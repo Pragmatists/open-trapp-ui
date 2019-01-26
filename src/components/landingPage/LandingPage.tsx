@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import './landing-page.css'
 import {Grid} from "@material-ui/core";
 import Divider from "@material-ui/core/Divider";
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 import PersonIcon from '@material-ui/icons/Person';
+import './LandingPage.css'
 
 export class LandingPage extends Component<{}, {}> {
 

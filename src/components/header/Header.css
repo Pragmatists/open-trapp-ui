@@ -1,0 +1,11 @@
+.header {
+    display: flex;
+}
+
+.header__text {
+    flex-grow: 1;
+}
+
+.header__icon {
+    margin-right: 16px;
+}
