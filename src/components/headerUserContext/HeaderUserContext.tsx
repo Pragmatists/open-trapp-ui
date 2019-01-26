@@ -4,6 +4,7 @@ import {AccountCircle} from '@material-ui/icons';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
+import {OpenTrappAPI} from "../../api/OpenTrappAPI";
 
 interface HeaderUserContextProps {
     auth?: any;
@@ -57,7 +58,7 @@ export class HeaderUserContext extends Component<HeaderUserContextProps, HeaderU
 
     private renderUnauthorized() {
         return (
-            <Button color='inherit' data-login-button>Login</Button>
+            <Button color='inherit' data-login-button onClick={this.handleLogin}>Login</Button>
         );
     }
 
@@ -68,4 +69,8 @@ export class HeaderUserContext extends Component<HeaderUserContextProps, HeaderU
     private handleClose = () => {
         this.setState({anchorEl: null});
     };
+
+    private handleLogin = async () => {
+        window.open(`${OpenTrappAPI.apiRootUrl}/authentication/login/google`, '_self')
+    }
 }
