@@ -1,5 +1,5 @@
 # OpenTrappUI
-Open Time Registration Applicatio
+Open Time Registration Application
 
 ## Available Scripts
 
