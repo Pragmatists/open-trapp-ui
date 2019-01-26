@@ -1,0 +1,13 @@
+.registration-page {
+    padding: 12px;
+}
+
+.registration-page__header {
+    font-size: 1.2rem;
+    margin-top: 32px;
+    margin-bottom: 16px;
+}
+
+.registration-page__header > span {
+    font-size: 2rem;
+}

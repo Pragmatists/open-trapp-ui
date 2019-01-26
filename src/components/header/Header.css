@@ -6,6 +6,10 @@
     flex-grow: 1;
 }
 
+.header__text > span {
+    font-weight: 500;
+}
+
 .header__icon {
     margin-right: 16px;
 }

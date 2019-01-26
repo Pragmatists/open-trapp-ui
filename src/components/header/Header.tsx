@@ -17,7 +17,7 @@ export class Header extends Component<{}, {}> {
                             <Toolbar>
                                 <ScheduleIcon className='header__icon' />
                                 <Typography variant='h5' color='inherit' className='header__text'>
-                                    OpenTrapp
+                                    Open<span>Trapp</span>
                                 </Typography>
                                 <HeaderUserContext auth={false}/>
                             </Toolbar>

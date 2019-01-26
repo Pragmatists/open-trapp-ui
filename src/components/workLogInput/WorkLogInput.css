@@ -1,0 +1,16 @@
+.work-log-input {
+    padding: 2px 4px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    font-size: 1.2rem;
+}
+
+.work-log-input__input {
+    margin-left: 16px;
+    flex-grow: 1;
+}
+
+.work-log-input__input > input {
+    font-size: 1.2rem;
+}

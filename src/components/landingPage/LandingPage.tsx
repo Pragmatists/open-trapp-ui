@@ -21,7 +21,7 @@ export class LandingPage extends Component<{}, {}> {
                     </Grid>
                     <Grid item container justify='center' xs={12}>
                         <Grid item xs={9} sm={3} className='landing-page-card card'>
-                            <ScheduleIcon className='card__icon'/>
+                            <ScheduleIcon className='card__icon' color='secondary'/>
                             <h2 className='card__title'>Easy time capture</h2>
                             <Divider variant='middle' className='card__divider'/>
                             <div className='card__text'>
@@ -29,7 +29,7 @@ export class LandingPage extends Component<{}, {}> {
                             </div>
                         </Grid>
                         <Grid item xs={9} sm={3} className='landing-page-card card'>
-                            <EqualizerIcon className='card__icon'/>
+                            <EqualizerIcon className='card__icon' color='secondary'/>
                             <h2 className='card__title'>Intuitive reporting</h2>
                             <Divider variant='middle' className='card__divider'/>
                             <div className='card__text'>
@@ -37,7 +37,7 @@ export class LandingPage extends Component<{}, {}> {
                             </div>
                         </Grid>
                         <Grid item xs={9} sm={3} className='landing-page-card card'>
-                            <PersonIcon className='card__icon'/>
+                            <PersonIcon className='card__icon' color='secondary'/>
                             <h2 className='card__title'>OpenID integration</h2>
                             <Divider variant='middle' className='card__divider'/>
                             <div className='card__text'>
