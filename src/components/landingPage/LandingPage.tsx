@@ -1,12 +1,26 @@
 import React, {Component} from 'react';
-import {Grid} from "@material-ui/core";
-import Divider from "@material-ui/core/Divider";
+import {Grid} from '@material-ui/core';
+import Divider from '@material-ui/core/Divider';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 import PersonIcon from '@material-ui/icons/Person';
 import './LandingPage.css'
+import {withRouter} from 'react-router-dom';
+import {parse} from 'query-string';
 
-export class LandingPage extends Component<{}, {}> {
+interface LandingPageProps {
+    location: any;
+    history: any;
+    match: any;
+}
+
+class LandingPageComponent extends Component<LandingPageProps, {}> {
+
+    componentWillMount(): void {
+        const {location} = this.props;
+        const token = parse(location.search).token;
+        console.log('token', token);
+    }
 
     render() {
         return (
@@ -50,3 +64,5 @@ export class LandingPage extends Component<{}, {}> {
         );
     }
 }
+
+export const LandingPage = withRouter(LandingPageComponent);
