@@ -7,6 +7,8 @@ import {theme} from "./theme";
 import './App.css';
 import {LandingPage} from "./components/landingPage/LandingPage";
 import {RegistrationPage} from "./components/registrationPage/RegistrationPage";
+import { PrivateRoute } from './components/PrivateRoute';
+import { SettingsPage } from './components/settingsPage/SettingsPage';
 
 export class App extends Component {
     render() {
@@ -19,6 +21,7 @@ export class App extends Component {
                             <Header/>
                             <Route path='/' exact component={LandingPage}/>
                             <Route path='/registration' component={RegistrationPage}/>
+                            <PrivateRoute path='/settings' component={SettingsPage}/>
                         </div>
                     </BrowserRouter>
                 </MuiThemeProvider>

@@ -19,7 +19,7 @@ export class Header extends Component<{}, {}> {
                                 <Typography variant='h5' color='inherit' className='header__text'>
                                     Open<span>Trapp</span>
                                 </Typography>
-                                <HeaderUserContext auth={false}/>
+                                <HeaderUserContext />
                             </Toolbar>
                         </Grid>
                     </Grid>
