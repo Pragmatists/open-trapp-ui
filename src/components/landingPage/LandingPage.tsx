@@ -27,14 +27,14 @@ class LandingPageComponent extends Component<LandingPageProps, {}> {
             <div className='landing-page'>
                 <Grid container spacing={24}>
                     <Grid item container justify='center' xs={12} className='landing-page__header header'>
-                        <Grid item xs={9} sm={9} className='header__content'>
+                        <Grid item xs={9} className='header__content'>
                             <h1>Welcome to OpenTrapp!</h1>
                             <p>Capture your time into the simplest time registration application on the
                                 Internet.</p>
                         </Grid>
                     </Grid>
                     <Grid item container justify='center' xs={12}>
-                        <Grid item xs={9} sm={3} className='landing-page-card card'>
+                        <Grid item xs={9} md={3} className='landing-page-card card'>
                             <ScheduleIcon className='card__icon' color='secondary'/>
                             <h2 className='card__title'>Easy time capture</h2>
                             <Divider variant='middle' className='card__divider'/>
@@ -42,7 +42,7 @@ class LandingPageComponent extends Component<LandingPageProps, {}> {
                                 Powerfull expression language will help you quickly register your work.
                             </div>
                         </Grid>
-                        <Grid item xs={9} sm={3} className='landing-page-card card'>
+                        <Grid item xs={9} md={3} className='landing-page-card card'>
                             <EqualizerIcon className='card__icon' color='secondary'/>
                             <h2 className='card__title'>Intuitive reporting</h2>
                             <Divider variant='middle' className='card__divider'/>
@@ -50,7 +50,7 @@ class LandingPageComponent extends Component<LandingPageProps, {}> {
                                 Review your reports by applying different filters and enjoy the results in various presentation forms.
                             </div>
                         </Grid>
-                        <Grid item xs={9} sm={3} className='landing-page-card card'>
+                        <Grid item xs={9} md={3} className='landing-page-card card'>
                             <PersonIcon className='card__icon' color='secondary'/>
                             <h2 className='card__title'>OpenID integration</h2>
                             <Divider variant='middle' className='card__divider'/>

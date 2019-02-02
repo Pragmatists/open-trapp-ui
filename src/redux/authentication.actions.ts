@@ -3,7 +3,7 @@ import { AUTHENTICATION_CONSTANTS } from './constants';
 import { OpenTrappAPI } from '../api/OpenTrappAPI';
 import { AuthorizedUser } from '../api/dtos';
 
-export function obtainJWTToken(idToken: string) {
+export function login(idToken: string, onSuccess: () => void) {
   return (dispatch: Dispatch) => {
     dispatch(loginStartedAction());
 
@@ -13,6 +13,7 @@ export function obtainJWTToken(idToken: string) {
         return response;
       })
       .then(response => dispatch(loginSuccessAction(response)))
+      .then(onSuccess)
       .catch(err => dispatch(loginFailedAction(err)));
   }
 }

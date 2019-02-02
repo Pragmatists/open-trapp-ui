@@ -7,18 +7,20 @@ import ScheduleIcon from '@material-ui/icons/Schedule';
 import { connect } from 'react-redux';
 import GoogleLogin, { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { OpenTrappState } from '../../redux/root.reducer';
-import { logout, obtainJWTToken } from '../../redux/authentication.actions';
+import { logout, login } from '../../redux/authentication.actions';
 import './Header.css'
 import { UserDetails } from '../userDetails/UserDetails';
+import { withRouter } from 'react-router';
 
 interface HeaderDataProps {
     isLoggedIn: boolean;
     username?: string;
     profilePicture?: string;
+    history?: any;
 }
 
 interface HeaderEventProps {
-    onGoogleToken: (token: string) => void;
+    onGoogleToken: (token: string, onSuccess: () => void) => void;
     onLogout: () => void;
 }
 
@@ -26,7 +28,7 @@ type HeaderProps = HeaderDataProps & HeaderEventProps;
 
 class HeaderComponent extends Component<HeaderProps, {}> {
     render() {
-        const {isLoggedIn} = this.props;
+        const {isLoggedIn, } = this.props;
         return (
             <div className='header'>
                 <AppBar position="static">
@@ -65,9 +67,9 @@ class HeaderComponent extends Component<HeaderProps, {}> {
     }
 
     private handleSuccessLogin = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-        const {onGoogleToken} = this.props;
+        const {onGoogleToken, history} = this.props;
         const idToken = (response as GoogleLoginResponse).getAuthResponse().id_token;
-        onGoogleToken(idToken);
+        onGoogleToken(idToken, () => history.push('/registration'));
     };
 
     private handleErrorLogin = (response: any) => {
@@ -86,12 +88,12 @@ function mapStateToProps(state: OpenTrappState): HeaderDataProps {
 
 function mapDispatchToProps(dispatch: any): HeaderEventProps {
     return {
-        onGoogleToken: token => dispatch(obtainJWTToken(token)),
+        onGoogleToken: (token, onSuccess) => dispatch(login(token, onSuccess)),
         onLogout: () => dispatch(logout())
     };
 }
 
-export const Header = connect(
+export const Header = withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
-)(HeaderComponent);
+)(HeaderComponent) as any);
