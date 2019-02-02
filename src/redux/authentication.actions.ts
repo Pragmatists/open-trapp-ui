@@ -30,12 +30,12 @@ const loginStartedAction = () => ({
 
 const loginSuccessAction = (userDetails: AuthorizedUser) => ({
   type: AUTHENTICATION_CONSTANTS.LOGIN_SUCCESS,
-  value: userDetails
+  payload: userDetails
 });
 
 const loginFailedAction = (error: Error) => ({
   type: AUTHENTICATION_CONSTANTS.LOGIN_FAILURE,
-  value: error
+  payload: error
 });
 
 const logoutAction = () => ({

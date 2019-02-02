@@ -4,11 +4,29 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import {Grid} from "@material-ui/core";
 import ScheduleIcon from '@material-ui/icons/Schedule';
-import {HeaderUserContext} from "../headerUserContext/HeaderUserContext";
+import { connect } from 'react-redux';
+import GoogleLogin, { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
+import { OpenTrappState } from '../../redux/root.reducer';
+import { logout, obtainJWTToken } from '../../redux/authentication.actions';
 import './Header.css'
+import { UserDetails } from '../userDetails/UserDetails';
 
-export class Header extends Component<{}, {}> {
+interface HeaderDataProps {
+    isLoggedIn: boolean;
+    username?: string;
+    profilePicture?: string;
+}
+
+interface HeaderEventProps {
+    onGoogleToken: (token: string) => void;
+    onLogout: () => void;
+}
+
+type HeaderProps = HeaderDataProps & HeaderEventProps;
+
+class HeaderComponent extends Component<HeaderProps, {}> {
     render() {
+        const {isLoggedIn} = this.props;
         return (
             <div className='header'>
                 <AppBar position="static">
@@ -19,7 +37,7 @@ export class Header extends Component<{}, {}> {
                                 <Typography variant='h5' color='inherit' className='header__text'>
                                     Open<span>Trapp</span>
                                 </Typography>
-                                <HeaderUserContext />
+                                {isLoggedIn ? this.renderAuthorized() : this.renderUnauthorized()}
                             </Toolbar>
                         </Grid>
                     </Grid>
@@ -27,4 +45,53 @@ export class Header extends Component<{}, {}> {
             </div>
         );
     }
+
+    private renderUnauthorized() {
+        return (
+          <GoogleLogin
+            clientId='522512788382-la0g5vpsf2q8anekstsh2l551m1ba4oe.apps.googleusercontent.com'
+            responseType='id_token'
+            onSuccess={this.handleSuccessLogin}
+            onFailure={this.handleErrorLogin}
+          />
+        );
+    }
+
+    private renderAuthorized() {
+        const {onLogout, username = '', profilePicture = ''} = this.props;
+        return <UserDetails onLogout={onLogout}
+                            username={username}
+                            profilePicture={profilePicture} />;
+    }
+
+    private handleSuccessLogin = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
+        const {onGoogleToken} = this.props;
+        const idToken = (response as GoogleLoginResponse).getAuthResponse().id_token;
+        onGoogleToken(idToken);
+    };
+
+    private handleErrorLogin = (response: any) => {
+        console.log('handleErrorLogin', response);
+    };
 }
+
+function mapStateToProps(state: OpenTrappState): HeaderDataProps {
+    const {loggedIn, user} = state.authentication;
+    return {
+        isLoggedIn: loggedIn,
+        username: user ? user.displayName : undefined,
+        profilePicture: user ? user.profilePicture : undefined
+    };
+}
+
+function mapDispatchToProps(dispatch: any): HeaderEventProps {
+    return {
+        onGoogleToken: token => dispatch(obtainJWTToken(token)),
+        onLogout: () => dispatch(logout())
+    };
+}
+
+export const Header = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(HeaderComponent);
