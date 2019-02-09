@@ -6,6 +6,11 @@ import HelpIcon from '@material-ui/icons/Help';
 import './WorkLogInput.css'
 import {WorkLogHelpDialog} from "../workLogHelpDialog/WorkLogHelpDialog";
 
+interface WorkLogInputProps {
+  expression: string;
+  onWorkChange: (expression: string, tags: string[], workload: string, day: string) => void;
+}
+
 interface WorkLogInputState {
     helpOpen: boolean;
 }
