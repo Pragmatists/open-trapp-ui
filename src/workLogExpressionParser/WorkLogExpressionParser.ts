@@ -1,5 +1,7 @@
-import moment from 'moment';
-import pegjs from 'pegjs';
+import * as moment from 'moment';
+import { parse } from './WorkLogEntryGrammar';
+import { isNil, trim } from 'lodash'
+import {TimeProvider} from "../time/TimeProvider";
 
 interface WorkLog {
   days: string[];
@@ -7,20 +9,34 @@ interface WorkLog {
   workload: string;
 }
 
-
 export class WorkLogExpressionParser {
-  private static readonly PARSER = pegjs.generate();
   private static readonly DATE_RANGE_PATTERN = /\@[A-Z0-9/a-z-]+\~\@[A-Z0-9/a-z-]+/g;
   private static readonly DATE_PATTERN = /\@[A-Z0-9/a-z-]+/g;
 
+  constructor(private readonly timeProvider: TimeProvider = new TimeProvider()) {
+  }
+
   parse(expression: string): WorkLog | null {
-    return null;
+    try {
+      const result = parse(trim(expression), {timeProvider: this.timeProvider});
+      return {
+        tags: result.projectNames,
+        days: [result.day],
+        workload: result.workload
+      };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  isValid(expression: string): boolean {
+    return !isNil(this.parse(expression));
   }
 
   private getDatesArray(from: string, to: string): string[] {
 
-    const fromData = WorkLogExpressionParser.PARSER.parse('1h #projects ' + from);
-    const toData = WorkLogExpressionParser.PARSER.parse('1h #projects ' + to);
+    const fromData = parse('1h #projects ' + from, {timeProvider: this.timeProvider});
+    const toData = parse('1h #projects ' + to, {timeProvider: this.timeProvider});
 
     let start = moment(fromData.day, "YYYY/MM/DD");
     let end = moment(toData.day, "YYYY/MM/DD");

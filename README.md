@@ -27,3 +27,14 @@ In the project directory, you can run:
     **Note: this is a one-way operation. Once you `eject`, you can’t go back!**
     If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. 
     This command will remove the single build dependency from your project.
+    
+## Sources
+
+### Work log entry parser
+To parse work log expression `pegjs` library is used.
+
+Grammar is defined in file `workLogExpressionParser/WorkLogEntryGrammar.pegjs`.
+
+After each change it's necessary to generate `js` file. To do so you should execute command `pegjs WorkLogEntryGrammar.pegjs`.
+
+After that you have to add `import moment from 'moment';` at the very top of generated file. 
