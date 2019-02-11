@@ -228,9 +228,9 @@ function peg$parse(input, options) {
                   relativeDay = relativeDay.toLowerCase();
                   var relativeDayDate = now();
                   if (relativeDay === "yesterday") {
-                      relativeDayDate.subtract('days', 1);
+                      relativeDayDate.subtract(1, 'days');
                   } else if (relativeDay === "tomorrow") {
-                      relativeDayDate.add('days', 1);
+                      relativeDayDate.add(1, 'days');
                   }
                   return relativeDayDate.format(dateFormat);
               },
