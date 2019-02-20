@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Avatar from '@material-ui/core/Avatar';
-import './UserDetails.css';
+import './UserDetails.scss';
 
 interface UserDetailsProps {
   username: string;

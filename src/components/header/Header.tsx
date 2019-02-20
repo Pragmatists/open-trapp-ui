@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import GoogleLogin, { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { logout, login } from '../../redux/authentication.actions';
-import './Header.css'
+import './Header.scss'
 import { UserDetails } from '../userDetails/UserDetails';
 import { withRouter } from 'react-router';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid } from '@material-ui/core';
-import './NotFoundPage.css'
+import './NotFoundPage.scss'
 
 export const NotFoundPage = () => (
   <div>

@@ -3,7 +3,7 @@ import {Paper} from '@material-ui/core';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
 import HelpIcon from '@material-ui/icons/Help';
-import './WorkLogInput.css'
+import './WorkLogInput.scss'
 import {WorkLogHelpDialog} from "../workLogHelpDialog/WorkLogHelpDialog";
 
 interface WorkLogInputState {
@@ -18,7 +18,7 @@ export class WorkLogInput extends Component<{}, WorkLogInputState> {
     render() {
         return (
             <Paper className='work-log-input' elevation={1}>
-                <InputBase className='work-log-input__input' placeholder='1d #my-project' />
+                <InputBase className='work-log-input__input' placeholder='1d #my-project'/>
                 <IconButton className='work-log-input__help' aria-label='Help' onClick={this.handleOpenHelp}>
                     <HelpIcon color='secondary'/>
                 </IconButton>

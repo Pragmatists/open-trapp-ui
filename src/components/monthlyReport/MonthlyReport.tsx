@@ -1,11 +1,6 @@
 import React, {Component} from 'react';
-import './MonthlyReport.css';
-
-interface MonthlyReportDay {
-    id: string;
-    weekend: boolean;
-    holiday: boolean;
-}
+import './MonthlyReport.scss';
+import {MonthlyReportDay} from "./MonthlyReport.model";
 
 interface MonthlyReportProps {
     days: MonthlyReportDay[];

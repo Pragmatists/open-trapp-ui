@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Grid} from "@material-ui/core";
-import './RegistrationPage.desktop.css'
+import './RegistrationPage.desktop.scss'
 import Divider from "@material-ui/core/Divider";
 import {WorkLogInput} from "../workLogInput/WorkLogInput";
 
