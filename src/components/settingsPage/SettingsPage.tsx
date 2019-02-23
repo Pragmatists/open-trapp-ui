@@ -9,7 +9,7 @@ interface SettingsPageLayoutProps {
   width: Breakpoint;
 }
 
-const  SettingsPageLayout = ({width}: SettingsPageLayoutProps) =>
-  isWidthUp('md', width) ? <SettingsPageDesktop/> : <SettingsPageMobile/>;
+const SettingsPageLayout = ({width}: SettingsPageLayoutProps) =>
+    isWidthUp('md', width) ? <SettingsPageDesktop/> : <SettingsPageMobile/>;
 
 export const SettingsPage = withWidth()(SettingsPageLayout);

@@ -30,32 +30,32 @@ export class HeaderComponent extends Component<HeaderProps, {}> {
   render() {
     const {isLoggedIn} = this.props;
     return (
-      <div className='header'>
-        <AppBar position="static">
-          <Grid container justify='center'>
-            <Grid item xs={12} sm={9}>
-              <Toolbar>
-                <ScheduleIcon className='header__icon'/>
-                <Typography variant='h5' color='inherit' className='header__text'>
-                  Open<span>Trapp</span>
-                </Typography>
-                {isLoggedIn ? this.renderAuthorized() : this.renderUnauthorized()}
-              </Toolbar>
+        <div className='header'>
+          <AppBar position="static">
+            <Grid container justify='center'>
+              <Grid item xs={12} sm={9}>
+                <Toolbar>
+                  <ScheduleIcon className='header__icon'/>
+                  <Typography variant='h5' color='inherit' className='header__text'>
+                    Open<span>Trapp</span>
+                  </Typography>
+                  {isLoggedIn ? this.renderAuthorized() : this.renderUnauthorized()}
+                </Toolbar>
+              </Grid>
             </Grid>
-          </Grid>
-        </AppBar>
-      </div>
+          </AppBar>
+        </div>
     );
   }
 
   private renderUnauthorized() {
     return (
-      <GoogleLogin
-        clientId='522512788382-la0g5vpsf2q8anekstsh2l551m1ba4oe.apps.googleusercontent.com'
-        responseType='id_token'
-        onSuccess={this.handleSuccessLogin}
-        onFailure={this.handleErrorLogin}
-      />
+        <GoogleLogin
+            clientId='522512788382-la0g5vpsf2q8anekstsh2l551m1ba4oe.apps.googleusercontent.com'
+            responseType='id_token'
+            onSuccess={this.handleSuccessLogin}
+            onFailure={this.handleErrorLogin}
+        />
     );
   }
 
@@ -94,6 +94,6 @@ function mapDispatchToProps(dispatch: any): HeaderEventProps {
 }
 
 export const Header = withRouter(connect(
-  mapStateToProps,
-  mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(HeaderComponent) as any);

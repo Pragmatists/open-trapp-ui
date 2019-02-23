@@ -1,10 +1,11 @@
-
-.not-found__code {
+.not-found {
+  &__code {
     font-size: 6rem;
     font-weight: 300;
-}
+  }
 
-.not-found__text {
+  &__text {
     font-size: 4rem;
     font-weight: 300;
+  }
 }

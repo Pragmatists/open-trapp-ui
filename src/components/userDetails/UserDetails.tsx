@@ -16,7 +16,7 @@ interface UserDetailsState {
 
 export class UserDetails extends Component<UserDetailsProps, UserDetailsState> {
   state = {
-    anchorEl: null,
+    anchorEl: null
   };
 
   render() {
@@ -24,28 +24,28 @@ export class UserDetails extends Component<UserDetailsProps, UserDetailsState> {
     const open = Boolean(anchorEl);
     const {username, profilePicture, onLogout} = this.props;
     return (
-      <div className='user-details'>
-        <div onClick={this.handleMenu} className='user-details__user user'>
-          <Avatar alt={username}
-                  src={profilePicture}/>
-          <div className='user__name'>{username}</div>
+        <div className='user-details'>
+          <div onClick={this.handleMenu} className='user-details__user user'>
+            <Avatar alt={username}
+                    src={profilePicture}/>
+            <div className='user__name'>{username}</div>
+          </div>
+          <Menu id='menu-appbar'
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right'
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right'
+                }}
+                open={open}
+                onClose={this.handleClose}>
+            <MenuItem>Settings</MenuItem>
+            <MenuItem onClick={onLogout}>Logout</MenuItem>
+          </Menu>
         </div>
-        <Menu id='menu-appbar'
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={open}
-              onClose={this.handleClose}>
-          <MenuItem>Settings</MenuItem>
-          <MenuItem onClick={onLogout}>Logout</MenuItem>
-        </Menu>
-      </div>
     );
   }
 
