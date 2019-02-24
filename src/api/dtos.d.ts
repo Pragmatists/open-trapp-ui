@@ -26,3 +26,12 @@ interface DayDTO {
 interface LinkDTO {
   readonly link: string;
 }
+
+export interface ReportingWorkLogDTO {
+  readonly link: string;
+  readonly id: string,
+  readonly workload: string,
+  readonly projectNames: string[],
+  readonly employee: string,
+  readonly day: string
+}

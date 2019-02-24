@@ -3,3 +3,8 @@ export interface MonthlyReportDay {
     weekend: boolean;
     holiday: boolean;
 }
+
+export interface WorkLog {
+    day: string;
+    workload: number;
+}

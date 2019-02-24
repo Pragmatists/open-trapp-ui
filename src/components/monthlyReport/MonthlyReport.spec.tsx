@@ -33,7 +33,7 @@ const someMonth = [{
 
 describe('MonthlyReport', () => {
     it('should render days for specified month', () => {
-        const wrapper = shallow(<MonthlyReport days={someMonth} worklogs={{}}/>);
+        const wrapper = shallow(<MonthlyReport days={someMonth} workLogs={{}}/>);
     });
 
     it('should return selected day on click', () => {

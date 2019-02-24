@@ -1,0 +1,26 @@
+.monthly-report {
+
+  .report-table {
+    width: 100%;
+
+    &__cell {
+      padding: 4px 8px 4px 8px;
+    }
+
+    .header-cell {
+      font-size: 0.8rem;
+
+      &:last-child {
+        padding-right: 16px;
+      }
+
+      &:first-child {
+        padding-left: 16px;
+      }
+
+      .day-name {
+        font-weight: bold;
+      }
+    }
+  }
+}

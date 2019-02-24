@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { AuthorizedUser, MonthDTO } from './dtos';
+import { AuthorizedUser, MonthDTO, ReportingWorkLogDTO } from './dtos';
 
 class OpenTrappAPI {
   private static readonly API_ROOT_URL = `${process.env.REACT_APP_API_URL}/api/v1`;
@@ -28,9 +28,13 @@ class OpenTrappAPI {
   }
 
   calendarMonth(year: number, month: number): Promise<MonthDTO> {
-    return this.axiosInstance.get<MonthDTO>(
-        `/calendar/${year}/${month}`
-    ).then(axiosResp => axiosResp.data);
+    return this.axiosInstance.get<MonthDTO>(`/calendar/${year}/${month}`)
+        .then(axiosResp => axiosResp.data);
+  }
+
+  workLogEntriesForMonth(year: number, month: number): Promise<ReportingWorkLogDTO[]> {
+    return this.axiosInstance.get<ReportingWorkLogDTO[]>(`/calendar/${year}/${month}/work-log/entries`)
+        .then(axiosResp => axiosResp.data);
   }
 
   get axios() {
