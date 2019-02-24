@@ -6,7 +6,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
-import { entries } from 'lodash';
+import { chain, entries, reduce } from 'lodash';
 import moment from 'moment';
 
 interface MonthlyReportProps {
@@ -16,10 +16,9 @@ interface MonthlyReportProps {
 
 export class MonthlyReport extends Component<MonthlyReportProps, {}> {
   render() {
-    const {workLogs: workLogs} = this.props;
+    const {workLogs} = this.props;
     const workLogEntries = entries(workLogs);
     const singleEmployee = workLogEntries.length === 1;
-
     return (
         <div className='monthly-report'>
           <Table className='monthly-report__report-table report-table'>
@@ -51,15 +50,25 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
   }
 
   private renderRow(employee: string, workLogs: WorkLog[], singleEmployee: boolean) {
+    const {days} = this.props;
+    const workloadForDay = chain(workLogs)
+        .groupBy(w => w.day)
+        .mapValues(value => reduce(value, (sum, w) => sum + w.workload, 0))
+        .mapValues(value => value / 60)
+        .value();
+    const total = chain(workloadForDay)
+        .values()
+        .sum()
+        .value();
     return (
         <TableRow key={employee}>
           {!singleEmployee && <TableCell className='report-table__cell'>{employee}</TableCell>}
-          {workLogs.map((workLog, idx) => (
+          {days.map((day, idx) => (
               <TableCell key={idx} align='center' className='report-table__cell' data-month-day-value>
-                {workLog.workload}
+                {workloadForDay[day.id]}
               </TableCell>
           ))}
-          <TableCell align='center' className='report-table__cell' data-total-value>12</TableCell>
+          <TableCell align='center' className='report-table__cell' data-total-value>{total}</TableCell>
         </TableRow>
     );
   }

@@ -8,22 +8,15 @@ import Paper from '@material-ui/core/Paper';
 import { connect } from 'react-redux';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { loadMonth } from '../../redux/calendar.actions';
-import { DayDTO } from '../../api/dtos';
-
-const workLogs = {
-  'hubert.legec': [
-    {day: '2019/02/01', workload: 8},
-    {day: '2019/02/02', workload: 6},
-    {day: '2019/02/03', workload: 2},
-    {day: '2019/02/04', workload: 8.25},
-    {day: '2019/02/05', workload: 8},
-    {day: '2019/02/06', workload: 7.75}
-  ]
-};
+import { AuthorizedUser, DayDTO, ReportingWorkLogDTO } from '../../api/dtos';
+import { loadWorkLog } from '../../redux/workLog.actions';
+import { WorkLog } from '../monthlyReport/MonthlyReport.model';
+import { isEmpty } from 'lodash';
 
 interface RegistrationPageDataProps {
   selectedMonth: { year: number, month: number },
   days?: DayDTO[];
+  workLogs: { [employee: string]: WorkLog[] }
 }
 
 interface RegistrationPageEventProps {
@@ -40,7 +33,7 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
   }
 
   render() {
-    const {days} = this.props;
+    const {days, workLogs} = this.props;
     return (
         <div className='registration-page'>
           <Grid container justify='center' spacing={24}>
@@ -55,7 +48,7 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
             </Grid>
             <Grid item xs={8}>
               <Paper>
-                {days ? <MonthlyReport days={days} workLogs={workLogs}/> : 'Loading...'}
+                {days && !isEmpty(workLogs) ? <MonthlyReport days={days} workLogs={workLogs}/> : 'Loading...'}
               </Paper>
             </Grid>
           </Grid>
@@ -64,17 +57,34 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
   }
 }
 
+function workLogsForUser(name: string, workLogs?: ReportingWorkLogDTO[]): { [p: string]: WorkLog[] } {
+  if (!workLogs) {
+    return {};
+  }
+  const filteredWorkLogs = workLogs
+      .filter(w => w.employee === name)
+      .map(w => ({day: w.day, workload: w.workload}));
+  return {[name]: filteredWorkLogs};
+}
+
 function mapStateToProps(state: OpenTrappState): RegistrationPageDataProps {
   const {selectedMonth, days} = state.calendar;
+  const {name} = state.authentication.user || {} as AuthorizedUser;
+  const {workLogs} = state.workLog;
+  const userWorkLogs = workLogsForUser(name, workLogs);
   return {
     selectedMonth,
-    days
+    days,
+    workLogs: userWorkLogs
   };
 }
 
-function mapDispatchToProps(dispatch: any): RegistrationPageEventProps {
+function mapDispatchToProps(dispatch): RegistrationPageEventProps {
   return {
-    init: (year, month) => dispatch(loadMonth(year, month))
+    init: (year, month) => {
+      dispatch(loadMonth(year, month));
+      dispatch(loadWorkLog(year, month));
+    }
   };
 }
 

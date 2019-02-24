@@ -30,7 +30,7 @@ interface LinkDTO {
 export interface ReportingWorkLogDTO {
   readonly link: string;
   readonly id: string,
-  readonly workload: string,
+  readonly workload: number,
   readonly projectNames: string[],
   readonly employee: string,
   readonly day: string
