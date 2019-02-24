@@ -79,7 +79,7 @@ describe('RegistrationPageDesktop', () => {
     await flushAllPromises();
     wrapper.update();
 
-    expect(currentMonthHeader(wrapper).text()).toEqual('2019/02')
+    expect(currentMonthHeader(wrapper).text()).toEqual('2019/02 month worklog')
   });
 
   it('should fetch and render days with workload for current month', async () => {
