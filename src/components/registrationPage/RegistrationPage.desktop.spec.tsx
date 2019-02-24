@@ -48,6 +48,11 @@ describe('RegistrationPageDesktop', () => {
 
   beforeEach(() => {
     httpMock = new MockAdapter(OpenTrappRestAPI.axios);
+    httpMock
+        .onGet('/api/v1/calendar/2019/2')
+        .reply(200, currentMonthResponse)
+        .onGet('/api/v1/calendar/2019/2/work-log/entries')
+        .reply(200, workLogResponse);
     store = setupStore({
       authentication: {
         loggedIn: true,
@@ -64,13 +69,20 @@ describe('RegistrationPageDesktop', () => {
     });
   });
 
-  it('should fetch and render days with workload for current month', async () => {
-    httpMock
-        .onGet('/api/v1/calendar/2019/2')
-        .reply(200, currentMonthResponse)
-        .onGet('/api/v1/calendar/2019/2/work-log/entries')
-        .reply(200, workLogResponse);
+  it('should display current month', async () => {
+    const wrapper = mount(
+        <Provider store={store}>
+          <RegistrationPageDesktop/>
+        </Provider>
+    );
 
+    await flushAllPromises();
+    wrapper.update();
+
+    expect(currentMonthHeader(wrapper).text()).toEqual('2019/02')
+  });
+
+  it('should fetch and render days with workload for current month', async () => {
     const wrapper = mount(
         <Provider store={store}>
           <RegistrationPageDesktop/>
@@ -99,7 +111,11 @@ describe('RegistrationPageDesktop', () => {
     return wrapper.find(Table).find(TableBody).find(TableRow).at(rowIdx).find(TableCell);
   }
 
-  function totalCell(wrapper, rowIdx: number) {
+  function totalCell(wrapper, rowIdx: number): ReactWrapper {
     return tableRowCells(wrapper, rowIdx).at(days.length);
+  }
+
+  function currentMonthHeader(wrapper): ReactWrapper {
+    return wrapper.find('[data-selected-month-header]');
   }
 });

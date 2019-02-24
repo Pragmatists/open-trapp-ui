@@ -12,6 +12,7 @@ import { AuthorizedUser, DayDTO, ReportingWorkLogDTO } from '../../api/dtos';
 import { loadWorkLog } from '../../redux/workLog.actions';
 import { WorkLog } from '../monthlyReport/MonthlyReport.model';
 import { isEmpty } from 'lodash';
+import moment from 'moment';
 
 interface RegistrationPageDataProps {
   selectedMonth: { year: number, month: number },
@@ -33,7 +34,7 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
   }
 
   render() {
-    const {days, workLogs} = this.props;
+    const {days, workLogs, selectedMonth} = this.props;
     return (
         <div className='registration-page'>
           <Grid container justify='center' spacing={24}>
@@ -47,6 +48,16 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
               <WorkLogInput/>
             </Grid>
             <Grid item xs={8}>
+              <div className='registration-page__header' data-selected-month-header>
+                <span>{moment([selectedMonth.year, selectedMonth.month - 1, 1]).format('YYYY/MM')}</span> month worklog
+              </div>
+              <Divider variant='fullWidth'/>
+              <div className='registration-page__description'>
+                <span>Click</span> on date to set it on worklog expression
+              </div>
+              <div className='registration-page__description'>
+                <span>Shift + Click</span> on date to set dates range on worklog expression
+              </div>
               <Paper>
                 {days && !isEmpty(workLogs) ? <MonthlyReport days={days} workLogs={workLogs}/> : 'Loading...'}
               </Paper>
