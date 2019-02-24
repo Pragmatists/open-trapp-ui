@@ -13,6 +13,7 @@ import { loadWorkLog } from '../../redux/workLog.actions';
 import { WorkLog } from '../monthlyReport/MonthlyReport.model';
 import { isEmpty } from 'lodash';
 import moment from 'moment';
+import { RulesDialog } from '../rulesDialog/RulesDialog';
 
 interface RegistrationPageDataProps {
   selectedMonth: { year: number, month: number },
@@ -41,6 +42,7 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
             <Grid item xs={8}>
               <div className='registration-page__header'>
                 <span>Report your time</span> using our expression language, to make it quick!
+                <RulesDialog />
               </div>
               <Divider variant='fullWidth'/>
             </Grid>
