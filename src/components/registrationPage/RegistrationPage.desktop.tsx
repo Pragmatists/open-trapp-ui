@@ -3,17 +3,15 @@ import { Grid } from "@material-ui/core";
 import './RegistrationPage.desktop.scss'
 import Divider from "@material-ui/core/Divider";
 import { WorkLogInput } from "../workLogInput/WorkLogInput";
-import { MonthlyReport } from '../monthlyReport/MonthlyReport';
-import Paper from '@material-ui/core/Paper';
 import { connect } from 'react-redux';
 import { OpenTrappState } from '../../redux/root.reducer';
-import { loadMonth } from '../../redux/calendar.actions';
+import { changeMonth, loadMonth } from '../../redux/calendar.actions';
 import { AuthorizedUser, DayDTO, ReportingWorkLogDTO } from '../../api/dtos';
 import { loadWorkLog } from '../../redux/workLog.actions';
 import { WorkLog } from '../monthlyReport/MonthlyReport.model';
 import { isEmpty } from 'lodash';
-import moment from 'moment';
 import { RulesDialog } from '../rulesDialog/RulesDialog';
+import { RegistrationPageMonth } from '../registrationPageMonth/RegistrationPageMonth';
 
 interface RegistrationPageDataProps {
   selectedMonth: { year: number, month: number },
@@ -23,6 +21,7 @@ interface RegistrationPageDataProps {
 
 interface RegistrationPageEventProps {
   init: (year: number, month: number) => void;
+  onMonthChange: (year: number, month: number) => void;
 }
 
 type RegistrationPageProps = RegistrationPageDataProps & RegistrationPageEventProps;
@@ -35,14 +34,14 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
   }
 
   render() {
-    const {days, workLogs, selectedMonth} = this.props;
+    const {days, workLogs, selectedMonth, onMonthChange} = this.props;
     return (
         <div className='registration-page'>
           <Grid container justify='center' spacing={24}>
             <Grid item xs={8}>
               <div className='registration-page__header'>
                 <span>Report your time</span> using our expression language, to make it quick!
-                <RulesDialog />
+                <RulesDialog/>
               </div>
               <Divider variant='fullWidth'/>
             </Grid>
@@ -50,19 +49,13 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
               <WorkLogInput/>
             </Grid>
             <Grid item xs={8}>
-              <div className='registration-page__header' data-selected-month-header>
-                <span>{moment([selectedMonth.year, selectedMonth.month - 1, 1]).format('YYYY/MM')}</span> month worklog
-              </div>
-              <Divider variant='fullWidth'/>
-              <div className='registration-page__description'>
-                <span>Click</span> on date to set it on worklog expression
-              </div>
-              <div className='registration-page__description'>
-                <span>Shift + Click</span> on date to set dates range on worklog expression
-              </div>
-              <Paper>
-                {days && !isEmpty(workLogs) ? <MonthlyReport days={days} workLogs={workLogs}/> : 'Loading...'}
-              </Paper>
+              {days && !isEmpty(workLogs) ?
+                  <RegistrationPageMonth selectedMonth={selectedMonth}
+                                         days={days}
+                                         workLogs={workLogs}
+                                         onChange={onMonthChange}/> :
+                  'Loading...'
+              }
             </Grid>
           </Grid>
         </div>
@@ -94,8 +87,12 @@ function mapStateToProps(state: OpenTrappState): RegistrationPageDataProps {
 
 function mapDispatchToProps(dispatch): RegistrationPageEventProps {
   return {
-    init: (year, month) => {
+    init(year: number, month: number) {
       dispatch(loadMonth(year, month));
+      dispatch(loadWorkLog(year, month));
+    },
+    onMonthChange(year: number, month: number) {
+      dispatch(changeMonth(year, month));
       dispatch(loadWorkLog(year, month));
     }
   };

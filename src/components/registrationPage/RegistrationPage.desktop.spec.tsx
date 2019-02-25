@@ -12,6 +12,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import { mount, ReactWrapper } from 'enzyme';
+import { RegistrationPageMonth } from '../registrationPageMonth/RegistrationPageMonth';
+import Button from '@material-ui/core/Button';
 
 const days = [
   {id: '2019/02/01', weekend: false, holiday: false},
@@ -22,7 +24,7 @@ const days = [
   {id: '2019/02/06', weekend: false, holiday: true}
 ];
 
-const currentMonthResponse = {
+const monthResponse = {
   id: '2019/02',
   link: '/api/v1/2019/02',
   next: '/api/v1/2019/03',
@@ -49,9 +51,9 @@ describe('RegistrationPageDesktop', () => {
   beforeEach(() => {
     httpMock = new MockAdapter(OpenTrappRestAPI.axios);
     httpMock
-        .onGet('/api/v1/calendar/2019/2')
-        .reply(200, currentMonthResponse)
-        .onGet('/api/v1/calendar/2019/2/work-log/entries')
+        .onGet(/\/api\/v1\/calendar\/2019\/\d$/)
+        .reply(200, monthResponse)
+        .onGet(/\/api\/v1\/calendar\/2019\/\d\/work-log\/entries$/)
         .reply(200, workLogResponse);
     store = setupStore({
       authentication: {
@@ -79,7 +81,7 @@ describe('RegistrationPageDesktop', () => {
     await flushAllPromises();
     wrapper.update();
 
-    expect(currentMonthHeader(wrapper).text()).toEqual('2019/02 month worklog')
+    expect(currentMonthHeader(wrapper).text()).toEqual('2019/02 month worklog');
   });
 
   it('should fetch and render days with workload for current month', async () => {
@@ -103,6 +105,42 @@ describe('RegistrationPageDesktop', () => {
     expect(totalCell(wrapper, 0).text()).toEqual('16');
   });
 
+  it('should reload data on NEXT month click', async () => {
+    const wrapper = mount(
+        <Provider store={store}>
+          <RegistrationPageDesktop/>
+        </Provider>
+    );
+    await flushAllPromises();
+    wrapper.update();
+
+    nextMonthButton(wrapper).simulate('click');
+    await flushAllPromises();
+    wrapper.update();
+
+    expect(httpMock.history.get.length).toEqual(4);
+    expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
+    expect(currentMonthHeader(wrapper).text()).toEqual('2019/03 month worklog');
+  });
+
+  it('should reload data on PREVIOUS month click', async () => {
+    const wrapper = mount(
+        <Provider store={store}>
+          <RegistrationPageDesktop/>
+        </Provider>
+    );
+    await flushAllPromises();
+    wrapper.update();
+
+    previousMonthButton(wrapper).simulate('click');
+    await flushAllPromises();
+    wrapper.update();
+
+    expect(httpMock.history.get.length).toEqual(4);
+    expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
+    expect(currentMonthHeader(wrapper).text()).toEqual('2019/01 month worklog');
+  });
+
   function tableHeaderCells(wrapper): ReactWrapper {
     return wrapper.find(Table).find(TableHead).find(TableCell);
   }
@@ -117,5 +155,17 @@ describe('RegistrationPageDesktop', () => {
 
   function currentMonthHeader(wrapper): ReactWrapper {
     return wrapper.find('[data-selected-month-header]');
+  }
+
+  function nextMonthButton(wrapper): ReactWrapper {
+    return wrapper.find(RegistrationPageMonth)
+        .find(Button)
+        .filter('[data-next-month-button]');
+  }
+
+  function previousMonthButton(wrapper): ReactWrapper {
+    return wrapper.find(RegistrationPageMonth)
+        .find(Button)
+        .filter('[data-prev-month-button]');
   }
 });
