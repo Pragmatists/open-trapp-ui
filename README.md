@@ -1,6 +1,11 @@
 # OpenTrappUI
 Open Time Registration Application
 
+## GitHub Pages
+This code is deployed to GitHub Pages.
+
+Website is available [here](https://pragmatists.github.io/open-trapp-ui/).
+
 ## Available Scripts
 
 In the project directory, you can run:
