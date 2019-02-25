@@ -54,8 +54,9 @@ export class RegistrationPageMonth extends Component<RegistrationPageMonthProps,
     const {year, month} = selectedMonth;
     if (month === 12) {
       onChange(year + 1, 1);
+    } else {
+      onChange(year, month + 1);
     }
-    onChange(year, month + 1);
   };
 
   private onPrevious = () => {
@@ -63,7 +64,8 @@ export class RegistrationPageMonth extends Component<RegistrationPageMonthProps,
     const {year, month} = selectedMonth;
     if (month === 1) {
       onChange(year - 1, 12);
+    } else {
+      onChange(year, month - 1);
     }
-    onChange(year, month - 1);
   };
 }

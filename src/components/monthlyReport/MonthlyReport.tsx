@@ -44,7 +44,7 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
                 <div className='day-name'>{moment(day.id, 'YYYY/MM/DD').format('ddd')}</div>
               </TableCell>
           ))}
-          <TableCell align="right" className='report-table__cell header-cell' data-total-header>Total</TableCell>
+          <TableCell className='report-table__cell header-cell' data-total-header>Total</TableCell>
         </TableRow>
     );
   }
@@ -61,7 +61,7 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
         .sum()
         .value();
     return (
-        <TableRow key={employee}>
+        <TableRow key={employee} className='report-table__row'>
           {!singleEmployee && <TableCell className='report-table__cell'>{employee}</TableCell>}
           {days.map((day, idx) => (
               <TableCell key={idx} align='center' className='report-table__cell' data-month-day-value>
