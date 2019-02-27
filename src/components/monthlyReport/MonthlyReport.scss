@@ -1,0 +1,25 @@
+.monthly-report {
+  padding: 8px;
+
+  .report-table {
+    width: 100%;
+
+    &__cell {
+      padding: 4px;
+    }
+
+    &__row:last-of-type {
+      td {
+        border-bottom: none;
+      }
+    }
+
+    .header-cell {
+      font-size: 0.8rem;
+
+      .day-name {
+        font-weight: bold;
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@ import Divider from '@material-ui/core/Divider';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 import PersonIcon from '@material-ui/icons/Person';
-import './LandingPage.css';
+import './LandingPage.scss';
 
 export const LandingPage = () => (
   <div className='landing-page'>

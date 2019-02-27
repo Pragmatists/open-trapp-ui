@@ -1,0 +1,11 @@
+.rules-dialog {
+  code {
+    color: #c7254e;
+
+    &:after {
+      content: '\000A';
+      /* U+000A is the Line Feed character in Unicode */
+      white-space: pre;
+    }
+  }
+}

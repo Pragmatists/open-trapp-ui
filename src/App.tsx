@@ -17,7 +17,7 @@ export class App extends Component {
       <Fragment>
         <CssBaseline/>
         <MuiThemeProvider theme={theme}>
-          <BrowserRouter>
+          <BrowserRouter basename='/open-trapp-ui'>
             <div>
               <Header/>
               <Switch>

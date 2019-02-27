@@ -1,0 +1,15 @@
+.header {
+  display: flex;
+
+  &__text {
+    flex-grow: 1;
+
+    & > span {
+      font-weight: 500;
+    }
+  }
+
+  &__icon {
+    margin-right: 16px;
+  }
+}

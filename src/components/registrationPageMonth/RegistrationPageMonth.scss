@@ -1,0 +1,21 @@
+.registration-page-month {
+  &__header {
+    font-size: 1.2rem;
+    margin-top: 32px;
+    margin-bottom: 16px;
+
+    & > span {
+      font-size: 2rem;
+    }
+  }
+
+  &__description {
+    margin: 16px 0;
+  }
+
+  &__navigate-section {
+    display: flex;
+    justify-content: space-between;
+    margin: 16px 0;
+  }
+}

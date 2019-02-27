@@ -1,9 +1,0 @@
-.user-details__user {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
-
-.user__name {
-    margin-left: 16px;
-}

@@ -1,13 +1,13 @@
 import { Dispatch } from 'redux';
 import { AUTHENTICATION_CONSTANTS } from './constants';
-import { OpenTrappAPI } from '../api/OpenTrappAPI';
+import { OpenTrappRestAPI } from '../api/OpenTrappAPI';
 import { AuthorizedUser } from '../api/dtos';
 
 export function login(idToken: string, onSuccess: () => void) {
   return (dispatch: Dispatch) => {
     dispatch(loginStartedAction());
 
-    OpenTrappAPI.obtainJWTToken(idToken)
+    OpenTrappRestAPI.obtainJWTToken(idToken)
       .then(response => {
         sessionStorage.setItem('OpenTrappUser', JSON.stringify(response));
         return response;

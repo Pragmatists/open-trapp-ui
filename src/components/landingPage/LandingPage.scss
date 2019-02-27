@@ -1,40 +1,40 @@
 .landing-page {
-    padding: 12px;
-}
+  padding: 12px;
 
-.landing-page__header {
+  &__header {
     background-color: #2d6ca2;
     color: #fff;
-}
+  }
 
-.header__content {
+  .header__content {
     padding: 2em 0 1em 0;
-}
+  }
 
-.landing-page-card {
+  .landing-page-card {
     padding: 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
-}
 
-.landing-page-card > .card__divider {
-    width: 100%;
-    margin-bottom: 16px;
-}
+    & > .card__divider {
+      width: 100%;
+      margin-bottom: 16px;
+    }
 
-.landing-page-card > .card__icon {
-    font-size: 5rem;
-}
+    & > .card__icon {
+      font-size: 5rem;
+    }
+  }
 
-.card__title {
+  .card__title {
     font-size: 2rem;
     font-weight: 500;
     text-align: center;
-}
+  }
 
-.card__text {
+  .card__text {
     font-size: 1.2rem;
     font-weight: 300;
     text-align: center;
+  }
 }
