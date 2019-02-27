@@ -38,17 +38,17 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
     return (
         <div className='registration-page'>
           <Grid container justify='center' spacing={24}>
-            <Grid item xs={8}>
+            <Grid item lg={10} md={11} xs={11}>
               <div className='registration-page__header'>
                 <span>Report your time</span> using our expression language, to make it quick!
                 <RulesDialog/>
               </div>
               <Divider variant='fullWidth'/>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item lg={10} md={11} xs={11}>
               <WorkLogInput/>
             </Grid>
-            <Grid item xs={8}>
+            <Grid item lg={10} md={11} xs={11}>
               {days && !isEmpty(workLogs) ?
                   <RegistrationPageMonth selectedMonth={selectedMonth}
                                          days={days}

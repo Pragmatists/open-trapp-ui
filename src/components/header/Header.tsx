@@ -33,7 +33,7 @@ export class HeaderComponent extends Component<HeaderProps, {}> {
         <div className='header'>
           <AppBar position="static">
             <Grid container justify='center'>
-              <Grid item xs={12} sm={9}>
+              <Grid item xs={12} md={11} lg={10}>
                 <Toolbar>
                   <ScheduleIcon className='header__icon'/>
                   <Typography variant='h5' color='inherit' className='header__text'>
