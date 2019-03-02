@@ -1,4 +1,4 @@
-import * as moment from "moment";
+import moment from "moment";
 
 export class Month {
     private static readonly FORMAT = 'YYYY/MM';

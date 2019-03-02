@@ -1,7 +1,7 @@
-import * as moment from 'moment';
+import moment from 'moment';
 import { parse } from './WorkLogEntryGrammar';
 import { isNil, trim } from 'lodash'
-import {TimeProvider} from "../time/TimeProvider";
+import { TimeProvider } from "../time/TimeProvider";
 
 interface WorkLog {
   days: string[];
@@ -38,8 +38,8 @@ export class WorkLogExpressionParser {
     const fromData = parse('1h #projects ' + from, {timeProvider: this.timeProvider});
     const toData = parse('1h #projects ' + to, {timeProvider: this.timeProvider});
 
-    let start = moment(fromData.day, "YYYY/MM/DD");
-    let end = moment(toData.day, "YYYY/MM/DD");
+    let start: moment.Moment = moment(fromData.day, "YYYY/MM/DD");
+    let end: moment.Moment = moment(toData.day, "YYYY/MM/DD");
 
     if (end.isBefore(start)) {
       const pom = start;
