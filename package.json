@@ -45,7 +45,8 @@
     "start": "PORT=4200 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "generate-parser": "pegjs --plugin ./node_modules/ts-pegjs/src/tspegjs -o ./src/workLogExpressionParser/WorkLogEntryGrammar.ts ./src/workLogExpressionParser/WorkLogEntryGrammar.pegjs"
   },
   "eslintConfig": {
     "extends": "react-app"

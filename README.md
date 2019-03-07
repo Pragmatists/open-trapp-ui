@@ -40,6 +40,9 @@ To parse work log expression `pegjs` library is used.
 
 Grammar is defined in file `workLogExpressionParser/WorkLogEntryGrammar.pegjs`.
 
-After each change it's necessary to generate `js` file. To do so you should execute command `pegjs WorkLogEntryGrammar.pegjs`.
+After each change it's necessary to generate `js` file. To do so you should execute command 
+```bash
+npm run generate-parser
+```
 
-After that you have to add `import moment from 'moment';` at the very top of generated file. 
+After that you have to add `import moment from 'moment';` at the very top of generated file and suppress ts errors. 
