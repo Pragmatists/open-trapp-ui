@@ -8,7 +8,9 @@ import { WorkLogHelpDialog } from "../workLogHelpDialog/WorkLogHelpDialog";
 import { ParsedWorkLog, WorkLogExpressionParser } from '../../workLogExpressionParser/WorkLogExpressionParser';
 import Autosuggest from 'react-autosuggest';
 import { Suggestion, SuggestionItem } from './Suggestion';
-import { startsWith, isEmpty, chain, noop } from 'lodash';
+import { isEmpty, noop } from 'lodash';
+import { TagsSuggestionFactory } from './TagsSuggestionFactory';
+import { DatesSuggestionFactory } from './DatesSuggestionFactory';
 
 interface WorkLogInputProps {
   workLog: ParsedWorkLog;
@@ -107,7 +109,7 @@ export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState
 
   private shouldRenderSuggestions = (text: string) => {
     const lastWord = WorkLogInput.getLastWord(text);
-    return lastWord ? lastWord.startsWith('#') : false;
+    return lastWord ? lastWord.startsWith('#') || lastWord.startsWith('@') : false;
   };
 
   private getSuggestions = (text: string) => {
@@ -115,21 +117,20 @@ export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState
     const lastWord = WorkLogInput.getLastWord(text);
     if (isEmpty(lastWord)) {
       return [];
+    } else if (lastWord.startsWith('#')) {
+      const tagsSuggestionsFactory = new TagsSuggestionFactory(tags);
+      return tagsSuggestionsFactory.suggestions(text, lastWord);
+    } else if (lastWord.startsWith('@')) {
+      const daysSuggestionsFactory = new DatesSuggestionFactory();
+      return daysSuggestionsFactory.suggestions(text, lastWord);
     }
-    return chain(tags)
-        .filter(tag => startsWith(tag.toLowerCase(), lastWord.replace('#', '')))
-        .take(5)
-        .sort()
-        .map(tag => tag.trim())
-        .map(tag => ({
-          label: tag,
-          value: text.replace(new RegExp(`${lastWord}$`), `#${tag} `)
-        }))
-        .value();
+    return [];
   };
 
   private static getLastWord(text: string) {
-    return text.trim().split(/[\s,]+/).pop();
+    return text.trim()
+        .split(/[\s,]+/)
+        .pop();
   }
 
   private handleCloseHelp = () => this.setState({helpOpen: false});

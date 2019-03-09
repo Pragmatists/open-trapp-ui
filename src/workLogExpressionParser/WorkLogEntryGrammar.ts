@@ -260,9 +260,9 @@ function peg$parse(input: string, options?: IParseOptions) {
               relativeDay = relativeDay.toLowerCase();
               var relativeDayDate = now();
               if (relativeDay === "yesterday") {
-                  relativeDayDate.subtract('days', 1);
+                  relativeDayDate.subtract(1, 'days');
               } else if (relativeDay === "tomorrow") {
-                  relativeDayDate.add('days', 1);
+                  relativeDayDate.add(1, 'days');
               }
               return relativeDayDate.format(dateFormat);
           };
@@ -310,7 +310,7 @@ function peg$parse(input: string, options?: IParseOptions) {
   const peg$c79 = peg$classExpectation(["+", "-"], false, false);
   const peg$c80 = function(offsetSign: any, offset: any) {
               var daysToAdd = offsetSign + offset;
-              return now().add('days', daysToAdd).format(dateFormat)
+              return now().add(daysToAdd, 'days').format(dateFormat)
           };
   const peg$c81 = " ";
   const peg$c82 = peg$literalExpectation(" ", false);
@@ -1798,7 +1798,7 @@ function peg$parse(input: string, options?: IParseOptions) {
       function dateOfPrevious(dayOfWeek) {
           var dayOfWeekDate = now().day(dayOfWeek);
           if (!dayOfWeekDate.isBefore(now(), 'day')) {
-              dayOfWeekDate.subtract('days', 7);
+              dayOfWeekDate.subtract(7, 'days');
           }
           return dayOfWeekDate;
       }
@@ -1806,7 +1806,7 @@ function peg$parse(input: string, options?: IParseOptions) {
       function dateOfNext(dayOfWeek) {
           var dayOfWeekDate = now().day(dayOfWeek);
           if (!dayOfWeekDate.isAfter(now(), 'day')) {
-              dayOfWeekDate.add('days', 7);
+              dayOfWeekDate.add(7, 'days');
           }
           return dayOfWeekDate;
       }

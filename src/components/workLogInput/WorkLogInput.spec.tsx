@@ -106,7 +106,7 @@ describe('WorkLogInput', () => {
       expect(suggestions(wrapper).at(0).text()).toEqual('projects');
     });
 
-    it('replaces last word with selected suggestion', () => {
+    it('replaces last word with selected tag suggestion', () => {
       let parsedWorkLog: ParsedWorkLog = undefined;
       const initialWorkLog = ParsedWorkLog.empty();
       const wrapper = mount(
@@ -116,7 +116,33 @@ describe('WorkLogInput', () => {
       typeAndFocus(wrapper, '1d #pro');
       chooseSuggestion(wrapper, 0);
 
-      expect(parsedWorkLog.expression).toEqual('1d #projects');
+      expect(parsedWorkLog.expression).toEqual('1d #projects ');
+    });
+
+    it('shows suggestions when user starts typing date', () => {
+      const initialWorkLog = ParsedWorkLog.empty();
+      const wrapper = mount(
+          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={noop}/>
+      );
+
+      typeAndFocus(wrapper, '1d @to');
+
+      expect(suggestions(wrapper)).toHaveLength(2);
+      expect(suggestions(wrapper).at(0).text()).toEqual('today');
+      expect(suggestions(wrapper).at(1).text()).toEqual('tomorrow');
+    });
+
+    it('replaces last word with selected day suggestion', () => {
+      let parsedWorkLog: ParsedWorkLog = undefined;
+      const initialWorkLog = ParsedWorkLog.empty();
+      const wrapper = mount(
+          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={workLog => parsedWorkLog = workLog} onSave={noop}/>
+      );
+
+      typeAndFocus(wrapper, '1d #projects @to');
+      chooseSuggestion(wrapper, 1);
+
+      expect(parsedWorkLog.expression).toEqual('1d #projects @tomorrow ');
     });
 
     function typeAndFocus(wrapper, expression: string) {
