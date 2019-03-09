@@ -48,6 +48,11 @@ class OpenTrappAPI {
     ).then(axiosResp => axiosResp.data.id);
   }
 
+  tags(): Promise<string[]> {
+    return this.axios.get<string[]>('/projects')
+        .then(axiosResp => axiosResp.data);
+  }
+
   get axios() {
     return this.axiosInstance;
   }

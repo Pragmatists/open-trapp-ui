@@ -10,7 +10,20 @@ export function loadWorkLog(year: number, month: number) {
   };
 }
 
+export function loadTags() {
+  return (dispatch: Dispatch) => {
+    OpenTrappRestAPI.tags()
+        .then(tags => dispatch(tagsLoadedAction(tags)))
+        .catch(err => console.error(err));
+  };
+}
+
 const workLogLoadedAction = entries => ({
   type: WORK_LOG_CONSTANTS.WORK_LOG_LOADED,
   payload: entries
+});
+
+const tagsLoadedAction = tags => ({
+  type: WORK_LOG_CONSTANTS.TAGS_LOADED,
+  payload: tags
 });

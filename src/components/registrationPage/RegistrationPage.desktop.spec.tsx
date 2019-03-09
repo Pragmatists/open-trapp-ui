@@ -42,6 +42,8 @@ const workLogResponse = [
   {employee: 'andy.barber', day: '2019/02/01', workload: 0, projectNames: ['remote']}
 ];
 
+const tagsResponse = ['projects', 'nvm', 'holiday', 'vacation'];
+
 describe('RegistrationPageDesktop', () => {
   let httpMock: MockAdapter;
   let store: Store;
@@ -55,6 +57,8 @@ describe('RegistrationPageDesktop', () => {
         .reply(200, monthResponse)
         .onGet(/\/api\/v1\/calendar\/2019\/\d\/work-log\/entries$/)
         .reply(200, workLogResponse)
+        .onGet('/api/v1/projects')
+        .reply(200, tagsResponse)
         .onPost('/api/v1/employee/john.doe/work-log/entries')
         .reply(201, {id: '123-456'});
     store = setupStore({
@@ -104,7 +108,7 @@ describe('RegistrationPageDesktop', () => {
       await flushAllPromises();
       wrapper.update();
 
-      expect(httpMock.history.get.length).toEqual(2);
+      expect(httpMock.history.get.filter(r => r.url.startsWith('/api/v1/calendar'))).toHaveLength(2);
       expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
       expect(tableHeaderCells(wrapper).not('[data-total-header]')).toHaveLength(days.length);
       expect(tableRowCells(wrapper, 0).not('[data-total-value]')).toHaveLength(days.length);
@@ -128,7 +132,7 @@ describe('RegistrationPageDesktop', () => {
       await flushAllPromises();
       wrapper.update();
 
-      expect(httpMock.history.get.length).toEqual(4);
+      expect(httpMock.history.get.filter(r => r.url.startsWith('/api/v1/calendar'))).toHaveLength(4);
       expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
       expect(currentMonthHeader(wrapper).text()).toEqual('2019/03 month worklog');
     });
@@ -146,7 +150,7 @@ describe('RegistrationPageDesktop', () => {
       await flushAllPromises();
       wrapper.update();
 
-      expect(httpMock.history.get.length).toEqual(4);
+      expect(httpMock.history.get.filter(r => r.url.startsWith('/api/v1/calendar'))).toHaveLength(4);
       expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
       expect(currentMonthHeader(wrapper).text()).toEqual('2019/01 month worklog');
     });
@@ -181,6 +185,19 @@ describe('RegistrationPageDesktop', () => {
   });
 
   describe('Work log input', () => {
+    it('fetches tags', async () => {
+      const wrapper = mount(
+          <Provider store={store}>
+            <RegistrationPageDesktop/>
+          </Provider>
+      );
+      await flushAllPromises();
+      wrapper.update();
+
+      expect(httpMock.history.get.filter(r => r.url === '/api/v1/projects')).toHaveLength(1);
+      expect(store.getState().workLog.tags).toEqual(tagsResponse);
+    });
+
     it('saves valid work log on enter', async () => {
       const wrapper = mount(
           <Provider store={store}>
