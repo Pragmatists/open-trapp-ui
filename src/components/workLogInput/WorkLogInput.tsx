@@ -10,6 +10,7 @@ import { ParsedWorkLog, WorkLogExpressionParser } from '../../workLogExpressionP
 interface WorkLogInputProps {
   workLog: ParsedWorkLog;
   onChange: (workLog: ParsedWorkLog) => void;
+  onSave: (workLog: ParsedWorkLog) => void;
 }
 
 interface WorkLogInputState {
@@ -29,7 +30,9 @@ export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState
         <Paper className='work-log-input' elevation={1}>
           <InputBase className='work-log-input__input'
                      placeholder='1d #my-project'
-                     value={workLog.expression} onChange={this.onInputChange}/>
+                     value={workLog.expression}
+                     onChange={this.onInputChange}
+                     onKeyPress={this.onSubmit}/>
           <IconButton className='work-log-input__help' aria-label='Help' onClick={this.handleOpenHelp}>
             <HelpIcon color='secondary'/>
           </IconButton>
@@ -42,6 +45,15 @@ export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState
     const {onChange} = this.props;
     const workLog = this.workLogExpressionParser.parse(event.target.value);
     onChange(workLog)
+  };
+
+  private onSubmit = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      const {onSave, workLog} = this.props;
+      if (workLog.valid) {
+        onSave(workLog);
+      }
+    }
   };
 
   private handleCloseHelp = () => this.setState({helpOpen: false});

@@ -6,7 +6,7 @@ import { setupStore } from '../../utils/testUtils';
 import { RegistrationPageDesktop } from './RegistrationPage.desktop';
 import { OpenTrappRestAPI } from '../../api/OpenTrappAPI';
 import { MonthlyReport } from '../monthlyReport/MonthlyReport';
-import { TableCell } from '@material-ui/core';
+import { InputBase, TableCell } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
@@ -51,10 +51,12 @@ describe('RegistrationPageDesktop', () => {
   beforeEach(() => {
     httpMock = new MockAdapter(OpenTrappRestAPI.axios);
     httpMock
-      .onGet(/\/api\/v1\/calendar\/2019\/\d$/)
-      .reply(200, monthResponse)
-      .onGet(/\/api\/v1\/calendar\/2019\/\d\/work-log\/entries$/)
-      .reply(200, workLogResponse);
+        .onGet(/\/api\/v1\/calendar\/2019\/\d$/)
+        .reply(200, monthResponse)
+        .onGet(/\/api\/v1\/calendar\/2019\/\d\/work-log\/entries$/)
+        .reply(200, workLogResponse)
+        .onPost('/api/v1/employee/john.doe/work-log/entries')
+        .reply(201, {id: '123-456'});
     store = setupStore({
       authentication: {
         loggedIn: true,
@@ -67,6 +69,13 @@ describe('RegistrationPageDesktop', () => {
           year: 2019,
           month: 2
         }
+      },
+      registration: {
+        expression: '',
+        days: [],
+        tags: [],
+        workload: undefined,
+        valid: false
       }
     });
   });
@@ -74,9 +83,9 @@ describe('RegistrationPageDesktop', () => {
   describe('Monthly report', () => {
     it('displays current month', async () => {
       const wrapper = mount(
-        <Provider store={store}>
-          <RegistrationPageDesktop/>
-        </Provider>
+          <Provider store={store}>
+            <RegistrationPageDesktop/>
+          </Provider>
       );
 
       await flushAllPromises();
@@ -87,9 +96,9 @@ describe('RegistrationPageDesktop', () => {
 
     it('fetches and renders days with workload for current month', async () => {
       const wrapper = mount(
-        <Provider store={store}>
-          <RegistrationPageDesktop/>
-        </Provider>
+          <Provider store={store}>
+            <RegistrationPageDesktop/>
+          </Provider>
       );
 
       await flushAllPromises();
@@ -108,9 +117,9 @@ describe('RegistrationPageDesktop', () => {
 
     it('reloads data on NEXT month click', async () => {
       const wrapper = mount(
-        <Provider store={store}>
-          <RegistrationPageDesktop/>
-        </Provider>
+          <Provider store={store}>
+            <RegistrationPageDesktop/>
+          </Provider>
       );
       await flushAllPromises();
       wrapper.update();
@@ -126,9 +135,9 @@ describe('RegistrationPageDesktop', () => {
 
     it('reloads data on PREVIOUS month click', async () => {
       const wrapper = mount(
-        <Provider store={store}>
-          <RegistrationPageDesktop/>
-        </Provider>
+          <Provider store={store}>
+            <RegistrationPageDesktop/>
+          </Provider>
       );
       await flushAllPromises();
       wrapper.update();
@@ -160,32 +169,51 @@ describe('RegistrationPageDesktop', () => {
 
     function nextMonthButton(wrapper): ReactWrapper {
       return wrapper.find(RegistrationPageMonth)
-        .find(Button)
-        .filter('[data-next-month-button]');
+          .find(Button)
+          .filter('[data-next-month-button]');
     }
 
     function previousMonthButton(wrapper): ReactWrapper {
       return wrapper.find(RegistrationPageMonth)
-        .find(Button)
-        .filter('[data-prev-month-button]');
+          .find(Button)
+          .filter('[data-prev-month-button]');
     }
   });
 
   describe('Work log input', () => {
-    xit('saves valid work log on enter', async () => {
+    it('saves valid work log on enter', async () => {
       const wrapper = mount(
-        <Provider store={store}>
-          <RegistrationPageDesktop/>
-        </Provider>
+          <Provider store={store}>
+            <RegistrationPageDesktop/>
+          </Provider>
       );
       await flushAllPromises();
       wrapper.update();
 
+      typeExpression(wrapper, '1d #projects #nvm @2019/03/01');
+      pressEnter(wrapper);
+      await flushAllPromises();
 
+      expect(httpMock.history.post.length).toEqual(1);
+      expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
+        projectNames: ['projects', 'nvm'],
+        workload: '1d',
+        day: '2019/03/01'
+      });
     });
 
+    function typeExpression(wrapper, expression: string) {
+      const input = workLogInput(wrapper);
+      input.simulate('change', {target: {value: expression}})
+    }
+
+    function pressEnter(wrapper) {
+      const input = workLogInput(wrapper);
+      input.simulate('keypress', {key: 'Enter'});
+    }
+
     function workLogInput(wrapper): ReactWrapper {
-      return wrapper.find();
+      return wrapper.find(InputBase).at(0).find('input');
     }
   });
 });

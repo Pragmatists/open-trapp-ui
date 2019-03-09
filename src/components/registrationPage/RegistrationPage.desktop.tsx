@@ -13,7 +13,7 @@ import { isEmpty } from 'lodash';
 import { RulesDialog } from '../rulesDialog/RulesDialog';
 import { RegistrationPageMonth } from '../registrationPageMonth/RegistrationPageMonth';
 import { ParsedWorkLog } from '../../workLogExpressionParser/WorkLogExpressionParser';
-import { changeWorkLog } from '../../redux/registration.actions';
+import { changeWorkLog, saveWorkLog } from '../../redux/registration.actions';
 
 interface RegistrationPageDataProps {
   selectedMonth: { year: number, month: number },
@@ -25,7 +25,8 @@ interface RegistrationPageDataProps {
 interface RegistrationPageEventProps {
   init: (year: number, month: number) => void;
   onMonthChange: (year: number, month: number) => void;
-  onWorkLogInputChange: (workLog: ParsedWorkLog | null) => void;
+  onWorkLogInputChange: (workLog: ParsedWorkLog) => void;
+  onSaveWorkLog: (workLog: ParsedWorkLog) => void;
 }
 
 type RegistrationPageProps = RegistrationPageDataProps & RegistrationPageEventProps;
@@ -38,7 +39,7 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
   }
 
   render() {
-    const {days, workLogs, workLog, selectedMonth, onMonthChange, onWorkLogInputChange} = this.props;
+    const {days, workLogs, workLog, selectedMonth, onMonthChange, onWorkLogInputChange, onSaveWorkLog} = this.props;
     return (
         <div className='registration-page'>
           <Grid container justify='center' spacing={24}>
@@ -50,7 +51,7 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
               <Divider variant='fullWidth'/>
             </Grid>
             <Grid item lg={10} md={11} xs={11}>
-              <WorkLogInput onChange={onWorkLogInputChange} workLog={workLog}/>
+              <WorkLogInput onChange={onWorkLogInputChange} onSave={onSaveWorkLog} workLog={workLog}/>
             </Grid>
             <Grid item lg={10} md={11} xs={11}>
               {days && !isEmpty(workLogs) ?
@@ -101,8 +102,11 @@ function mapDispatchToProps(dispatch): RegistrationPageEventProps {
       dispatch(changeMonth(year, month));
       dispatch(loadWorkLog(year, month));
     },
-    onWorkLogInputChange(workLog: ParsedWorkLog | null) {
-      dispatch(changeWorkLog(workLog))
+    onWorkLogInputChange(workLog: ParsedWorkLog) {
+      dispatch(changeWorkLog(workLog));
+    },
+    onSaveWorkLog(workLog: ParsedWorkLog) {
+      dispatch(saveWorkLog(workLog));
     }
   };
 }

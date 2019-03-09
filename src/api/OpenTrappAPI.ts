@@ -37,9 +37,9 @@ class OpenTrappAPI {
         .then(axiosResp => axiosResp.data);
   }
 
-  saveWorkLog(day: string, tags: string[], workload: string): Promise<string> {
+  saveWorkLog(day: string, tags: string[], workload: string, username: string): Promise<string> {
     return this.axios.post<{id: string}>(
-        `/employee/${OpenTrappAPI.username}/work-log/entries`,
+        `/employee/${username}/work-log/entries`,
         {
           projectNames: tags,
           workload,
@@ -66,11 +66,6 @@ class OpenTrappAPI {
     }
     return Promise.reject(error);
   };
-
-  private static get username(): string {
-    const authorizedUser = OpenTrappAPI.authorizedUser;
-    return authorizedUser ? authorizedUser.name : undefined;
-  }
 
   private static get apiToken(): string {
     const authorizedUser = OpenTrappAPI.authorizedUser;
