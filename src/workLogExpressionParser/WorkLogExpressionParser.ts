@@ -1,12 +1,24 @@
 import moment from 'moment';
 import { parse } from './WorkLogEntryGrammar';
-import { isNil, trim } from 'lodash'
+import { isNil, trim, isEmpty } from 'lodash'
 import { TimeProvider } from "../time/TimeProvider";
 
-interface WorkLog {
-  days: string[];
-  tags: string[];
-  workload: string;
+export class ParsedWorkLog {
+  constructor(
+      readonly expression: string,
+      readonly days: string[],
+      readonly tags: string[],
+      readonly workload: string
+  ) {
+  }
+
+  get valid(): boolean {
+    return !isEmpty(this.tags) && !isEmpty(this.workload);
+  }
+
+  static empty(): ParsedWorkLog {
+    return new ParsedWorkLog('', [], [], undefined);
+  }
 }
 
 export class WorkLogExpressionParser {
@@ -16,21 +28,17 @@ export class WorkLogExpressionParser {
   constructor(private readonly timeProvider: TimeProvider = new TimeProvider()) {
   }
 
-  parse(expression: string): WorkLog | null {
+  parse(expression: string): ParsedWorkLog {
     try {
       const result = parse(trim(expression), {timeProvider: this.timeProvider});
-      return {
-        tags: result.projectNames,
-        days: [result.day],
-        workload: result.workload
-      };
+      return new ParsedWorkLog(expression, [result.day], result.projectNames, result.workload);
     } catch (e) {
-      return null;
+      return new ParsedWorkLog(expression, [], [], undefined);
     }
   }
 
   isValid(expression: string): boolean {
-    return !isNil(this.parse(expression));
+    return this.parse(expression).valid;
   }
 
   private getDatesArray(from: string, to: string): string[] {
@@ -51,7 +59,7 @@ export class WorkLogExpressionParser {
       return [start.format("YYYY/MM/DD")];
     }
 
-    const result = [];
+    const result: string[] = [];
     for (let day = start; day <= end; day = day.add(1, 'd')) {
       if (day.days() > 0 && day.days() < 6)
         result.push(day.format("YYYY/MM/DD"));

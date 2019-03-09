@@ -10,7 +10,7 @@ export function loadWorkLog(year: number, month: number) {
   };
 }
 
-const workLogLoadedAction = (entries) => ({
+const workLogLoadedAction = entries => ({
   type: WORK_LOG_CONSTANTS.WORK_LOG_LOADED,
   payload: entries
 });

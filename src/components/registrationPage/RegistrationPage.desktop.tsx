@@ -12,16 +12,20 @@ import { WorkLog } from '../monthlyReport/MonthlyReport.model';
 import { isEmpty } from 'lodash';
 import { RulesDialog } from '../rulesDialog/RulesDialog';
 import { RegistrationPageMonth } from '../registrationPageMonth/RegistrationPageMonth';
+import { ParsedWorkLog } from '../../workLogExpressionParser/WorkLogExpressionParser';
+import { changeWorkLog } from '../../redux/registration.actions';
 
 interface RegistrationPageDataProps {
   selectedMonth: { year: number, month: number },
   days?: DayDTO[];
-  workLogs: { [employee: string]: WorkLog[] }
+  workLogs: { [employee: string]: WorkLog[] };
+  workLog: ParsedWorkLog;
 }
 
 interface RegistrationPageEventProps {
   init: (year: number, month: number) => void;
   onMonthChange: (year: number, month: number) => void;
+  onWorkLogInputChange: (workLog: ParsedWorkLog | null) => void;
 }
 
 type RegistrationPageProps = RegistrationPageDataProps & RegistrationPageEventProps;
@@ -34,7 +38,7 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
   }
 
   render() {
-    const {days, workLogs, selectedMonth, onMonthChange} = this.props;
+    const {days, workLogs, workLog, selectedMonth, onMonthChange, onWorkLogInputChange} = this.props;
     return (
         <div className='registration-page'>
           <Grid container justify='center' spacing={24}>
@@ -46,7 +50,7 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
               <Divider variant='fullWidth'/>
             </Grid>
             <Grid item lg={10} md={11} xs={11}>
-              <WorkLogInput/>
+              <WorkLogInput onChange={onWorkLogInputChange} workLog={workLog}/>
             </Grid>
             <Grid item lg={10} md={11} xs={11}>
               {days && !isEmpty(workLogs) ?
@@ -75,13 +79,15 @@ function workLogsForUser(name: string, workLogs?: ReportingWorkLogDTO[]): { [p: 
 
 function mapStateToProps(state: OpenTrappState): RegistrationPageDataProps {
   const {selectedMonth, days} = state.calendar;
+  const {expression, tags, workload} = state.registration;
   const {name} = state.authentication.user || {} as AuthorizedUser;
   const {workLogs} = state.workLog;
   const userWorkLogs = workLogsForUser(name, workLogs);
   return {
     selectedMonth,
     days,
-    workLogs: userWorkLogs
+    workLogs: userWorkLogs,
+    workLog: new ParsedWorkLog(expression, state.registration.days, tags, workload)
   };
 }
 
@@ -94,6 +100,9 @@ function mapDispatchToProps(dispatch): RegistrationPageEventProps {
     onMonthChange(year: number, month: number) {
       dispatch(changeMonth(year, month));
       dispatch(loadWorkLog(year, month));
+    },
+    onWorkLogInputChange(workLog: ParsedWorkLog | null) {
+      dispatch(changeWorkLog(workLog))
     }
   };
 }

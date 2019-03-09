@@ -21,20 +21,31 @@ class OpenTrappAPI {
   }
 
   obtainJWTToken(idToken: string) {
-    return this.axiosInstance.get<AuthorizedUser>(
+    return this.axios.get<AuthorizedUser>(
         `/authentication/user-token`,
         {headers: {'id-token': idToken}}
     ).then(axiosResp => axiosResp.data);
   }
 
   calendarMonth(year: number, month: number): Promise<MonthDTO> {
-    return this.axiosInstance.get<MonthDTO>(`/calendar/${year}/${month}`)
+    return this.axios.get<MonthDTO>(`/calendar/${year}/${month}`)
         .then(axiosResp => axiosResp.data);
   }
 
   workLogEntriesForMonth(year: number, month: number): Promise<ReportingWorkLogDTO[]> {
-    return this.axiosInstance.get<ReportingWorkLogDTO[]>(`/calendar/${year}/${month}/work-log/entries`)
+    return this.axios.get<ReportingWorkLogDTO[]>(`/calendar/${year}/${month}/work-log/entries`)
         .then(axiosResp => axiosResp.data);
+  }
+
+  saveWorkLog(day: string, tags: string[], workload: string): Promise<string> {
+    return this.axios.post<{id: string}>(
+        `/employee/${OpenTrappAPI.username}/work-log/entries`,
+        {
+          projectNames: tags,
+          workload,
+          day
+        }
+    ).then(axiosResp => axiosResp.data.id);
   }
 
   get axios() {
@@ -56,9 +67,19 @@ class OpenTrappAPI {
     return Promise.reject(error);
   };
 
+  private static get username(): string {
+    const authorizedUser = OpenTrappAPI.authorizedUser;
+    return authorizedUser ? authorizedUser.name : undefined;
+  }
+
   private static get apiToken(): string {
+    const authorizedUser = OpenTrappAPI.authorizedUser;
+    return authorizedUser ? authorizedUser.token : undefined;
+  }
+
+  private static get authorizedUser(): any {
     const storageUser = sessionStorage.getItem('OpenTrappUser');
-    return storageUser ? JSON.parse(storageUser).token : undefined;
+    return storageUser ? JSON.parse(storageUser) : undefined;
   }
 
   private static removeAuthorizationFromSessionStorage() {

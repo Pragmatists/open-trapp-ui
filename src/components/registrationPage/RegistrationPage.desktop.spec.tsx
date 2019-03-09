@@ -51,10 +51,10 @@ describe('RegistrationPageDesktop', () => {
   beforeEach(() => {
     httpMock = new MockAdapter(OpenTrappRestAPI.axios);
     httpMock
-        .onGet(/\/api\/v1\/calendar\/2019\/\d$/)
-        .reply(200, monthResponse)
-        .onGet(/\/api\/v1\/calendar\/2019\/\d\/work-log\/entries$/)
-        .reply(200, workLogResponse);
+      .onGet(/\/api\/v1\/calendar\/2019\/\d$/)
+      .reply(200, monthResponse)
+      .onGet(/\/api\/v1\/calendar\/2019\/\d\/work-log\/entries$/)
+      .reply(200, workLogResponse);
     store = setupStore({
       authentication: {
         loggedIn: true,
@@ -71,101 +71,121 @@ describe('RegistrationPageDesktop', () => {
     });
   });
 
-  it('should display current month', async () => {
-    const wrapper = mount(
+  describe('Monthly report', () => {
+    it('displays current month', async () => {
+      const wrapper = mount(
         <Provider store={store}>
           <RegistrationPageDesktop/>
         </Provider>
-    );
+      );
 
-    await flushAllPromises();
-    wrapper.update();
+      await flushAllPromises();
+      wrapper.update();
 
-    expect(currentMonthHeader(wrapper).text()).toEqual('2019/02 month worklog');
-  });
+      expect(currentMonthHeader(wrapper).text()).toEqual('2019/02 month worklog');
+    });
 
-  it('should fetch and render days with workload for current month', async () => {
-    const wrapper = mount(
+    it('fetches and renders days with workload for current month', async () => {
+      const wrapper = mount(
         <Provider store={store}>
           <RegistrationPageDesktop/>
         </Provider>
-    );
+      );
 
-    await flushAllPromises();
-    wrapper.update();
+      await flushAllPromises();
+      wrapper.update();
 
-    expect(httpMock.history.get.length).toEqual(2);
-    expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
-    expect(tableHeaderCells(wrapper).not('[data-total-header]')).toHaveLength(days.length);
-    expect(tableRowCells(wrapper, 0).not('[data-total-value]')).toHaveLength(days.length);
-    expect(tableRowCells(wrapper, 0).at(0).text()).toEqual('8');
-    expect(tableRowCells(wrapper, 0).at(1).text()).toEqual('');
-    expect(tableRowCells(wrapper, 0).at(2).text()).toEqual('');
-    expect(tableRowCells(wrapper, 0).at(3).text()).toEqual('8');
-    expect(totalCell(wrapper, 0).text()).toEqual('16');
-  });
+      expect(httpMock.history.get.length).toEqual(2);
+      expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
+      expect(tableHeaderCells(wrapper).not('[data-total-header]')).toHaveLength(days.length);
+      expect(tableRowCells(wrapper, 0).not('[data-total-value]')).toHaveLength(days.length);
+      expect(tableRowCells(wrapper, 0).at(0).text()).toEqual('8');
+      expect(tableRowCells(wrapper, 0).at(1).text()).toEqual('');
+      expect(tableRowCells(wrapper, 0).at(2).text()).toEqual('');
+      expect(tableRowCells(wrapper, 0).at(3).text()).toEqual('8');
+      expect(totalCell(wrapper, 0).text()).toEqual('16');
+    });
 
-  it('should reload data on NEXT month click', async () => {
-    const wrapper = mount(
+    it('reloads data on NEXT month click', async () => {
+      const wrapper = mount(
         <Provider store={store}>
           <RegistrationPageDesktop/>
         </Provider>
-    );
-    await flushAllPromises();
-    wrapper.update();
+      );
+      await flushAllPromises();
+      wrapper.update();
 
-    nextMonthButton(wrapper).simulate('click');
-    await flushAllPromises();
-    wrapper.update();
+      nextMonthButton(wrapper).simulate('click');
+      await flushAllPromises();
+      wrapper.update();
 
-    expect(httpMock.history.get.length).toEqual(4);
-    expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
-    expect(currentMonthHeader(wrapper).text()).toEqual('2019/03 month worklog');
-  });
+      expect(httpMock.history.get.length).toEqual(4);
+      expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
+      expect(currentMonthHeader(wrapper).text()).toEqual('2019/03 month worklog');
+    });
 
-  it('should reload data on PREVIOUS month click', async () => {
-    const wrapper = mount(
+    it('reloads data on PREVIOUS month click', async () => {
+      const wrapper = mount(
         <Provider store={store}>
           <RegistrationPageDesktop/>
         </Provider>
-    );
-    await flushAllPromises();
-    wrapper.update();
+      );
+      await flushAllPromises();
+      wrapper.update();
 
-    previousMonthButton(wrapper).simulate('click');
-    await flushAllPromises();
-    wrapper.update();
+      previousMonthButton(wrapper).simulate('click');
+      await flushAllPromises();
+      wrapper.update();
 
-    expect(httpMock.history.get.length).toEqual(4);
-    expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
-    expect(currentMonthHeader(wrapper).text()).toEqual('2019/01 month worklog');
-  });
+      expect(httpMock.history.get.length).toEqual(4);
+      expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
+      expect(currentMonthHeader(wrapper).text()).toEqual('2019/01 month worklog');
+    });
 
-  function tableHeaderCells(wrapper): ReactWrapper {
-    return wrapper.find(Table).find(TableHead).find(TableCell);
-  }
+    function tableHeaderCells(wrapper): ReactWrapper {
+      return wrapper.find(Table).find(TableHead).find(TableCell);
+    }
 
-  function tableRowCells(wrapper, rowIdx: number): ReactWrapper {
-    return wrapper.find(Table).find(TableBody).find(TableRow).at(rowIdx).find(TableCell);
-  }
+    function tableRowCells(wrapper, rowIdx: number): ReactWrapper {
+      return wrapper.find(Table).find(TableBody).find(TableRow).at(rowIdx).find(TableCell);
+    }
 
-  function totalCell(wrapper, rowIdx: number): ReactWrapper {
-    return tableRowCells(wrapper, rowIdx).at(days.length);
-  }
+    function totalCell(wrapper, rowIdx: number): ReactWrapper {
+      return tableRowCells(wrapper, rowIdx).at(days.length);
+    }
 
-  function currentMonthHeader(wrapper): ReactWrapper {
-    return wrapper.find('[data-selected-month-header]');
-  }
+    function currentMonthHeader(wrapper): ReactWrapper {
+      return wrapper.find('[data-selected-month-header]');
+    }
 
-  function nextMonthButton(wrapper): ReactWrapper {
-    return wrapper.find(RegistrationPageMonth)
+    function nextMonthButton(wrapper): ReactWrapper {
+      return wrapper.find(RegistrationPageMonth)
         .find(Button)
         .filter('[data-next-month-button]');
-  }
+    }
 
-  function previousMonthButton(wrapper): ReactWrapper {
-    return wrapper.find(RegistrationPageMonth)
+    function previousMonthButton(wrapper): ReactWrapper {
+      return wrapper.find(RegistrationPageMonth)
         .find(Button)
         .filter('[data-prev-month-button]');
-  }
+    }
+  });
+
+  describe('Work log input', () => {
+    xit('saves valid work log on enter', async () => {
+      const wrapper = mount(
+        <Provider store={store}>
+          <RegistrationPageDesktop/>
+        </Provider>
+      );
+      await flushAllPromises();
+      wrapper.update();
+
+
+    });
+
+    function workLogInput(wrapper): ReactWrapper {
+      return wrapper.find();
+    }
+  });
 });
