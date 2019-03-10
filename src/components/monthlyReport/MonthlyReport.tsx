@@ -8,6 +8,7 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import { chain, entries, reduce } from 'lodash';
 import moment from 'moment';
+import classNames from 'classnames';
 
 interface MonthlyReportProps {
   days: MonthlyReportDay[];
@@ -39,12 +40,12 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
         <TableRow>
           {!singleEmployee && <TableCell className='report-table__cell header-cell'>Employee</TableCell>}
           {days.map((day, idx) => (
-              <TableCell key={idx} className='report-table__cell header-cell' data-month-day-header>
+              <TableCell key={idx} className={this.cellClass(day, true)} data-month-day-header>
                 <div>{idx + 1}</div>
                 <div className='day-name'>{moment(day.id, 'YYYY/MM/DD').format('ddd')}</div>
               </TableCell>
           ))}
-          <TableCell className='report-table__cell header-cell' data-total-header>Total</TableCell>
+          <TableCell className='report-table__cell report-table__cell--total header-cell' data-total-header>Total</TableCell>
         </TableRow>
     );
   }
@@ -64,12 +65,20 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
         <TableRow key={employee} className='report-table__row'>
           {!singleEmployee && <TableCell className='report-table__cell'>{employee}</TableCell>}
           {days.map((day, idx) => (
-              <TableCell key={idx} align='center' className='report-table__cell' data-month-day-value>
+              <TableCell key={idx} className={this.cellClass(day)} data-month-day-value>
                 {workloadForDay[day.id]}
               </TableCell>
           ))}
-          <TableCell align='center' className='report-table__cell' data-total-value>{total}</TableCell>
+          <TableCell className='report-table__cell report-table__cell--total' data-total-value>{total}</TableCell>
         </TableRow>
     );
+  }
+
+  private cellClass(day: MonthlyReportDay, header = false): string {
+    return classNames('report-table__cell', {
+      'header-cell': header,
+      'report-table__cell--weekend': day.weekend,
+      'report-table__cell--holiday': day.holiday
+    });
   }
 }

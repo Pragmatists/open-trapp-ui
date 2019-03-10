@@ -22,7 +22,7 @@ export function calendar(state: CalendarState = initialState, action: any): Cale
     case CALENDAR_CONSTANTS.MONTH_LOADED:
       return {...state, days: action.payload.days};
     case CALENDAR_CONSTANTS.MONTH_CHANGED:
-      return {...state, selectedMonth: {year: action.payload.year, month: action.payload.month}};
+      return {...state, selectedMonth: {year: action.payload.year, month: action.payload.month}, days: undefined};
     default:
       return state;
   }

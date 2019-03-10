@@ -6,6 +6,18 @@
 
     &__cell {
       padding: 4px;
+
+      &--weekend {
+        color: #c7254e;
+      }
+
+      &--holiday {
+        color: #2a98c7;
+      }
+
+      &--total {
+        font-weight: bold;
+      }
     }
 
     &__row:last-of-type {
