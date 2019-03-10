@@ -18,7 +18,7 @@ export function loadTags() {
   };
 }
 
-const workLogLoadedAction = entries => ({
+export const workLogLoadedAction = entries => ({
   type: WORK_LOG_CONSTANTS.WORK_LOG_LOADED,
   payload: entries
 });

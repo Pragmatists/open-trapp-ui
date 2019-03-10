@@ -3,6 +3,7 @@ import { Dispatch } from 'redux';
 import { REGISTRATION_CONSTANTS } from './constants';
 import { OpenTrappRestAPI } from '../api/OpenTrappAPI';
 import { OpenTrappState } from './root.reducer';
+import { workLogLoadedAction } from './workLog.actions';
 
 export function changeWorkLog(workLog: ParsedWorkLog) {
   return (dispatch: Dispatch) => dispatch(workLogChangedAction(workLog));
@@ -10,9 +11,12 @@ export function changeWorkLog(workLog: ParsedWorkLog) {
 
 export function saveWorkLog(workLog: ParsedWorkLog) {
   return (dispatch: Dispatch, getState: () => OpenTrappState) => {
-    const username = getState().authentication.user.name;
+    const state = getState();
+    const username = state.authentication.user.name;
     OpenTrappRestAPI.saveWorkLog(workLog.days[0], workLog.tags, workLog.workload, username)
         .then(() => dispatch(workLogSavedAction()))
+        .then(() => OpenTrappRestAPI.workLogEntriesForMonth(state.calendar.selectedMonth.year, state.calendar.selectedMonth.month))
+        .then(entries => dispatch(workLogLoadedAction(entries)))
         .catch(err => console.error(err));
   };
 }

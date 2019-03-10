@@ -207,7 +207,7 @@ describe('RegistrationPageDesktop', () => {
       await flushAllPromises();
       wrapper.update();
 
-      typeExpression(wrapper, '1d #projects #nvm @2019/03/01');
+      typeExpression(wrapper, '1d #projects #nvm @2019/02/27');
       pressEnter(wrapper);
       await flushAllPromises();
 
@@ -215,8 +215,23 @@ describe('RegistrationPageDesktop', () => {
       expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
         projectNames: ['projects', 'nvm'],
         workload: '1d',
-        day: '2019/03/01'
+        day: '2019/02/27'
       });
+    });
+
+    it('reloads work logs after save', async () => {
+      const wrapper = mount(
+          <Provider store={store}>
+            <RegistrationPageDesktop/>
+          </Provider>
+      );
+      await flushAllPromises();
+      wrapper.update();
+
+      typeExpression(wrapper, '1d #projects #nvm @2019/02/27');
+      pressEnter(wrapper);
+      await flushAllPromises();
+      expect(httpMock.history.get.filter(r => r.url === '/api/v1/calendar/2019/2/work-log/entries')).toHaveLength(2);
     });
 
     function typeExpression(wrapper, expression: string) {
