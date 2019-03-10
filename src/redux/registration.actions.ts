@@ -13,7 +13,8 @@ export function saveWorkLog(workLog: ParsedWorkLog) {
   return (dispatch: Dispatch, getState: () => OpenTrappState) => {
     const state = getState();
     const username = state.authentication.user.name;
-    OpenTrappRestAPI.saveWorkLog(workLog.days[0], workLog.tags, workLog.workload, username)
+
+    Promise.all(workLog.days.map(d => OpenTrappRestAPI.saveWorkLog(d, workLog.tags, workLog.workload, username)))
         .then(() => dispatch(workLogSavedAction()))
         .then(() => OpenTrappRestAPI.workLogEntriesForMonth(state.calendar.selectedMonth.year, state.calendar.selectedMonth.month))
         .then(entries => dispatch(workLogLoadedAction(entries)))

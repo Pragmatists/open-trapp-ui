@@ -219,6 +219,32 @@ describe('RegistrationPageDesktop', () => {
       });
     });
 
+    it('saves work log with dates range on enter', async () => {
+      const wrapper = mount(
+          <Provider store={store}>
+            <RegistrationPageDesktop/>
+          </Provider>
+      );
+      await flushAllPromises();
+      wrapper.update();
+
+      typeExpression(wrapper, '1d #projects #nvm @2019/02/27~@2019/02/28');
+      pressEnter(wrapper);
+      await flushAllPromises();
+
+      expect(httpMock.history.post.length).toEqual(2);
+      expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
+        projectNames: ['projects', 'nvm'],
+        workload: '1d',
+        day: '2019/02/27'
+      });
+      expect(JSON.parse(httpMock.history.post[1].data)).toEqual({
+        projectNames: ['projects', 'nvm'],
+        workload: '1d',
+        day: '2019/02/28'
+      });
+    });
+
     it('reloads work logs after save', async () => {
       const wrapper = mount(
           <Provider store={store}>
