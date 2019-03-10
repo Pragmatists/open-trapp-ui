@@ -18,6 +18,11 @@
       &--total {
         font-weight: bold;
       }
+
+      &--selected {
+        color: white;
+        background-color: #2d6ca2;
+      }
     }
 
     &__row:last-of-type {

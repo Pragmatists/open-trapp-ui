@@ -57,6 +57,7 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
             <Grid item lg={10} md={11} xs={11}>
               {days && !isEmpty(workLogs) ?
                   <RegistrationPageMonth selectedMonth={selectedMonth}
+                                         selectedDays={workLog.days}
                                          days={days}
                                          workLogs={workLogs}
                                          onChange={onMonthChange}/> :

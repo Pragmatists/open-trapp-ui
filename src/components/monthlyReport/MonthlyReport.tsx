@@ -12,7 +12,8 @@ import classNames from 'classnames';
 
 interface MonthlyReportProps {
   days: MonthlyReportDay[];
-  workLogs: { [employee: string]: WorkLog[] }
+  workLogs: { [employee: string]: WorkLog[] },
+  selectedDays?: string[];
 }
 
 export class MonthlyReport extends Component<MonthlyReportProps, {}> {
@@ -75,10 +76,12 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
   }
 
   private cellClass(day: MonthlyReportDay, header = false): string {
+    const {selectedDays = []} = this.props;
     return classNames('report-table__cell', {
       'header-cell': header,
       'report-table__cell--weekend': day.weekend,
-      'report-table__cell--holiday': day.holiday
+      'report-table__cell--holiday': day.holiday,
+      'report-table__cell--selected': selectedDays.includes(day.id)
     });
   }
 }
