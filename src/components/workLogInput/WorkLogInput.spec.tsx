@@ -5,12 +5,16 @@ import { InputBase } from '@material-ui/core';
 import { noop } from 'lodash';
 import { WorkLogInput } from './WorkLogInput';
 import { ParsedWorkLog } from '../../workLogExpressionParser/WorkLogExpressionParser';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+import Button from '@material-ui/core/Button';
+import { ConfirmNewTagsDialog } from '../confirmNewTagsDialog/ConfirmNewTagsDialog';
 
 const tags = ['projects', 'nvm', 'vacation'];
 
 describe('WorkLogInput', () => {
 
-  it('parses new worklog expression', () => {
+  it('parses new work log expression', () => {
     let parsedWorkLog: ParsedWorkLog = undefined;
     const initialWorkLog = ParsedWorkLog.empty();
     const wrapper = mount(
@@ -26,7 +30,7 @@ describe('WorkLogInput', () => {
     expect(parsedWorkLog.days).toEqual(['2019/03/01']);
   });
 
-  it('emits valid worklog for today if date not present', () => {
+  it('emits valid work log for today if date not present', () => {
     let parsedWorkLog: ParsedWorkLog = undefined;
     const initialWorkLog = ParsedWorkLog.empty();
     const wrapper = mount(
@@ -42,7 +46,7 @@ describe('WorkLogInput', () => {
     expect(parsedWorkLog.days).toEqual([moment().format('YYYY/MM/DD')]);
   });
 
-  it('emits invalid worklog if tags not present', () => {
+  it('emits invalid work log if tags not present', () => {
     let parsedWorkLog: ParsedWorkLog = undefined;
     const initialWorkLog = ParsedWorkLog.empty();
     const wrapper = mount(
@@ -158,6 +162,61 @@ describe('WorkLogInput', () => {
 
     function suggestions(wrapper): ReactWrapper {
       return wrapper.find('li.react-autosuggest__suggestion');
+    }
+  });
+
+  describe('new tags', () => {
+    it('shows confirmation dialog if work log contains new tags', () => {
+      const onSave = jest.fn();
+      const initialWorkLog = new ParsedWorkLog('1h #new-tag @2019/03/01', ['2019/03/01'], ['new-tag'], '1h');
+      const wrapper = mount(
+          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={onSave}/>
+      );
+
+      pressEnter(wrapper);
+
+      expect(onSave).not.toHaveBeenCalled();
+      expect(wrapper.find(DialogContent)).toHaveLength(1);
+      expect(wrapper.find(DialogContent).text()).toEqual('This action will add new tag: new-tag.Make sure you really want to do this!');
+    });
+
+    it('emits save if user confirmed new tags', () => {
+      const onSave = jest.fn();
+      const initialWorkLog = new ParsedWorkLog('1h #new-tag @2019/03/01', ['2019/03/01'], ['new-tag'], '1h');
+      const wrapper = mount(
+          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={onSave}/>
+      );
+
+      pressEnter(wrapper);
+      confirmButton(wrapper).simulate('click');
+
+      expect(onSave).toHaveBeenCalledWith({
+        days: ['2019/03/01'],
+        expression: '1h #new-tag @2019/03/01',
+        tags: ['new-tag'],
+        workload: '1h'
+      });
+      expect(wrapper.find(ConfirmNewTagsDialog).props().open).toBeFalsy();
+    });
+
+    it('closes dialog when CANCEL clicked', () => {
+      const initialWorkLog = new ParsedWorkLog('1h #new-tag @2019/03/01', ['2019/03/01'], ['new-tag'], '1h');
+      const wrapper = mount(
+          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={noop}/>
+      );
+
+      pressEnter(wrapper);
+      cancelButton(wrapper).simulate('click');
+
+      expect(wrapper.find(ConfirmNewTagsDialog).props().open).toBeFalsy();
+    });
+
+    function confirmButton(wrapper) {
+      return wrapper.find(DialogActions).at(0).find(Button).filter('[data-confirm-button]').at(0);
+    }
+
+    function cancelButton(wrapper) {
+      return wrapper.find(DialogActions).at(0).find(Button).filter('[data-cancel-button]').at(0);
     }
   });
 

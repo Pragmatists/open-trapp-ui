@@ -8,9 +8,10 @@ import { WorkLogHelpDialog } from "../workLogHelpDialog/WorkLogHelpDialog";
 import { ParsedWorkLog, WorkLogExpressionParser } from '../../workLogExpressionParser/WorkLogExpressionParser';
 import Autosuggest from 'react-autosuggest';
 import { Suggestion, SuggestionItem } from './Suggestion';
-import { isEmpty, noop } from 'lodash';
+import { isEmpty, noop, difference } from 'lodash';
 import { TagsSuggestionFactory } from './TagsSuggestionFactory';
 import { DatesSuggestionFactory } from './DatesSuggestionFactory';
+import { ConfirmNewTagsDialog } from '../confirmNewTagsDialog/ConfirmNewTagsDialog';
 
 interface WorkLogInputProps {
   workLog: ParsedWorkLog;
@@ -22,6 +23,7 @@ interface WorkLogInputProps {
 interface WorkLogInputState {
   helpOpen: boolean;
   suggestions: SuggestionItem[];
+  newTags: string[];
 }
 
 export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState> {
@@ -29,7 +31,8 @@ export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState
 
   state = {
     helpOpen: false,
-    suggestions: []
+    suggestions: [],
+    newTags: []
   };
 
   render() {
@@ -43,12 +46,12 @@ export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState
                 className: 'work-log-input__input',
                 placeholder: '1d #my-project',
                 value: workLog.expression,
-                onChange: this.onInputChange,
-                onKeyPress: this.onSubmit
+                onChange: this.handleInputChange,
+                onKeyPress: this.handleSubmit
               }}
               onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
               onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
-              onSuggestionSelected={this.onSelected}
+              onSuggestionSelected={this.handleSelected}
               shouldRenderSuggestions={this.shouldRenderSuggestions}
               renderSuggestion={this.renderSuggestion}
               suggestions={this.state.suggestions}
@@ -62,6 +65,10 @@ export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState
             <HelpIcon color='secondary'/>
           </IconButton>
           <WorkLogHelpDialog open={this.state.helpOpen} onClose={this.handleCloseHelp}/>
+          <ConfirmNewTagsDialog workLog={workLog}
+                                newTags={this.state.newTags}
+                                onClose={this.handleConfirmationDialogClose}
+                                open={!isEmpty(this.state.newTags)}/>
         </Paper>
     );
   }
@@ -82,22 +89,27 @@ export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState
       <Suggestion isHighlighted={isHighlighted} suggestion={suggestion} query={query}/>
   );
 
-  private onInputChange = (event, {newValue}) => {
+  private handleInputChange = (event, {newValue}) => {
     const {onChange} = this.props;
     const workLog = this.workLogExpressionParser.parse(newValue);
     onChange(workLog)
   };
 
-  private onSubmit = (event: React.KeyboardEvent) => {
+  private handleSubmit = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
-      const {onSave, workLog} = this.props;
+      const {onSave, workLog, tags} = this.props;
       if (workLog.valid) {
-        onSave(workLog);
+        const newTags = difference(workLog.tags, tags);
+        if (isEmpty(newTags)) {
+          onSave(workLog);
+        } else {
+          this.setState({newTags});
+        }
       }
     }
   };
 
-  private onSelected = (event) => event.preventDefault();
+  private handleSelected = (event) => event.preventDefault();
 
   private handleSuggestionsFetchRequested = ({value}) => this.setState({
     suggestions: this.getSuggestions(value)
@@ -106,6 +118,16 @@ export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState
   private handleSuggestionsClearRequested = () => this.setState({
     suggestions: []
   });
+
+  private handleConfirmationDialogClose = (workLog: ParsedWorkLog, result: boolean) => {
+    const {onSave} = this.props;
+    this.setState({
+      newTags: []
+    });
+    if (result) {
+      onSave(workLog);
+    }
+  };
 
   private shouldRenderSuggestions = (text: string) => {
     const lastWord = WorkLogInput.getLastWord(text);
