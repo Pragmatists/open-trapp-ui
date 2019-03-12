@@ -12,7 +12,7 @@ import { WorkLog } from '../monthlyReport/MonthlyReport.model';
 import { isEmpty } from 'lodash';
 import { RulesDialog } from '../rulesDialog/RulesDialog';
 import { RegistrationPageMonth } from '../registrationPageMonth/RegistrationPageMonth';
-import { ParsedWorkLog } from '../../workLogExpressionParser/WorkLogExpressionParser';
+import { ParsedWorkLog } from '../../workLogExpressionParser/ParsedWorkLog';
 import { changeWorkLog, saveWorkLog } from '../../redux/registration.actions';
 
 interface RegistrationPageDataProps {
@@ -60,13 +60,19 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
                                          selectedDays={workLog.days}
                                          days={days}
                                          workLogs={workLogs}
-                                         onChange={onMonthChange}/> :
+                                         onChange={onMonthChange}
+                                         onDaysSelected={this.onDaysSelected}/> :
                   'Loading...'
               }
             </Grid>
           </Grid>
         </div>
     );
+  }
+
+  private onDaysSelected = (days: string[]) => {
+    const {onWorkLogInputChange, workLog} = this.props;
+    onWorkLogInputChange(workLog.withDays(days));
   }
 }
 

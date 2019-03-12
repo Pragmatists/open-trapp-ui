@@ -15,12 +15,13 @@ interface RegistrationPageMonthProps {
   days: DayDTO[];
   workLogs: { [employee: string]: WorkLog[] }
   onChange: (year: number, month: number) => void;
+  onDaysSelected?: (days: string[]) => void;
   selectedDays?: string[];
 }
 
 export class RegistrationPageMonth extends Component<RegistrationPageMonthProps, {}> {
   render() {
-    const {days, workLogs, selectedMonth, selectedDays} = this.props;
+    const {days, workLogs, selectedMonth, selectedDays, onDaysSelected} = this.props;
     return (
         <div className='registration-page-month'>
           <div className='registration-page-month__header' data-selected-month-header>
@@ -34,7 +35,7 @@ export class RegistrationPageMonth extends Component<RegistrationPageMonthProps,
             <span>Shift + Click</span> on date to set dates range on worklog expression
           </div>
           <Paper>
-            <MonthlyReport days={days} workLogs={workLogs} selectedDays={selectedDays}/>
+            <MonthlyReport days={days} workLogs={workLogs} selectedDays={selectedDays} onSelect={onDaysSelected}/>
           </Paper>
           <div className='registration-page-month__navigate-section'>
             <Button variant="contained" color="secondary" onClick={this.onPrevious} data-prev-month-button>

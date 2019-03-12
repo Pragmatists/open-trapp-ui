@@ -52,7 +52,7 @@ describe('MonthlyReport', () => {
 
     expect(headerCells(wrapper)).toHaveLength(someMonth.length + 1);
     expect(tableRows(wrapper)).toHaveLength(1);
-    expect(tableRowCells(wrapper, 0)).toHaveLength(someMonth.length + 1);
+    expect(tableRowCells(wrapper)).toHaveLength(someMonth.length + 1);
   });
 
   it('should display day number and weekday name in header cell', () => {
@@ -67,20 +67,53 @@ describe('MonthlyReport', () => {
   it('should display workload in hours', () => {
     const wrapper = mount(<MonthlyReport days={someMonth} workLogs={singleEmployeeWorkLog}/>);
 
-    expect(tableRowCells(wrapper, 0).at(0).text()).toEqual('');
-    expect(tableRowCells(wrapper, 0).at(1).text()).toEqual('');
-    expect(tableRowCells(wrapper, 0).at(2).text()).toEqual('8');
-    expect(tableRowCells(wrapper, 0).at(3).text()).toEqual('8');
-    expect(tableRowCells(wrapper, 0).at(4).text()).toEqual('');
-    expect(tableRowCells(wrapper, 0).at(5).text()).toEqual('5.5');
-    expect(tableRowCells(wrapper, 0).at(6).text()).toEqual('0');
+    expect(tableRowCells(wrapper).at(0).text()).toEqual('');
+    expect(tableRowCells(wrapper).at(1).text()).toEqual('');
+    expect(tableRowCells(wrapper).at(2).text()).toEqual('8');
+    expect(tableRowCells(wrapper).at(3).text()).toEqual('8');
+    expect(tableRowCells(wrapper).at(4).text()).toEqual('');
+    expect(tableRowCells(wrapper).at(5).text()).toEqual('5.5');
+    expect(tableRowCells(wrapper).at(6).text()).toEqual('0');
   });
 
   it('should display total number of hours in last column', () => {
     const wrapper = mount(<MonthlyReport days={someMonth} workLogs={singleEmployeeWorkLog}/>);
 
     expect(headerCells(wrapper).at(someMonth.length).text()).toEqual('Total');
-    expect(totalCell(wrapper, 0).text()).toEqual('21.5');
+    expect(totalCell(wrapper).text()).toEqual('21.5');
+  });
+
+  it('emits selected day', () => {
+    const onSelect = jest.fn();
+    const wrapper = mount(
+        <MonthlyReport days={someMonth} workLogs={singleEmployeeWorkLog} onSelect={onSelect}/>
+        );
+
+    cell(wrapper, 0).simulate('click');
+
+    expect(onSelect).toHaveBeenCalledWith(['2018/12/01']);
+  });
+
+  it('emits selected days range if click with shift', () => {
+    const onSelect = jest.fn();
+    const wrapper = mount(
+        <MonthlyReport days={someMonth} workLogs={singleEmployeeWorkLog} selectedDays={['2018/12/01']} onSelect={onSelect}/>
+    );
+
+    cell(wrapper, 1).simulate('click', {shiftKey: true});
+
+    expect(onSelect).toHaveBeenCalledWith(['2018/12/01', '2018/12/02']);
+  });
+
+  it('changes previous selection', () => {
+    const onSelect = jest.fn();
+    const wrapper = mount(
+        <MonthlyReport days={someMonth} workLogs={singleEmployeeWorkLog} selectedDays={['2018/12/02', '2018/12/03']} onSelect={onSelect}/>
+    );
+
+    cell(wrapper, 0).simulate('click');
+
+    expect(onSelect).toHaveBeenCalledWith(['2018/12/01']);
   });
 
   function headerCells(wrapper): ReactWrapper {
@@ -91,11 +124,15 @@ describe('MonthlyReport', () => {
     return wrapper.find(TableBody).find(TableRow);
   }
 
-  function tableRowCells(wrapper, rowIdx: number): ReactWrapper {
+  function tableRowCells(wrapper, rowIdx = 0): ReactWrapper {
     return tableRows(wrapper).at(rowIdx).find(TableCell);
   }
 
-  function totalCell(wrapper, rowIdx: number): ReactWrapper {
-    return tableRowCells(wrapper, rowIdx).at(someMonth.length);
+  function cell(wrapper, cellIdx: number): ReactWrapper {
+    return tableRowCells(wrapper).at(cellIdx);
+  }
+
+  function totalCell(wrapper): ReactWrapper {
+    return cell(wrapper, someMonth.length);
   }
 });

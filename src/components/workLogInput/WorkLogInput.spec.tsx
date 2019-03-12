@@ -4,7 +4,7 @@ import { mount, ReactWrapper } from 'enzyme';
 import { InputBase } from '@material-ui/core';
 import { noop } from 'lodash';
 import { WorkLogInput } from './WorkLogInput';
-import { ParsedWorkLog } from '../../workLogExpressionParser/WorkLogExpressionParser';
+import { ParsedWorkLog } from '../../workLogExpressionParser/ParsedWorkLog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';

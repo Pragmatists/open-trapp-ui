@@ -155,12 +155,46 @@ describe('RegistrationPageDesktop', () => {
       expect(currentMonthHeader(wrapper).text()).toEqual('2019/01 month worklog');
     });
 
+    it('adds day to work log expression on day click', async () => {
+      const wrapper = mount(
+          <Provider store={store}>
+            <RegistrationPageDesktop/>
+          </Provider>
+      );
+      await flushAllPromises();
+      wrapper.update();
+
+      dayCell(wrapper, 0).simulate('click');
+
+      expect(workLogInputValue(wrapper)).toEqual('@2019/02/01');
+    });
+
+    it('modifies work log expression on day range click', async () => {
+      const wrapper = mount(
+          <Provider store={store}>
+            <RegistrationPageDesktop/>
+          </Provider>
+      );
+      await flushAllPromises();
+
+      typeExpression(wrapper, '1d @2019/02/03 #holiday');
+
+      dayCell(wrapper, 0).simulate('click', {shiftKey: true});
+      wrapper.update();
+
+      expect(workLogInputValue(wrapper)).toEqual('1d @2019/02/01~@2019/02/03 #holiday');
+    });
+
     function tableHeaderCells(wrapper): ReactWrapper {
       return wrapper.find(Table).find(TableHead).find(TableCell);
     }
 
     function tableRowCells(wrapper, rowIdx: number): ReactWrapper {
       return wrapper.find(Table).find(TableBody).find(TableRow).at(rowIdx).find(TableCell);
+    }
+
+    function dayCell(wrapper, dayIndex: number): ReactWrapper {
+      return tableRowCells(wrapper, 0).at(dayIndex);
     }
 
     function totalCell(wrapper, rowIdx: number): ReactWrapper {
@@ -181,6 +215,10 @@ describe('RegistrationPageDesktop', () => {
       return wrapper.find(RegistrationPageMonth)
           .find(Button)
           .filter('[data-prev-month-button]');
+    }
+
+    function workLogInputValue(wrapper) {
+      return (workLogInput(wrapper).instance() as any).value;
     }
   });
 
@@ -260,18 +298,18 @@ describe('RegistrationPageDesktop', () => {
       expect(httpMock.history.get.filter(r => r.url === '/api/v1/calendar/2019/2/work-log/entries')).toHaveLength(2);
     });
 
-    function typeExpression(wrapper, expression: string) {
-      const input = workLogInput(wrapper);
-      input.simulate('change', {target: {value: expression}})
-    }
-
     function pressEnter(wrapper) {
       const input = workLogInput(wrapper);
       input.simulate('keypress', {key: 'Enter'});
     }
-
-    function workLogInput(wrapper): ReactWrapper {
-      return wrapper.find(InputBase).at(0).find('input');
-    }
   });
+
+  function workLogInput(wrapper): ReactWrapper {
+    return wrapper.find(InputBase).at(0).find('input');
+  }
+
+  function typeExpression(wrapper, expression: string) {
+    const input = workLogInput(wrapper);
+    input.simulate('change', {target: {value: expression}})
+  }
 });

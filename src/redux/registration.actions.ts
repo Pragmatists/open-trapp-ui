@@ -1,4 +1,4 @@
-import { ParsedWorkLog } from '../workLogExpressionParser/WorkLogExpressionParser';
+import { ParsedWorkLog } from '../workLogExpressionParser/ParsedWorkLog';
 import { Dispatch } from 'redux';
 import { REGISTRATION_CONSTANTS } from './constants';
 import { OpenTrappRestAPI } from '../api/OpenTrappAPI';

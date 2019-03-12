@@ -376,6 +376,17 @@ describe('WorkLogExpressionParser', () => {
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual(['2019/03/01', '2019/03/02', '2019/03/03']);
   });
 
+  it('parses work log with named dates range', () => {
+    const workLogExpression = new Expression()
+        .withProject(SOME_PROJECT)
+        .withWorkload(SOME_WORKLOAD)
+        .withDateRange('today', 't+1')
+        .build();
+
+    expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
+    expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([CURRENT_DATE, TOMORROW]);
+  });
+
   it('parses work log with inverted range', () => {
     const workLogExpression = new Expression()
         .withProject(SOME_PROJECT)
@@ -396,6 +407,16 @@ describe('WorkLogExpressionParser', () => {
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([CURRENT_DATE]);
+  });
+
+  it('parses day even if expression is invalid (missing tag)', () => {
+    const workLogExpression = new Expression()
+        .withWorkload(SOME_WORKLOAD)
+        .withDate('@2019/03/01')
+        .build();
+
+    expect(workLogExpressionParser.isValid(workLogExpression)).toBeFalsy();
+    expect(workLogExpressionParser.parse(workLogExpression).days).toEqual(['2019/03/01'])
   });
 
   class Expression {

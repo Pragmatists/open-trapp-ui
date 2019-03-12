@@ -6,14 +6,16 @@ import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
-import { chain, entries, reduce } from 'lodash';
+import { chain, entries, reduce, noop, size } from 'lodash';
 import moment from 'moment';
 import classNames from 'classnames';
+import { daysInRange } from '../../utils/dateTimeUtils';
 
 interface MonthlyReportProps {
   days: MonthlyReportDay[];
   workLogs: { [employee: string]: WorkLog[] },
   selectedDays?: string[];
+  onSelect?: (days: string[]) => void
 }
 
 export class MonthlyReport extends Component<MonthlyReportProps, {}> {
@@ -66,7 +68,7 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
         <TableRow key={employee} className='report-table__row'>
           {!singleEmployee && <TableCell className='report-table__cell'>{employee}</TableCell>}
           {days.map((day, idx) => (
-              <TableCell key={idx} className={this.cellClass(day)} data-month-day-value>
+              <TableCell key={idx} className={this.cellClass(day)} onClick={e => this.onCellClick(e, day.id)} data-month-day-value>
                 {workloadForDay[day.id]}
               </TableCell>
           ))}
@@ -83,5 +85,15 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
       'report-table__cell--holiday': day.holiday,
       'report-table__cell--selected': selectedDays.includes(day.id)
     });
+  }
+
+  private onCellClick(event: React.MouseEvent, day: string) {
+    const {onSelect = noop, selectedDays} = this.props;
+    event.stopPropagation();
+    if (event.shiftKey && size(selectedDays) === 1) {
+      onSelect(daysInRange(selectedDays[0], day));
+    } else {
+      onSelect([day]);
+    }
   }
 }

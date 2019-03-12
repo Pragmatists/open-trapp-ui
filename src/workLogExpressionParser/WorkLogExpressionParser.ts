@@ -1,48 +1,27 @@
-import moment from 'moment';
-import { extendMoment } from 'moment-range';
 import { parse } from './WorkLogEntryGrammar';
-import { trim, isEmpty } from 'lodash'
+import { trim } from 'lodash'
 import { TimeProvider } from "../time/TimeProvider";
-
-const momentRange = extendMoment(moment as any);
-
-export class ParsedWorkLog {
-  constructor(
-      readonly expression: string,
-      readonly days: string[],
-      readonly tags: string[],
-      readonly workload: string
-  ) {
-  }
-
-  get valid(): boolean {
-    return !isEmpty(this.tags) && !isEmpty(this.workload);
-  }
-
-  static empty(): ParsedWorkLog {
-    return new ParsedWorkLog('', [], [], undefined);
-  }
-}
+import { daysInRange } from '../utils/dateTimeUtils';
+import { ParsedWorkLog } from './ParsedWorkLog';
 
 export class WorkLogExpressionParser {
   private static readonly DATE_FORMAT = 'YYYY/MM/DD';
-  private static readonly DATE_RANGE_PATTERN = /\@[A-Z0-9/a-z-]+\~\@[A-Z0-9/a-z-]+/g;
 
   constructor(private readonly timeProvider: TimeProvider = new TimeProvider()) {
   }
 
   parse(expression: string): ParsedWorkLog {
-    try {
-      if (this.hasDatesRange(expression)) {
-        const {noDateExpression, datesRange} = this.datesFromRangeExpression(expression);
-        const parsed = this.parseExpression(noDateExpression);
-        return new ParsedWorkLog(expression, datesRange, parsed.tags, parsed.workload);
-      } else {
-        return this.parseExpression(expression);
-      }
-    } catch (e) {
-      return new ParsedWorkLog(expression, [], [], undefined);
+
+    if (this.hasDatesRange(expression)) {
+      const {noDateExpression, datesRange} = this.daysFromRangeExpression(expression);
+      const parsed = this.parseExpression(noDateExpression);
+      return new ParsedWorkLog(expression, datesRange, parsed.tags, parsed.workload);
+    } else if (this.hasDate(expression)) {
+      const day = this.dayFromExpression(expression);
+      const parsed = this.parseExpression(expression);
+      return new ParsedWorkLog(expression, [day], parsed.tags, parsed.workload);
     }
+    return this.parseExpression(expression);
   }
 
   isValid(expression: string): boolean {
@@ -50,42 +29,45 @@ export class WorkLogExpressionParser {
   }
 
   private parseExpression(expression: string): ParsedWorkLog {
-    const result = parse(trim(expression), {timeProvider: this.timeProvider});
-    return new ParsedWorkLog(expression, [result.day], result.projectNames, result.workload);
+    try {
+      const result = parse(trim(expression), {timeProvider: this.timeProvider});
+      return new ParsedWorkLog(expression, [result.day], result.projectNames, result.workload);
+    } catch (e) {
+      return new ParsedWorkLog(expression, [], [], undefined);
+    }
   }
 
   private hasDatesRange(expression: string): boolean {
-    return WorkLogExpressionParser.DATE_RANGE_PATTERN.test(expression);
+    return ParsedWorkLog.DATE_RANGE_PATTERN.test(expression);
   }
 
-  private datesFromRangeExpression(expression: string): { noDateExpression: string; datesRange: string[]; } {
-    const fromDateSelector = /\@[A-Z0-9/a-z-]+\~/g;
-    const toDateSelector = /\~\@[A-Z0-9/a-z-]+/g;
+  private hasDate(expression: string): boolean {
+    return ParsedWorkLog.DATE_PATTERN.test(expression);
+  }
+
+  private daysFromRangeExpression(expression: string): { noDateExpression: string; datesRange: string[]; } {
+    const fromDateSelector = /\@[A-Z0-9/a-z-\+]+\~/g;
+    const toDateSelector = /\~\@[A-Z0-9/a-z-\+]+/g;
     const fromDateMatch = expression.match(fromDateSelector);
     const toDateMatch = expression.match(toDateSelector);
     const fromDate = fromDateMatch[0].substring(0, fromDateMatch[0].length - 1);
     const toDate = toDateMatch[0].substring(1);
 
     return {
-      noDateExpression: expression.replace(WorkLogExpressionParser.DATE_RANGE_PATTERN, ''),
+      noDateExpression: expression.replace(ParsedWorkLog.DATE_RANGE_PATTERN, ''),
       datesRange: this.datesArray(fromDate, toDate)
     };
+  }
+
+  private dayFromExpression(expression: string): string {
+    const dateMatch = expression.match(ParsedWorkLog.DATE_PATTERN);
+    const date = dateMatch[0];
+    return this.parseExpression(`#tag ${date}`).days[0];
   }
 
   private datesArray(from: string, to: string): string[] {
     const fromData = parse('1h #projects ' + from, {timeProvider: this.timeProvider});
     const toData = parse('1h #projects ' + to, {timeProvider: this.timeProvider});
-
-    let start = moment(fromData.day, WorkLogExpressionParser.DATE_FORMAT);
-    let end = moment(toData.day, WorkLogExpressionParser.DATE_FORMAT);
-
-    if (end.isBefore(start)) {
-      const pom = start;
-      start = end;
-      end = pom;
-    }
-    const range = momentRange.range(start, end);
-    return Array.from(range.by('days'))
-        .map(d => d.format(WorkLogExpressionParser.DATE_FORMAT));
+    return daysInRange(fromData.day, toData.day, WorkLogExpressionParser.DATE_FORMAT);
   }
 }
