@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/Pragmatists/open-trapp-ui.svg?branch=master)](https://travis-ci.org/Pragmatists/open-trapp-ui)
+[![Coverage Status](https://coveralls.io/repos/github/Pragmatists/open-trapp-ui/badge.svg?branch=master)](https://coveralls.io/github/Pragmatists/open-trapp-ui?branch=master)
 
 # OpenTrappUI
 Open Time Registration Application
