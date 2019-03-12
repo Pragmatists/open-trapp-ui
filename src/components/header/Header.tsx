@@ -4,6 +4,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { Grid } from "@material-ui/core";
 import ScheduleIcon from '@material-ui/icons/Schedule';
+import MenuIcon from '@material-ui/icons/Menu';
 import { connect } from 'react-redux';
 import GoogleLogin, { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { OpenTrappState } from '../../redux/root.reducer';
@@ -11,6 +12,8 @@ import { logout, login } from '../../redux/authentication.actions';
 import './Header.scss'
 import { UserDetails } from '../userDetails/UserDetails';
 import { withRouter } from 'react-router';
+import IconButton from '@material-ui/core/IconButton';
+import Hidden from '@material-ui/core/Hidden';
 
 interface HeaderDataProps {
   isLoggedIn: boolean;
@@ -28,20 +31,28 @@ type HeaderProps = HeaderDataProps & HeaderEventProps;
 
 export class HeaderComponent extends Component<HeaderProps, {}> {
   render() {
-    const {isLoggedIn} = this.props;
+    const {isLoggedIn, history} = this.props;
     return (
         <div className='header'>
           <AppBar position="static">
             <Grid container justify='center'>
-              <Grid item xs={12} md={11} lg={10}>
+              <Grid item xs={1} className='header__hamburger-container'>
+                <IconButton color="inherit" aria-label="Menu">
+                  <MenuIcon fontSize='large'/>
+                </IconButton>
+              </Grid>
+              <Grid item xs={11} lg={10}>
                 <Toolbar>
-                  <ScheduleIcon className='header__icon'/>
+                  <ScheduleIcon className='header__icon' onClick={() => history.push('/')}/>
                   <Typography variant='h5' color='inherit' className='header__text'>
                     Open<span>Trapp</span>
                   </Typography>
                   {isLoggedIn ? this.renderAuthorized() : this.renderUnauthorized()}
                 </Toolbar>
               </Grid>
+              <Hidden mdDown>
+                <Grid item xs='auto' lg={1}/>
+              </Hidden>
             </Grid>
           </AppBar>
         </div>

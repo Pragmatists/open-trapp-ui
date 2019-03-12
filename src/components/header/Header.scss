@@ -1,6 +1,11 @@
 .header {
   display: flex;
 
+  &__hamburger-container {
+    display: flex;
+    align-items: center;
+  }
+
   &__text {
     flex-grow: 1;
 
@@ -11,5 +16,6 @@
 
   &__icon {
     margin-right: 16px;
+    cursor: pointer;
   }
 }
