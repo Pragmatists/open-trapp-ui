@@ -12,6 +12,7 @@
     "autosuggest-highlight": "^3.1.1",
     "axios": "^0.18.0",
     "classnames": "^2.2.6",
+    "coveralls": "^3.0.3",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
@@ -52,8 +53,9 @@
   "scripts": {
     "start": "PORT=4200 react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --coverage",
     "eject": "react-scripts eject",
+    "report-coverage": "cat ./coverage/lcov.info | coveralls",
     "generate-parser": "pegjs --plugin ./node_modules/ts-pegjs/src/tspegjs -o ./src/workLogExpressionParser/WorkLogEntryGrammar.ts ./src/workLogExpressionParser/WorkLogEntryGrammar.pegjs"
   },
   "eslintConfig": {

@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Pragmatists/open-trapp-ui.svg?branch=master)](https://travis-ci.org/Pragmatists/open-trapp-ui)
+
 # OpenTrappUI
 Open Time Registration Application
 
