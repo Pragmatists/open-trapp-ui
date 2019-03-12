@@ -4,7 +4,6 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { MuiThemeProvider } from "@material-ui/core";
 import { Header } from "./components/header/Header";
 import { theme } from "./theme";
-import './App.css';
 import { LandingPage } from "./components/landingPage/LandingPage";
 import { RegistrationPage } from "./components/registrationPage/RegistrationPage";
 import { PrivateRoute } from './components/PrivateRoute';
