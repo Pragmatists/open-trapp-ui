@@ -67,7 +67,7 @@ class OpenTrappAPI {
 
   private handleErrorResponse = (error: any) => {
     if ( error.status === 401 ) {
-      OpenTrappAPI.removeAuthorizationFromSessionStorage();
+      OpenTrappAPI.removeAuthorizationFromLocalStorage();
     }
     return Promise.reject(error);
   };
@@ -78,12 +78,12 @@ class OpenTrappAPI {
   }
 
   private static get authorizedUser(): any {
-    const storageUser = sessionStorage.getItem('OpenTrappUser');
+    const storageUser = localStorage.getItem('OpenTrappUser');
     return storageUser ? JSON.parse(storageUser) : undefined;
   }
 
-  private static removeAuthorizationFromSessionStorage() {
-    sessionStorage.removeItem('OpenTrappUser');
+  private static removeAuthorizationFromLocalStorage() {
+    localStorage.removeItem('OpenTrappUser');
   }
 }
 

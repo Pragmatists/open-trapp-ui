@@ -9,7 +9,7 @@ export function login(idToken: string, onSuccess: () => void) {
 
     OpenTrappRestAPI.obtainJWTToken(idToken)
       .then(response => {
-        sessionStorage.setItem('OpenTrappUser', JSON.stringify(response));
+        localStorage.setItem('OpenTrappUser', JSON.stringify(response));
         return response;
       })
       .then(response => dispatch(loginSuccessAction(response)))
@@ -20,7 +20,7 @@ export function login(idToken: string, onSuccess: () => void) {
 
 export function logout() {
   return (dispatch: Dispatch) => {
-    sessionStorage.removeItem('OpenTrappUser');
+    localStorage.removeItem('OpenTrappUser');
     dispatch(logoutAction());
   }
 }

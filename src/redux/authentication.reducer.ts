@@ -1,7 +1,7 @@
 import { AuthorizedUser } from '../api/dtos';
 import { AUTHENTICATION_CONSTANTS } from './constants';
 
-const storageUser = sessionStorage.getItem('OpenTrappUser');
+const storageUser = localStorage.getItem('OpenTrappUser');
 const user: AuthorizedUser = storageUser ? JSON.parse(storageUser) : undefined;
 
 export interface AuthenticationState {
