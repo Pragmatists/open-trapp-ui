@@ -4,6 +4,9 @@ node_js:
 cache:
   directories:
     - node_modules
+branches:
+  only:
+    - master
 after_success:
   - npm run report-coverage
 before_deploy:
