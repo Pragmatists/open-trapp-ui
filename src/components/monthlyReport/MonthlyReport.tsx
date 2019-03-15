@@ -43,7 +43,7 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
         <TableRow>
           {!singleEmployee && <TableCell className='report-table__cell header-cell'>Employee</TableCell>}
           {days.map((day, idx) => (
-              <TableCell key={idx} className={this.cellClass(day, true)} data-month-day-header>
+              <TableCell key={idx} className={this.cellClass(day, true)} onClick={e => this.onCellClick(e, day.id)} data-month-day-header>
                 <div>{idx + 1}</div>
                 <div className='day-name'>{moment(day.id, 'YYYY/MM/DD').format('ddd')}</div>
               </TableCell>

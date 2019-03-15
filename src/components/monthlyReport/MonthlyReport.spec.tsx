@@ -94,6 +94,17 @@ describe('MonthlyReport', () => {
     expect(onSelect).toHaveBeenCalledWith(['2018/12/01']);
   });
 
+  it('emits selected day when header cell clicked', () => {
+    const onSelect = jest.fn();
+    const wrapper = mount(
+        <MonthlyReport days={someMonth} workLogs={singleEmployeeWorkLog} onSelect={onSelect}/>
+    );
+
+    headerCell(wrapper, 0).simulate('click');
+
+    expect(onSelect).toHaveBeenCalledWith(['2018/12/01']);
+  });
+
   it('emits selected days range if click with shift', () => {
     const onSelect = jest.fn();
     const wrapper = mount(
@@ -101,6 +112,17 @@ describe('MonthlyReport', () => {
     );
 
     cell(wrapper, 1).simulate('click', {shiftKey: true});
+
+    expect(onSelect).toHaveBeenCalledWith(['2018/12/01', '2018/12/02']);
+  });
+
+  it('emits selected days range if click in header cell with shift', () => {
+    const onSelect = jest.fn();
+    const wrapper = mount(
+        <MonthlyReport days={someMonth} workLogs={singleEmployeeWorkLog} selectedDays={['2018/12/01']} onSelect={onSelect}/>
+    );
+
+    headerCell(wrapper, 1).simulate('click', {shiftKey: true});
 
     expect(onSelect).toHaveBeenCalledWith(['2018/12/01', '2018/12/02']);
   });
@@ -130,6 +152,10 @@ describe('MonthlyReport', () => {
 
   function cell(wrapper, cellIdx: number): ReactWrapper {
     return tableRowCells(wrapper).at(cellIdx);
+  }
+
+  function headerCell(wrapper, cellIdx: number): ReactWrapper {
+      return headerCells(wrapper).at(cellIdx);
   }
 
   function totalCell(wrapper): ReactWrapper {
