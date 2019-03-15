@@ -21,7 +21,7 @@ export class App extends Component {
               <Header/>
               <Switch>
                 <Route path='/' exact component={LandingPage}/>
-                <Route path='/registration' component={RegistrationPage}/>
+                <PrivateRoute path='/registration' component={RegistrationPage}/>
                 <PrivateRoute path='/settings' component={SettingsPage}/>
                 <Route component={NotFoundPage}/>
               </Switch>

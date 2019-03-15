@@ -2,6 +2,7 @@ import { Dispatch } from 'redux';
 import { AUTHENTICATION_CONSTANTS } from './constants';
 import { OpenTrappRestAPI } from '../api/OpenTrappAPI';
 import { AuthorizedUser } from '../api/dtos';
+import { LocalStorage } from '../utils/LocalStorage';
 
 export function login(idToken: string, onSuccess: () => void) {
   return (dispatch: Dispatch) => {
@@ -9,7 +10,7 @@ export function login(idToken: string, onSuccess: () => void) {
 
     OpenTrappRestAPI.obtainJWTToken(idToken)
       .then(response => {
-        localStorage.setItem('OpenTrappUser', JSON.stringify(response));
+        LocalStorage.authorizedUser = response;
         return response;
       })
       .then(response => dispatch(loginSuccessAction(response)))

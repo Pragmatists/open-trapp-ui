@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { AuthorizedUser, MonthDTO, ReportingWorkLogDTO } from './dtos';
+import { LocalStorage } from '../utils/LocalStorage';
 
 class OpenTrappAPI {
   private static readonly API_ROOT_URL = `${process.env.REACT_APP_API_URL}/api/v1`;
@@ -78,8 +79,7 @@ class OpenTrappAPI {
   }
 
   private static get authorizedUser(): any {
-    const storageUser = localStorage.getItem('OpenTrappUser');
-    return storageUser ? JSON.parse(storageUser) : undefined;
+    return LocalStorage.authorizedUser
   }
 
   private static removeAuthorizationFromLocalStorage() {

@@ -1,8 +1,8 @@
 import { AuthorizedUser } from '../api/dtos';
 import { AUTHENTICATION_CONSTANTS } from './constants';
+import { LocalStorage } from '../utils/LocalStorage';
 
-const storageUser = localStorage.getItem('OpenTrappUser');
-const user: AuthorizedUser = storageUser ? JSON.parse(storageUser) : undefined;
+const user: AuthorizedUser = LocalStorage.authorizedUser;
 
 export interface AuthenticationState {
   loggedIn: boolean;
@@ -21,4 +21,3 @@ export function authentication(state: AuthenticationState = initialState, action
       return state;
   }
 }
-
