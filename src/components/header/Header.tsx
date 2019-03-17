@@ -14,6 +14,7 @@ import { UserDetails } from '../userDetails/UserDetails';
 import { withRouter } from 'react-router';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
+import { toggleMenuVisibility } from '../../redux/leftMenu.actions';
 
 interface HeaderDataProps {
   isLoggedIn: boolean;
@@ -25,19 +26,20 @@ interface HeaderDataProps {
 interface HeaderEventProps {
   onGoogleToken: (token: string, onSuccess: () => void) => void;
   onLogout: () => void;
+  onMenuButtonClick: () => void;
 }
 
 type HeaderProps = HeaderDataProps & HeaderEventProps;
 
 export class HeaderComponent extends Component<HeaderProps, {}> {
   render() {
-    const {isLoggedIn, history} = this.props;
+    const {isLoggedIn, history, onMenuButtonClick} = this.props;
     return (
         <div className='header'>
-          <AppBar position="static">
+          <AppBar position='static'>
             <Grid container justify='center'>
               <Grid item xs={1} className='header__hamburger-container'>
-                <IconButton color="inherit" aria-label="Menu">
+                <IconButton color='inherit' aria-label='Menu' onClick={onMenuButtonClick} data-left-menu-button>
                   <MenuIcon fontSize='large'/>
                 </IconButton>
               </Grid>
@@ -100,7 +102,8 @@ function mapStateToProps(state: OpenTrappState): HeaderDataProps {
 function mapDispatchToProps(dispatch: any): HeaderEventProps {
   return {
     onGoogleToken: (token, onSuccess) => dispatch(login(token, onSuccess)),
-    onLogout: () => dispatch(logout())
+    onLogout: () => dispatch(logout()),
+    onMenuButtonClick: () => dispatch(toggleMenuVisibility())
   };
 }
 

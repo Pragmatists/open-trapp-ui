@@ -12,6 +12,7 @@ import { SettingsPageDesktop } from './components/settingsPage/SettingsPage.desk
 import { RegistrationPageMobile } from './components/registrationPage/RegistrationPage.mobile';
 import { SettingsPageMobile } from './components/settingsPage/SettingsPage.mobile';
 import { ReportingPageDesktop } from './components/reportingPage/ReportingPage.desktop';
+import { LeftMenu } from './components/leftMenu/LeftMenu';
 
 interface AppRoutingProps {
   width: Breakpoint;
@@ -20,6 +21,7 @@ interface AppRoutingProps {
 const AppRoutingComponent = ({width}: AppRoutingProps) => (
     <div>
       <Header/>
+      <LeftMenu/>
       {isWidthUp('md', width) ?
           <Switch>
             <Route path='/' exact component={LandingPage}/>

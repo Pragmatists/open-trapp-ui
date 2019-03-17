@@ -4,6 +4,7 @@ import { calendar, CalendarState } from './calendar.reducer';
 import { workLog, WorkLogState } from './workLog.reducer';
 import { registration, RegistrationState } from './registration.reducer';
 import { reporting, ReportingState } from './reporting.reducer';
+import { leftMenu, LeftMenuState } from './leftMenu.reducer';
 
 export interface OpenTrappState {
   authentication: AuthenticationState;
@@ -11,6 +12,7 @@ export interface OpenTrappState {
   workLog: WorkLogState;
   registration: RegistrationState;
   reporting: ReportingState;
+  leftMenu: LeftMenuState;
 }
 
 export const rootReducer = combineReducers({
@@ -18,5 +20,6 @@ export const rootReducer = combineReducers({
   calendar,
   workLog,
   registration,
-  reporting
+  reporting,
+  leftMenu
 });
