@@ -5,6 +5,7 @@ import { TableHead } from '@material-ui/core';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import TableBody from '@material-ui/core/TableBody';
+import TableFooter from '@material-ui/core/TableFooter';
 
 const someMonth = [{
   id: '2018/12/01',
@@ -46,16 +47,31 @@ const singleEmployeeWorkLog = {
   ]
 };
 
+const multipleEmployeeWorklok = {
+  'john.doe': [
+    {day: '2018/12/03', workload: 480},
+    {day: '2018/12/04', workload: 450},
+    {day: '2018/12/04', workload: 30},
+    {day: '2018/12/06', workload: 330},
+    {day: '2018/12/07', workload: 0}
+  ],
+  'tom.kowalsky': [
+    {day: '2018/12/03', workload: 300},
+    {day: '2018/12/04', workload: 415},
+  ]
+};
+
 describe('MonthlyReport', () => {
-  it('should render days for specified month and single employee', () => {
+  it('renders days for specified month and single employee', () => {
     const wrapper = shallow(<MonthlyReport days={someMonth} workLogs={singleEmployeeWorkLog}/>);
 
     expect(headerCells(wrapper)).toHaveLength(someMonth.length + 1);
     expect(tableRows(wrapper)).toHaveLength(1);
     expect(tableRowCells(wrapper)).toHaveLength(someMonth.length + 1);
+    expect(wrapper.find(TableFooter).find(TableRow)).toHaveLength(0);
   });
 
-  it('should display day number and weekday name in header cell', () => {
+  it('displays day number and weekday name in header cell', () => {
     const wrapper = mount(<MonthlyReport days={someMonth} workLogs={singleEmployeeWorkLog}/>);
 
     expect(headerCells(wrapper).at(0).find('div').at(0).text()).toEqual('1');
@@ -64,7 +80,7 @@ describe('MonthlyReport', () => {
     expect(headerCells(wrapper).at(1).find('div').at(1).text()).toEqual('Sun');
   });
 
-  it('should display workload in hours', () => {
+  it('displays workload in hours', () => {
     const wrapper = mount(<MonthlyReport days={someMonth} workLogs={singleEmployeeWorkLog}/>);
 
     expect(tableRowCells(wrapper).at(0).text()).toEqual('');
@@ -76,11 +92,17 @@ describe('MonthlyReport', () => {
     expect(tableRowCells(wrapper).at(6).text()).toEqual('0');
   });
 
-  it('should display total number of hours in last column', () => {
+  it('displays total number of hours in last column', () => {
     const wrapper = mount(<MonthlyReport days={someMonth} workLogs={singleEmployeeWorkLog}/>);
 
     expect(headerCells(wrapper).at(someMonth.length).text()).toEqual('Total');
     expect(totalCell(wrapper).text()).toEqual('21.5');
+  });
+
+  it('displays total row if more than one employee', () => {
+    const wrapper = mount(<MonthlyReport days={someMonth} workLogs={multipleEmployeeWorklok}/>);
+
+    expect(wrapper.find(TableFooter).find(TableRow)).toHaveLength(1);
   });
 
   it('emits selected day', () => {

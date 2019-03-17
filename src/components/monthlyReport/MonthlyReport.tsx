@@ -6,10 +6,11 @@ import TableHead from "@material-ui/core/TableHead";
 import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
-import { chain, entries, reduce, noop, size } from 'lodash';
+import { chain, entries, reduce, noop, size, values } from 'lodash';
 import moment from 'moment';
 import classNames from 'classnames';
 import { daysInRange } from '../../utils/dateTimeUtils';
+import TableFooter from '@material-ui/core/TableFooter';
 
 interface MonthlyReportProps {
   days: MonthlyReportDay[];
@@ -32,6 +33,9 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
             <TableBody>
               {workLogEntries.map(entry => this.renderRow(entry[0], entry[1], singleEmployee))}
             </TableBody>
+            {
+              !singleEmployee && <TableFooter>{this.renderFooter()}</TableFooter>
+            }
           </Table>
         </div>
     );
@@ -67,6 +71,32 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
     return (
         <TableRow key={employee} className='report-table__row'>
           {!singleEmployee && <TableCell className='report-table__cell'>{employee}</TableCell>}
+          {days.map((day, idx) => (
+              <TableCell key={idx} className={this.cellClass(day)} onClick={e => this.onCellClick(e, day.id)} data-month-day-value>
+                {workloadForDay[day.id]}
+              </TableCell>
+          ))}
+          <TableCell className='report-table__cell report-table__cell--bold' data-total-value>{total}</TableCell>
+        </TableRow>
+    );
+  }
+
+  private renderFooter() {
+    const {days, workLogs} = this.props;
+    const allWorkLogs = values(workLogs);
+    const workloadForDay = chain(allWorkLogs)
+        .flatten()
+        .groupBy(w => w.day)
+        .mapValues(value => reduce(value, (sum, w) => sum + w.workload, 0))
+        .mapValues(value => value / 60)
+        .value();
+    const total = chain(workloadForDay)
+        .values()
+        .sum()
+        .value();
+    return (
+        <TableRow className='report-table__row' data-table-footer-row>
+          <TableCell className='report-table__cell report-table__cell--bold'>Total</TableCell>
           {days.map((day, idx) => (
               <TableCell key={idx} className={this.cellClass(day)} onClick={e => this.onCellClick(e, day.id)} data-month-day-value>
                 {workloadForDay[day.id]}
