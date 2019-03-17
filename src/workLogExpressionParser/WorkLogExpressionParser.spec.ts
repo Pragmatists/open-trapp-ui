@@ -1,4 +1,4 @@
-import { TimeProvider } from '../time/TimeProvider';
+import { TimeProvider } from '../utils/dateTimeUtils';
 import { WorkLogExpressionParser } from './WorkLogExpressionParser';
 
 describe('WorkLogExpressionParser', () => {

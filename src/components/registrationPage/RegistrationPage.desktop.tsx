@@ -16,7 +16,7 @@ import { ParsedWorkLog } from '../../workLogExpressionParser/ParsedWorkLog';
 import { changeWorkLog, saveWorkLog } from '../../redux/registration.actions';
 
 interface RegistrationPageDataProps {
-  selectedMonth: { year: number, month: number },
+  selectedMonth: { year: number, month: number };
   days?: DayDTO[];
   workLogs: { [employee: string]: WorkLog[] };
   workLog: ParsedWorkLog;

@@ -8,20 +8,20 @@ export interface RegistrationState {
   valid: boolean;
 }
 
-const initialState: RegistrationState = {
+export const initialState: () => RegistrationState = () => ({
   expression: '',
   tags: [],
   days: [],
   workload: '',
   valid: false
-};
+});
 
-export function registration(state: RegistrationState = initialState, action) {
+export function registration(state: RegistrationState = initialState(), action): RegistrationState {
   switch (action.type) {
     case REGISTRATION_CONSTANTS.WORK_LOG_CHANGED:
       return {...action.payload};
     case REGISTRATION_CONSTANTS.WORK_LOG_SAVED:
-      return initialState;
+      return initialState();
     default:
       return state;
   }

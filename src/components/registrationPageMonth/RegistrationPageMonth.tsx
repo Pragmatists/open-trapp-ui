@@ -4,11 +4,11 @@ import Button from '@material-ui/core/Button';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import Paper from '@material-ui/core/Paper';
-import moment from 'moment';
 import { DayDTO } from '../../api/dtos';
 import { WorkLog } from '../monthlyReport/MonthlyReport.model';
 import { Divider } from '@material-ui/core';
 import './RegistrationPageMonth.scss'
+import { Month } from '../../utils/dateTimeUtils';
 
 interface RegistrationPageMonthProps {
   selectedMonth: { year: number, month: number },
@@ -25,7 +25,7 @@ export class RegistrationPageMonth extends Component<RegistrationPageMonthProps,
     return (
         <div className='registration-page-month'>
           <div className='registration-page-month__header' data-selected-month-header>
-            <span>{moment([selectedMonth.year, selectedMonth.month - 1, 1]).format('YYYY/MM')}</span> month worklog
+            <span>{new Month(selectedMonth.year, selectedMonth.month).toString()}</span> month worklog
           </div>
           <Divider variant='fullWidth'/>
           <div className='registration-page-month__description'>
@@ -53,21 +53,13 @@ export class RegistrationPageMonth extends Component<RegistrationPageMonthProps,
 
   private onNext = () => {
     const {selectedMonth, onChange} = this.props;
-    const {year, month} = selectedMonth;
-    if (month === 12) {
-      onChange(year + 1, 1);
-    } else {
-      onChange(year, month + 1);
-    }
+    const nextMonth = new Month(selectedMonth.year, selectedMonth.month).next;
+    onChange(nextMonth.year, nextMonth.month);
   };
 
   private onPrevious = () => {
     const {selectedMonth, onChange} = this.props;
-    const {year, month} = selectedMonth;
-    if (month === 1) {
-      onChange(year - 1, 12);
-    } else {
-      onChange(year, month - 1);
-    }
+    const previousMonth = new Month(selectedMonth.year, selectedMonth.month).previous;
+    onChange(previousMonth.year, previousMonth.month);
   };
 }

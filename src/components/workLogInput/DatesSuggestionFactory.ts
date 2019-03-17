@@ -1,5 +1,5 @@
 import { startsWith, chain } from 'lodash';
-import { TimeProvider } from '../../time/TimeProvider';
+import { TimeProvider } from '../../utils/dateTimeUtils';
 import { SuggestionItem } from './Suggestion';
 import { WorkLogExpressionParser } from '../../workLogExpressionParser/WorkLogExpressionParser';
 

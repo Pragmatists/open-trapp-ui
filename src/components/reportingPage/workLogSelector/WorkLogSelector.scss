@@ -1,0 +1,31 @@
+.work-log-selector {
+  &__header {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    .chip + .chip {
+      margin-bottom: 8px;
+    }
+
+    .chip-content {
+      display: flex;
+      align-items: center;
+
+
+      &__label {
+        margin-right: 8px;
+        font-weight: bold;
+      }
+    }
+  }
+
+  &__footer {
+
+  }
+}

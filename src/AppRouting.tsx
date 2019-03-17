@@ -11,6 +11,7 @@ import { RegistrationPageDesktop } from './components/registrationPage/Registrat
 import { SettingsPageDesktop } from './components/settingsPage/SettingsPage.desktop';
 import { RegistrationPageMobile } from './components/registrationPage/RegistrationPage.mobile';
 import { SettingsPageMobile } from './components/settingsPage/SettingsPage.mobile';
+import { ReportingPageDesktop } from './components/reportingPage/ReportingPage.desktop';
 
 interface AppRoutingProps {
   width: Breakpoint;
@@ -24,6 +25,7 @@ const AppRoutingComponent = ({width}: AppRoutingProps) => (
             <Route path='/' exact component={LandingPage}/>
             <PrivateRoute path='/registration' component={RegistrationPageDesktop}/>
             <PrivateRoute path='/settings' component={SettingsPageDesktop}/>
+            <PrivateRoute path='/reporting' component={ReportingPageDesktop}/>
             <Route component={NotFoundPage}/>
           </Switch> :
           <Switch>

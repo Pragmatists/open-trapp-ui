@@ -41,14 +41,14 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
     const {days} = this.props;
     return (
         <TableRow>
-          {!singleEmployee && <TableCell className='report-table__cell header-cell'>Employee</TableCell>}
+          {!singleEmployee && <TableCell className='report-table__cell header-cell report-table__cell--bold'>Employee</TableCell>}
           {days.map((day, idx) => (
               <TableCell key={idx} className={this.cellClass(day, true)} onClick={e => this.onCellClick(e, day.id)} data-month-day-header>
                 <div>{idx + 1}</div>
                 <div className='day-name'>{moment(day.id, 'YYYY/MM/DD').format('ddd')}</div>
               </TableCell>
           ))}
-          <TableCell className='report-table__cell report-table__cell--total header-cell' data-total-header>Total</TableCell>
+          <TableCell className='report-table__cell report-table__cell--bold header-cell' data-total-header>Total</TableCell>
         </TableRow>
     );
   }
@@ -72,7 +72,7 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
                 {workloadForDay[day.id]}
               </TableCell>
           ))}
-          <TableCell className='report-table__cell report-table__cell--total' data-total-value>{total}</TableCell>
+          <TableCell className='report-table__cell report-table__cell--bold' data-total-value>{total}</TableCell>
         </TableRow>
     );
   }

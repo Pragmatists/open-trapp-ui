@@ -1,6 +1,6 @@
 import { parse } from './WorkLogEntryGrammar';
 import { trim } from 'lodash'
-import { TimeProvider } from "../time/TimeProvider";
+import { TimeProvider } from "../utils/dateTimeUtils";
 import { daysInRange } from '../utils/dateTimeUtils';
 import { ParsedWorkLog } from './ParsedWorkLog';
 

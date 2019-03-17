@@ -1,0 +1,15 @@
+.month-selector {
+  &__header {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+  }
+
+  &__months {
+    display: flex;
+    flex-direction: column;
+
+    .chip {
+      margin: 8px 0;
+    }
+  }
+}

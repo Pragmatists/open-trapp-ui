@@ -14,6 +14,8 @@ import TableRow from '@material-ui/core/TableRow';
 import { mount, ReactWrapper } from 'enzyme';
 import { RegistrationPageMonth } from '../registrationPageMonth/RegistrationPageMonth';
 import Button from '@material-ui/core/Button';
+import { initialState as registrationInitialState } from '../../redux/registration.reducer';
+import { initialState as reportingInitialState } from '../../redux/reporting.reducer';
 
 const days = [
   {id: '2019/02/01', weekend: false, holiday: false},
@@ -44,7 +46,7 @@ const workLogResponse = [
 
 const tagsResponse = ['projects', 'nvm', 'holiday', 'vacation'];
 
-describe('RegistrationPageDesktop', () => {
+describe('Registration Page - desktop', () => {
   let httpMock: MockAdapter;
   let store: Store;
 
@@ -74,13 +76,8 @@ describe('RegistrationPageDesktop', () => {
           month: 2
         }
       },
-      registration: {
-        expression: '',
-        days: [],
-        tags: [],
-        workload: undefined,
-        valid: false
-      }
+      registration: registrationInitialState(),
+      reporting: reportingInitialState()
     });
   });
 
@@ -295,6 +292,7 @@ describe('RegistrationPageDesktop', () => {
       typeExpression(wrapper, '1d #projects #nvm @2019/02/27');
       pressEnter(wrapper);
       await flushAllPromises();
+
       expect(httpMock.history.get.filter(r => r.url === '/api/v1/calendar/2019/2/work-log/entries')).toHaveLength(2);
     });
 
