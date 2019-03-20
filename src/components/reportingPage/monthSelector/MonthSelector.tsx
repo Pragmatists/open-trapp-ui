@@ -3,7 +3,7 @@ import { Button } from '@material-ui/core';
 import ArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import './MonthSelector.scss';
-import { Month } from '../../../utils/dateTimeUtils';
+import { Month } from '../../../utils/Month';
 import Chip from '@material-ui/core/Chip';
 
 interface MonthSelectorProps {
@@ -32,7 +32,9 @@ export class MonthSelector extends Component<MonthSelectorProps, MonthSelectorSt
             {
               months.map(this.renderChip)
             }
-            <Button onClick={this.onNextClick} disabled={this.state.shift === 0} data-next-months-button>
+            <Button onClick={this.onNextClick}
+                    disabled={this.state.shift === 0 || !this.monthBeforeCurrentSelected}
+                    data-next-months-button>
               <ArrowDownIcon/>
             </Button>
           </div>
@@ -56,11 +58,16 @@ export class MonthSelector extends Component<MonthSelectorProps, MonthSelectorSt
   };
 
   private get months(): Month[] {
-    const {year, month} = this.props.selectedMonth;
-    const currentMonth = new Month(year, month);
+    const lastButOneMonth = Month.current;
     const shift = this.state.shift;
-    return currentMonth.range(3, 1)
+    return lastButOneMonth.range(3, 1)
         .map(m => shift > 0 ? m.plus(shift) : m.minus(-shift));
+  }
+
+  private get monthBeforeCurrentSelected() {
+    const {year, month} = this.props.selectedMonth;
+    const selectedMonth = new Month(year, month);
+    return selectedMonth.isBefore(Month.current);
   }
 
   private onPreviousClick = () => this.setState({

@@ -1,10 +1,17 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
+import moment from 'moment';
 import { noop } from 'lodash';
 import { MonthSelector } from './MonthSelector';
 import { Chip } from '@material-ui/core';
+import { Month } from '../../../utils/Month';
 
 describe('Month Selector', () => {
+
+  beforeEach(() => {
+    jest.spyOn(Month, 'current', 'get').mockReturnValue(new Month(2019, 3));
+  });
+
   it('displays 5 months with current on last but one place', () => {
     const wrapper = mount(
         <MonthSelector selectedMonth={{year: 2019, month: 3}} onMonthChange={noop}/>
@@ -12,6 +19,19 @@ describe('Month Selector', () => {
 
     expect(monthChips(wrapper)).toHaveLength(5);
     expect(chipsLabels(wrapper)).toEqual(['2018/12', '2019/01', '2019/02', '2019/03', '2019/04']);
+  });
+
+  it('allows to display only one month after current', () => {
+    const current = moment();
+    const currentMonth = new Month(current.year(), current.month() + 1);
+    const nextMonth = currentMonth.next;
+    const wrapper = mount(
+        <MonthSelector selectedMonth={{year: nextMonth.year, month: nextMonth.month}} onMonthChange={noop}/>
+    );
+
+    const months = currentMonth.range(3, 1)
+        .map(m => m.toString());
+    expect(chipsLabels(wrapper)).toEqual(months);
   });
 
   it('marks selected month', () => {
@@ -35,7 +55,7 @@ describe('Month Selector', () => {
 
   it('scrolls months list on NEXT click', () => {
     const wrapper = mount(
-        <MonthSelector selectedMonth={{year: 2019, month: 3}} onMonthChange={noop}/>
+        <MonthSelector selectedMonth={{year: 2019, month: 2}} onMonthChange={noop}/>
     );
     previousButton(wrapper).simulate('click');
     previousButton(wrapper).simulate('click');
@@ -43,7 +63,7 @@ describe('Month Selector', () => {
     nextButton(wrapper).simulate('click');
 
     expect(chipsLabels(wrapper)).toEqual(['2018/11', '2018/12', '2019/01', '2019/02', '2019/03']);
-    expect(selectedChipsLabels(wrapper)).toEqual(['2019/03']);
+    expect(selectedChipsLabels(wrapper)).toEqual(['2019/02']);
   });
 
   it('next button is disabled in initial state', () => {

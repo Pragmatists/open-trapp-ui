@@ -7,8 +7,8 @@ import Paper from '@material-ui/core/Paper';
 import { DayDTO } from '../../api/dtos';
 import { WorkLog } from '../monthlyReport/MonthlyReport.model';
 import { Divider } from '@material-ui/core';
-import './RegistrationPageMonth.scss'
-import { Month } from '../../utils/dateTimeUtils';
+import { Month } from '../../utils/Month';
+import './RegistrationPageMonth.scss';
 
 interface RegistrationPageMonthProps {
   selectedMonth: { year: number, month: number },
