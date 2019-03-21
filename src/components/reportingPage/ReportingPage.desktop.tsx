@@ -92,7 +92,7 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
                   <Tab icon={<CalendarIcon/>} onClick={() => onReportTypeChange(ReportType.CALENDAR)} data-reporting-calendar-tab/>
                   <Tab icon={<ListIcon/>} onClick={() => onReportTypeChange(ReportType.TABLE)} data-reporting-table-tab/>
                 </Tabs>
-                {reportType === ReportType.CALENDAR && <MonthlyReport days={days} workLogs={this.workLogsForSelectedUsers}/>}
+                {reportType === ReportType.CALENDAR && <MonthlyReport days={days} workLogs={this.workLogsForSelectedUsersAndTags}/>}
                 {reportType === ReportType.TABLE && <TableReport/>}
               </Paper>
             </Grid>
@@ -111,12 +111,15 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
     return (workLog: ReportingWorkLog) => !isEmpty(intersection(selectedTags, workLog.projectNames));
   };
 
-  private get workLogsForSelectedUsers(): { [username: string]: WorkLog[]; } {
-    const {workLogs, selectedEmployees} = this.props;
+  private get workLogsForSelectedUsersAndTags(): { [username: string]: WorkLog[]; } {
+    const {workLogs, selectedEmployees, selectedTags} = this.props;
     return chain(workLogs)
         .filter(w => includes(selectedEmployees, w.employee))
         .groupBy(w => w.employee)
-        .mapValues(values => values.map(v => ({day: v.day, workload: v.workload})))
+        .mapValues(values => values
+            .filter(v => !isEmpty(intersection(selectedTags, v.projectNames)))
+            .map(v => ({day: v.day, workload: v.workload}))
+        )
         .value();
   }
 }
