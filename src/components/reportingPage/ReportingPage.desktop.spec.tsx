@@ -79,7 +79,7 @@ describe('Reporting Page - desktop', () => {
       wrapper.update();
 
       expect(chips(wrapper, '[data-months-selector]')).toHaveLength(5);
-      expect(monthChipsLabels(wrapper, '[data-months-selector]'))
+      expect(monthChipsLabels(wrapper))
           .toEqual(['2018/12', '2019/01', '2019/02', '2019/03', '2019/04']);
     });
 
@@ -149,8 +149,9 @@ describe('Reporting Page - desktop', () => {
 
       expect(httpMock.history.get.filter(r => r.url === '/api/v1/calendar/2019/2')).toHaveLength(1);
       expect(httpMock.history.get.filter(r => r.url === '/api/v1/calendar/2019/2/work-log/entries')).toHaveLength(1);
-      expect(monthChipsLabels(wrapper, '[data-months-selector]'))
-          .toEqual(['2018/11', '2018/12', '2019/01', '2019/02', '2019/03']);
+      expect(selectedMonth(wrapper)).toEqual('2019/02');
+      expect(monthChipsLabels(wrapper))
+          .toEqual(['2018/12', '2019/01', '2019/02', '2019/03', '2019/04']);
     });
 
     it('changes tags selection on click', async () => {
@@ -255,8 +256,8 @@ describe('Reporting Page - desktop', () => {
     return chips(wrapper, selector).map(w => w.find('[data-chip-label]').at(0).text());
   }
 
-  function monthChipsLabels(wrapper, selector: string): string[] {
-    return chips(wrapper, selector).map(w => w.text());
+  function monthChipsLabels(wrapper): string[] {
+    return chips(wrapper, '[data-months-selector]').map(w => w.text());
   }
 
   function chip(wrapper, selector: string, label: string): ReactWrapper {
@@ -275,6 +276,12 @@ describe('Reporting Page - desktop', () => {
 
   function selectedChipsLabels(wrapper, selector: string): string[] {
     return selectedChips(wrapper, selector).map(w => w.find('[data-chip-label]').at(0).text());
+  }
+
+  function selectedMonth(wrapper): string {
+    return chips(wrapper, '[data-months-selector]')
+        .filter('[data-chip-selected=true]')
+        .map(w => w.text())[0];
   }
 
   function chipWorkload(wrapper, selector: string, label: string): string {
