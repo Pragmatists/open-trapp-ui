@@ -11,3 +11,5 @@ export function setupStore(initialState?: any) {
       )
   );
 }
+
+export const flushAllPromises = () => new Promise(resolve => setImmediate(resolve));

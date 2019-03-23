@@ -2,20 +2,20 @@ import * as React from 'react';
 import MockAdapter from 'axios-mock-adapter';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
-import { setupStore } from '../../utils/testUtils';
-import { RegistrationPageDesktop } from './RegistrationPage.desktop';
-import { OpenTrappRestAPI } from '../../api/OpenTrappAPI';
-import { MonthlyReport } from '../monthlyReport/MonthlyReport';
+import { chain } from 'lodash';
+import { mount, ReactWrapper } from 'enzyme';
 import { InputBase, TableCell } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
-import { mount, ReactWrapper } from 'enzyme';
-import { RegistrationPageMonth } from '../registrationPageMonth/RegistrationPageMonth';
 import Button from '@material-ui/core/Button';
+import { flushAllPromises, setupStore } from '../../utils/testUtils';
+import { RegistrationPageDesktop } from './RegistrationPage.desktop';
+import { OpenTrappRestAPI } from '../../api/OpenTrappAPI';
+import { MonthlyReport } from '../monthlyReport/MonthlyReport';
+import { RegistrationPageMonth } from '../registrationPageMonth/RegistrationPageMonth';
 import { initialState as registrationInitialState } from '../../redux/registration.reducer';
-import { initialState as reportingInitialState } from '../../redux/reporting.reducer';
 
 const days = [
   {id: '2019/02/01', weekend: false, holiday: false},
@@ -35,22 +35,24 @@ const monthResponse = {
 };
 
 const workLogResponse = [
-  {employee: 'john.doe', day: '2019/02/01', workload: 480, projectNames: ['project', 'nvm']},
-  {employee: 'andy.barber', day: '2019/02/01', workload: 420, projectNames: ['project', 'nvm']},
-  {employee: 'john.doe', day: '2019/02/04', workload: 450, projectNames: ['project', 'nvm']},
+  {employee: 'john.doe', day: '2019/02/01', workload: 480, projectNames: ['projects', 'nvm']},
+  {employee: 'andy.barber', day: '2019/02/01', workload: 420, projectNames: ['projects', 'nvm']},
+  {employee: 'john.doe', day: '2019/02/04', workload: 450, projectNames: ['projects', 'nvm']},
   {employee: 'john.doe', day: '2019/02/04', workload: 30, projectNames: ['internal', 'standup']},
-  {employee: 'andy.barber', day: '2019/02/01', workload: 390, projectNames: ['project', 'nvm']},
+  {employee: 'andy.barber', day: '2019/02/01', workload: 390, projectNames: ['projects', 'nvm']},
   {employee: 'andy.barber', day: '2019/02/01', workload: 30, projectNames: ['internal', 'standup']},
   {employee: 'andy.barber', day: '2019/02/01', workload: 0, projectNames: ['remote']}
 ];
 
-const tagsResponse = ['projects', 'nvm', 'holiday', 'vacation'];
+const tagsResponse = chain(workLogResponse)
+    .map(r => r.projectNames)
+    .flatten()
+    .uniq()
+    .value();
 
 describe('Registration Page - desktop', () => {
   let httpMock: MockAdapter;
   let store: Store;
-
-  const flushAllPromises = () => new Promise(resolve => setImmediate(resolve));
 
   beforeEach(() => {
     httpMock = new MockAdapter(OpenTrappRestAPI.axios);
@@ -76,8 +78,7 @@ describe('Registration Page - desktop', () => {
           month: 2
         }
       },
-      registration: registrationInitialState(),
-      reporting: reportingInitialState()
+      registration: registrationInitialState()
     });
   });
 

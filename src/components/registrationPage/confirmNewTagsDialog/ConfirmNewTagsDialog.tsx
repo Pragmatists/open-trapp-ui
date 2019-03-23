@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ParsedWorkLog } from '../../workLogExpressionParser/ParsedWorkLog';
+import { ParsedWorkLog } from '../../../workLogExpressionParser/ParsedWorkLog';
 import { Dialog } from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';

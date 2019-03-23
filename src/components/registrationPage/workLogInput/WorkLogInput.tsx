@@ -5,14 +5,14 @@ import IconButton from '@material-ui/core/IconButton';
 import HelpIcon from '@material-ui/icons/Help';
 import './WorkLogInput.scss'
 import { WorkLogHelpDialog } from "../workLogHelpDialog/WorkLogHelpDialog";
-import { WorkLogExpressionParser } from '../../workLogExpressionParser/WorkLogExpressionParser';
+import { WorkLogExpressionParser } from '../../../workLogExpressionParser/WorkLogExpressionParser';
 import Autosuggest from 'react-autosuggest';
 import { Suggestion, SuggestionItem } from './Suggestion';
 import { isEmpty, noop, difference } from 'lodash';
 import { TagsSuggestionFactory } from './TagsSuggestionFactory';
 import { DatesSuggestionFactory } from './DatesSuggestionFactory';
 import { ConfirmNewTagsDialog } from '../confirmNewTagsDialog/ConfirmNewTagsDialog';
-import { ParsedWorkLog } from '../../workLogExpressionParser/ParsedWorkLog';
+import { ParsedWorkLog } from '../../../workLogExpressionParser/ParsedWorkLog';
 
 interface WorkLogInputProps {
   workLog: ParsedWorkLog;

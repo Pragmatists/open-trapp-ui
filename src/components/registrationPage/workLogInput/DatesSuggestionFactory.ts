@@ -1,7 +1,7 @@
 import { startsWith, chain } from 'lodash';
-import { TimeProvider } from '../../utils/dateTimeUtils';
+import { TimeProvider } from '../../../utils/dateTimeUtils';
 import { SuggestionItem } from './Suggestion';
-import { WorkLogExpressionParser } from '../../workLogExpressionParser/WorkLogExpressionParser';
+import { WorkLogExpressionParser } from '../../../workLogExpressionParser/WorkLogExpressionParser';
 
 export class DatesSuggestionFactory {
   private static POSSIBLE_SUGGESTIONS = [

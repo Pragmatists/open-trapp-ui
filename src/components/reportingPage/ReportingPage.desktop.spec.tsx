@@ -1,7 +1,7 @@
 import MockAdapter from 'axios-mock-adapter';
 import { Store } from 'redux';
 import { OpenTrappRestAPI } from '../../api/OpenTrappAPI';
-import { setupStore } from '../../utils/testUtils';
+import { flushAllPromises, setupStore } from '../../utils/testUtils';
 import { initialState as registrationInitialState } from '../../redux/registration.reducer';
 import { mount, ReactWrapper } from 'enzyme';
 import * as React from 'react';
@@ -39,8 +39,6 @@ const workLogResponse = [
 describe('Reporting Page - desktop', () => {
   let httpMock: MockAdapter;
   let store: Store;
-
-  const flushAllPromises = () => new Promise(resolve => setImmediate(resolve));
 
   beforeEach(() => {
     httpMock = new MockAdapter(OpenTrappRestAPI.axios);

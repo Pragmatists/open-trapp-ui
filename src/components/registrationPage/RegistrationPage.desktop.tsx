@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Grid } from "@material-ui/core";
 import './RegistrationPage.desktop.scss'
 import Divider from "@material-ui/core/Divider";
-import { WorkLogInput } from "../workLogInput/WorkLogInput";
+import { WorkLogInput } from "./workLogInput/WorkLogInput";
 import { connect } from 'react-redux';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { changeMonth, loadMonth } from '../../redux/calendar.actions';
@@ -10,7 +10,7 @@ import { AuthorizedUser, DayDTO, ReportingWorkLogDTO } from '../../api/dtos';
 import { loadTags, loadWorkLog } from '../../redux/workLog.actions';
 import { WorkLog } from '../monthlyReport/MonthlyReport.model';
 import { isEmpty } from 'lodash';
-import { RulesDialog } from '../rulesDialog/RulesDialog';
+import { RulesDialog } from './rulesDialog/RulesDialog';
 import { RegistrationPageMonth } from '../registrationPageMonth/RegistrationPageMonth';
 import { ParsedWorkLog } from '../../workLogExpressionParser/ParsedWorkLog';
 import { changeWorkLog, saveWorkLog } from '../../redux/registration.actions';
