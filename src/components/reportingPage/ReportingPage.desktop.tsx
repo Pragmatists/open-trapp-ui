@@ -4,7 +4,7 @@ import { OpenTrappState } from '../../redux/root.reducer';
 import { Grid } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import { changeMonth, loadMonth } from '../../redux/calendar.actions';
-import { loadWorkLog } from '../../redux/workLog.actions';
+import { loadWorkLogs, removeWorkLog } from '../../redux/workLog.actions';
 import './ReportingPage.desktop.scss';
 import { MonthSelector } from './monthSelector/MonthSelector';
 import { WorkLogSelector } from './workLogSelector/WorkLogSelector';
@@ -20,15 +20,20 @@ import ListIcon from '@material-ui/icons/ViewList';
 import { MonthlyReport } from '../monthlyReport/MonthlyReport';
 import { WorkLog } from '../monthlyReport/MonthlyReport.model';
 import { ReportType } from '../../redux/reporting.reducer';
-import { TableReport } from '../tableReport/TableReport';
+import { TableReport } from './tableReport/TableReport';
+
+interface Selection {
+  month: { year: number, month: number };
+  tags: string[];
+  employees: string[];
+}
 
 interface ReportingPageDataProps {
-  selectedMonth: { year: number, month: number };
   workLogs: ReportingWorkLog[];
-  selectedTags: string[];
-  selectedEmployees: string[];
+  selection: Selection;
   days: DayDTO[];
   reportType: ReportType;
+  username: string;
 }
 
 interface ReportingPageEventProps {
@@ -37,19 +42,22 @@ interface ReportingPageEventProps {
   onTagsChange: (values: string[]) => void;
   onEmployeesChange: (values: string[]) => void;
   onReportTypeChange: (type: ReportType) => void;
+  onRemoveWorkLog: (id: string) => void;
 }
 
 type ReportingPageProps = ReportingPageDataProps & ReportingPageEventProps;
 
 class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
   componentDidMount(): void {
-    const {init, selectedMonth} = this.props;
-    init(selectedMonth.year, selectedMonth.month);
+    const {init, selection} = this.props;
+    const {month, year} = selection.month;
+    init(year, month);
   }
 
   render() {
     const {
-      selectedMonth, onMonthChange, workLogs, selectedEmployees, selectedTags, onTagsChange, onEmployeesChange, days, reportType, onReportTypeChange
+      selection, username, workLogs, days, reportType,
+      onMonthChange, onTagsChange, onEmployeesChange, onReportTypeChange, onRemoveWorkLog
     } = this.props;
     return (
         <div className='reporting-page'>
@@ -62,22 +70,22 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
             </Grid>
             <Grid item container lg={10} xs={11} spacing={32}>
               <Grid item lg={2} sm={12} data-months-selector>
-                <MonthSelector selectedMonth={selectedMonth} onMonthChange={onMonthChange}/>
+                <MonthSelector selectedMonth={selection.month} onMonthChange={onMonthChange}/>
               </Grid>
               <Grid item lg={5} sm={12} data-projects-selector>
                 <WorkLogSelector title='Projects'
                                  chipLabel={workLog => workLog.projectNames}
                                  workLogs={workLogs}
-                                 selected={selectedTags}
-                                 workLogFilter={this.projectsFilter}
+                                 selected={selection.tags}
+                                 workLogFilter={this.employeesFilter}
                                  onSelectionChange={onTagsChange}/>
               </Grid>
               <Grid item lg={5} sm={12} data-employees-selector>
                 <WorkLogSelector title='Employees'
                                  chipLabel={workLog => workLog.employee}
                                  workLogs={workLogs}
-                                 selected={selectedEmployees}
-                                 workLogFilter={this.employeesFilter}
+                                 selected={selection.employees}
+                                 workLogFilter={this.tagsFilter}
                                  onSelectionChange={onEmployeesChange}/>
               </Grid>
             </Grid>
@@ -92,8 +100,13 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
                   <Tab icon={<CalendarIcon/>} onClick={() => onReportTypeChange(ReportType.CALENDAR)} data-reporting-calendar-tab/>
                   <Tab icon={<ListIcon/>} onClick={() => onReportTypeChange(ReportType.TABLE)} data-reporting-table-tab/>
                 </Tabs>
-                {reportType === ReportType.CALENDAR && <MonthlyReport days={days} workLogs={this.workLogsForSelectedUsersAndTags}/>}
-                {reportType === ReportType.TABLE && <TableReport/>}
+                {reportType === ReportType.CALENDAR && <MonthlyReport days={days}
+                                                                      workLogs={this.workLogsForSelectedUsersAndTags}/>
+                }
+                {reportType === ReportType.TABLE && <TableReport workLogs={this.filteredWorkLogs}
+                                                                 onRemoveWorkLog={onRemoveWorkLog}
+                                                                 username={username}/>
+                }
               </Paper>
             </Grid>
           </Grid>
@@ -101,25 +114,33 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
     );
   }
 
-  private get projectsFilter() {
-    const {selectedEmployees} = this.props;
-    return (workLog: ReportingWorkLog) => includes(selectedEmployees, workLog.employee);
+  private get employeesFilter() {
+    const {employees} = this.props.selection;
+    return (workLog: ReportingWorkLog) => includes(employees, workLog.employee);
   };
 
-  private get employeesFilter() {
-    const {selectedTags} = this.props;
-    return (workLog: ReportingWorkLog) => !isEmpty(intersection(selectedTags, workLog.projectNames));
+  private get tagsFilter() {
+    const {tags} = this.props.selection;
+    return (workLog: ReportingWorkLog) => !isEmpty(intersection(tags, workLog.projectNames));
   };
 
   private get workLogsForSelectedUsersAndTags(): { [username: string]: WorkLog[]; } {
-    const {workLogs, selectedEmployees, selectedTags} = this.props;
+    const {workLogs} = this.props;
     return chain(workLogs)
-        .filter(w => includes(selectedEmployees, w.employee))
+        .filter(this.employeesFilter)
         .groupBy(w => w.employee)
         .mapValues(values => values
-            .filter(v => !isEmpty(intersection(selectedTags, v.projectNames)))
+            .filter(this.tagsFilter)
             .map(v => ({day: v.day, workload: v.workload}))
         )
+        .value();
+  }
+
+  private get filteredWorkLogs(): ReportingWorkLog[] {
+    const {workLogs} = this.props;
+    return chain(workLogs)
+        .filter(this.employeesFilter)
+        .filter(this.tagsFilter)
         .value();
   }
 }
@@ -139,10 +160,13 @@ function mapStateToProps(state: OpenTrappState): ReportingPageDataProps {
   const {selectedTags, selectedEmployees, reportType} = state.reporting;
   const {name} = state.authentication.user;
   return {
-    selectedMonth,
+    selection: {
+      month: selectedMonth,
+      tags: selectedTags ? selectedTags : tagsForUser(workLogs, name),
+      employees: selectedEmployees ? selectedEmployees : [name]
+    },
+    username: name,
     workLogs: workLogs.map(w => new ReportingWorkLog(w)),
-    selectedTags: selectedTags ? selectedTags : tagsForUser(workLogs, name),
-    selectedEmployees: selectedEmployees ? selectedEmployees : [name],
     days: days || [],
     reportType
   };
@@ -152,11 +176,11 @@ function mapDispatchToProps(dispatch): ReportingPageEventProps {
   return {
     init(year: number, month: number) {
       dispatch(loadMonth(year, month));
-      dispatch(loadWorkLog(year, month));
+      dispatch(loadWorkLogs(year, month));
     },
     onMonthChange(year: number, month: number) {
       dispatch(changeMonth(year, month));
-      dispatch(loadWorkLog(year, month));
+      dispatch(loadWorkLogs(year, month));
     },
     onTagsChange(values: string[]) {
       dispatch(changeTags(values));
@@ -166,6 +190,9 @@ function mapDispatchToProps(dispatch): ReportingPageEventProps {
     },
     onReportTypeChange(type: ReportType) {
       dispatch(changeReportType(type));
+    },
+    onRemoveWorkLog(id: string) {
+      dispatch(removeWorkLog(id));
     }
   };
 }

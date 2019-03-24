@@ -7,10 +7,11 @@ import { mount, ReactWrapper } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { ReportingPageDesktop } from './ReportingPage.desktop';
-import { Chip } from '@material-ui/core';
+import { Chip, TableRow } from '@material-ui/core';
 import { initialState as reportingInitialState } from '../../redux/reporting.reducer';
 import { MonthlyReport } from '../monthlyReport/MonthlyReport';
-import { TableReport } from '../tableReport/TableReport';
+import { TableReport } from './tableReport/TableReport';
+import TableBody from '@material-ui/core/TableBody';
 
 const days = [
   {id: '2019/02/01', weekend: false, holiday: false},
@@ -30,10 +31,10 @@ const monthResponse = {
 };
 
 const workLogResponse = [
-  {employee: 'john.doe', projectNames: ['projects', 'nvm'], workload: 480, day: '2019/03/01'},
-  {employee: 'john.doe', projectNames: ['projects', 'nvm'], workload: 420, day: '2019/03/02'},
-  {employee: 'tom.kowalsky', projectNames: ['projects', 'jld'], workload: 330, day: '2019/03/01'},
-  {employee: 'tom.kowalsky', projectNames: ['internal', 'self-dev'], workload: 480, day: '2019/03/03'},
+  {id: 'jd1', employee: 'john.doe', projectNames: ['projects', 'nvm'], workload: 480, day: '2019/03/01'},
+  {id: 'jd2', employee: 'john.doe', projectNames: ['projects', 'nvm'], workload: 420, day: '2019/03/02'},
+  {id: 'tk1', employee: 'tom.kowalsky', projectNames: ['projects', 'jld'], workload: 330, day: '2019/03/01'},
+  {id: 'th2', employee: 'tom.kowalsky', projectNames: ['internal', 'self-dev'], workload: 480, day: '2019/03/03'}
 ];
 
 describe('Reporting Page - desktop', () => {
@@ -46,7 +47,9 @@ describe('Reporting Page - desktop', () => {
         .onGet(/\/api\/v1\/calendar\/2019\/\d$/)
         .reply(200, monthResponse)
         .onGet(/\/api\/v1\/calendar\/2019\/\d\/work-log\/entries$/)
-        .reply(200, workLogResponse);
+        .reply(200, workLogResponse)
+        .onDelete(/\/api\/v1\/work-log\/entries\/.*$/)
+        .reply(204);
 
     store = setupStore({
       authentication: {
@@ -241,8 +244,41 @@ describe('Reporting Page - desktop', () => {
       expect(wrapper.find(MonthlyReport)).toHaveLength(0);
     });
 
+    it('removes work log no remove button click', async () => {
+      const wrapper = mount(
+          <Provider store={store}>
+            <ReportingPageDesktop />
+          </Provider>
+      );
+      await flushAllPromises();
+      wrapper.update();
+      tableTab(wrapper).simulate('click');
+
+      removeWorkLogButton(wrapper, 0).simulate('click');
+      await flushAllPromises();
+      wrapper.update();
+
+      expect(httpMock.history.delete).toHaveLength(1);
+      expect(tableRows(wrapper)).toHaveLength(1);
+    });
+
     function tableTab(wrapper) {
       return wrapper.find('[data-reporting-table-tab]').at(0);
+    }
+
+    function tableRows(wrapper) {
+      return wrapper
+          .find(TableBody).at(0)
+          .find(TableRow);
+    }
+
+    function tableRow(wrapper, rowIdx: number) {
+      return tableRows(wrapper)
+          .at(rowIdx);
+    }
+
+    function removeWorkLogButton(wrapper, rowIdx: number) {
+      return tableRow(wrapper, rowIdx).find('[data-remove-button]').at(0);
     }
   });
 

@@ -90,11 +90,6 @@ describe('Left menu', () => {
     return wrapper.find(ListItem);
   }
 
-  function itemsText(wrapper: ReactWrapper): string[] {
-    return listItems(wrapper)
-        .map(w => w.find(ListItemText).at(0).text());
-  }
-
   function selectedItemsText(wrapper: ReactWrapper): string[] {
     return listItems(wrapper)
         .filterWhere(w => w.prop('selected') === true)

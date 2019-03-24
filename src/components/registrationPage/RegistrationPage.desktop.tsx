@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { changeMonth, loadMonth } from '../../redux/calendar.actions';
 import { AuthorizedUser, DayDTO, ReportingWorkLogDTO } from '../../api/dtos';
-import { loadTags, loadWorkLog } from '../../redux/workLog.actions';
+import { loadTags, loadWorkLogs } from '../../redux/workLog.actions';
 import { WorkLog } from '../monthlyReport/MonthlyReport.model';
 import { isEmpty } from 'lodash';
 import { RulesDialog } from './rulesDialog/RulesDialog';
@@ -105,12 +105,12 @@ function mapDispatchToProps(dispatch): RegistrationPageEventProps {
   return {
     init(year: number, month: number) {
       dispatch(loadMonth(year, month));
-      dispatch(loadWorkLog(year, month));
+      dispatch(loadWorkLogs(year, month));
       dispatch(loadTags());
     },
     onMonthChange(year: number, month: number) {
       dispatch(changeMonth(year, month));
-      dispatch(loadWorkLog(year, month));
+      dispatch(loadWorkLogs(year, month));
     },
     onWorkLogInputChange(workLog: ParsedWorkLog) {
       dispatch(changeWorkLog(workLog));

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEmpty } from 'lodash';
 import { OpenTrappState } from '../../redux/root.reducer';
-import { loadTags, loadWorkLog } from '../../redux/workLog.actions';
+import { loadTags, loadWorkLogs } from '../../redux/workLog.actions';
 import { DaySelector } from './daySelector/DaySelector';
 import { ParsedWorkLog } from '../../workLogExpressionParser/ParsedWorkLog';
 import moment from 'moment';
@@ -59,7 +59,7 @@ function mapStateToProps(state: OpenTrappState): RegistrationPageDataProps {
 function mapDispatchToProps(dispatch): RegistrationPageEventProps {
   return {
     init(year: number, month: number) {
-      dispatch(loadWorkLog(year, month));
+      dispatch(loadWorkLogs(year, month));
       dispatch(loadTags());
     },
     onWorkLogChange(workLog: ParsedWorkLog) {

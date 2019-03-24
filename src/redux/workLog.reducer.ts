@@ -13,10 +13,20 @@ const initialState: WorkLogState = {
 
 export function workLog(state: WorkLogState = initialState, action: any): WorkLogState {
   switch (action.type) {
-    case WORK_LOG_CONSTANTS.WORK_LOG_LOADED:
+    case WORK_LOG_CONSTANTS.WORK_LOGS_LOADED:
       return {...state, workLogs: action.payload};
     case WORK_LOG_CONSTANTS.TAGS_LOADED:
       return {...state, tags: action.payload};
+    case WORK_LOG_CONSTANTS.WORK_LOG_UPDATED:
+      return {
+        ...state,
+        workLogs: state.workLogs.map(workLog => workLog.id === action.payload.id ? action.payload : workLog)
+      };
+    case WORK_LOG_CONSTANTS.WORK_LOG_REMOVED:
+      return {
+        ...state,
+        workLogs: state.workLogs.filter(workLog => workLog.id !== action.payload)
+      };
     default:
       return state;
   }
