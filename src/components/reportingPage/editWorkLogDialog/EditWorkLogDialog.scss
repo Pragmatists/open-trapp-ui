@@ -1,0 +1,11 @@
+.edit-work-log {
+  &__content {
+    display: flex;
+    flex-direction: column;
+
+    .text-field {
+      margin: 8px 0;
+      width: 20em;
+    }
+  }
+}

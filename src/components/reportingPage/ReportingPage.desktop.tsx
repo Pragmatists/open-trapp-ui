@@ -4,12 +4,12 @@ import { OpenTrappState } from '../../redux/root.reducer';
 import { Grid } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import { changeMonth, loadMonth } from '../../redux/calendar.actions';
-import { loadWorkLogs, removeWorkLog } from '../../redux/workLog.actions';
+import { loadWorkLogs, removeWorkLog, updateWorkLog } from '../../redux/workLog.actions';
 import './ReportingPage.desktop.scss';
 import { MonthSelector } from './monthSelector/MonthSelector';
 import { WorkLogSelector } from './workLogSelector/WorkLogSelector';
 import { changeEmployees, changeReportType, changeTags } from '../../redux/reporting.actions';
-import { ReportingWorkLog } from './reporting.model';
+import { EditedWorkLog, ReportingWorkLog } from './reporting.model';
 import { chain, includes, intersection, isEmpty } from 'lodash';
 import { DayDTO, ReportingWorkLogDTO } from '../../api/dtos';
 import Paper from '@material-ui/core/Paper';
@@ -43,6 +43,7 @@ interface ReportingPageEventProps {
   onEmployeesChange: (values: string[]) => void;
   onReportTypeChange: (type: ReportType) => void;
   onRemoveWorkLog: (id: string) => void;
+  onEditWorkLog: (workLog: EditedWorkLog) => void;
 }
 
 type ReportingPageProps = ReportingPageDataProps & ReportingPageEventProps;
@@ -57,7 +58,7 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
   render() {
     const {
       selection, username, workLogs, days, reportType,
-      onMonthChange, onTagsChange, onEmployeesChange, onReportTypeChange, onRemoveWorkLog
+      onMonthChange, onTagsChange, onEmployeesChange, onReportTypeChange, onRemoveWorkLog, onEditWorkLog
     } = this.props;
     return (
         <div className='reporting-page'>
@@ -105,6 +106,7 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
                 }
                 {reportType === ReportType.TABLE && <TableReport workLogs={this.filteredWorkLogs}
                                                                  onRemoveWorkLog={onRemoveWorkLog}
+                                                                 onEditWorkLog={onEditWorkLog}
                                                                  username={username}/>
                 }
               </Paper>
@@ -193,6 +195,9 @@ function mapDispatchToProps(dispatch): ReportingPageEventProps {
     },
     onRemoveWorkLog(id: string) {
       dispatch(removeWorkLog(id));
+    },
+    onEditWorkLog(workLog: EditedWorkLog) {
+      dispatch(updateWorkLog(workLog.id, workLog.projectNames, workLog.workload));
     }
   };
 }

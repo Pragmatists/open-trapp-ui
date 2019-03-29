@@ -15,3 +15,9 @@ export class ReportingWorkLog {
     this.workload = workLog.workload;
   }
 }
+
+export interface EditedWorkLog {
+  id: string;
+  workload: string;
+  projectNames: string[];
+}

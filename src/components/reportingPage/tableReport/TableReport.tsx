@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ReportingWorkLog } from '../reporting.model';
+import { EditedWorkLog, ReportingWorkLog } from '../reporting.model';
 import { Table } from '@material-ui/core';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
@@ -11,20 +11,31 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import './TableReport.scss';
 import Button from '@material-ui/core/Button';
+import { EditWorkLogDialog } from '../editWorkLogDialog/EditWorkLogDialog';
 
 interface TableReportProps {
   workLogs: ReportingWorkLog[];
   onRemoveWorkLog: (id: string) => void;
+  onEditWorkLog: (workLog: EditedWorkLog) => void;
   username: string;
 }
 
-export class TableReport extends Component<TableReportProps, {}> {
+interface TableReportState {
+  editedWorkLog?: ReportingWorkLog;
+}
+
+export class TableReport extends Component<TableReportProps, TableReportState> {
+  state = {
+    editedWorkLog: undefined
+  };
+
   render() {
     const {workLogs} = this.props;
     const workLogsByDay = groupBy(workLogs, w => w.day);
     const days = keys(workLogsByDay);
     return (
         <div className='table-report'>
+          <EditWorkLogDialog workLog={this.state.editedWorkLog} onClose={this.onEditFinished} open={this.state.editedWorkLog !== undefined} />
           <Table className='table-report__table table'>
             <TableHead>
               <TableRow>
@@ -69,7 +80,7 @@ export class TableReport extends Component<TableReportProps, {}> {
           <TableCell data-workload-cell>{formatWorkload(workLog.workload)}</TableCell>
           <TableCell data-tags-cell>{workLog.projectNames.join(', ')}</TableCell>
           <TableCell padding='checkbox'>
-            {username === workLog.employee && <Button data-edit-button>
+            {username === workLog.employee && <Button onClick={() => this.onEditWorkLog(workLog)} data-edit-button>
               <EditIcon/>
             </Button>}
           </TableCell>
@@ -80,5 +91,21 @@ export class TableReport extends Component<TableReportProps, {}> {
           </TableCell>
         </TableRow>
     ));
+  }
+
+  private onEditWorkLog(workLog: ReportingWorkLog) {
+    this.setState({
+      editedWorkLog: workLog
+    });
+  };
+
+  private onEditFinished = (workLog?: EditedWorkLog) => {
+    const {onEditWorkLog} = this.props;
+    this.setState({
+      editedWorkLog: undefined
+    });
+    if (workLog) {
+      onEditWorkLog(workLog);
+    }
   }
 }

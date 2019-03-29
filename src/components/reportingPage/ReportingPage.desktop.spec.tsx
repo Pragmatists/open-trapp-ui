@@ -7,11 +7,13 @@ import { mount, ReactWrapper } from 'enzyme';
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { ReportingPageDesktop } from './ReportingPage.desktop';
-import { Chip, TableRow } from '@material-ui/core';
+import { Button, Chip, TableRow } from '@material-ui/core';
 import { initialState as reportingInitialState } from '../../redux/reporting.reducer';
 import { MonthlyReport } from '../monthlyReport/MonthlyReport';
 import { TableReport } from './tableReport/TableReport';
 import TableBody from '@material-ui/core/TableBody';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
 
 const days = [
   {id: '2019/02/01', weekend: false, holiday: false},
@@ -37,6 +39,14 @@ const workLogResponse = [
   {id: 'th2', employee: 'tom.kowalsky', projectNames: ['internal', 'self-dev'], workload: 480, day: '2019/03/03'}
 ];
 
+const updatedResponse = {
+  id: 'jd2',
+  employee: 'john.doe',
+  projectNames: ['projects', 'jld'],
+  workload: 300,
+  day: '2019/03/02'
+};
+
 describe('Reporting Page - desktop', () => {
   let httpMock: MockAdapter;
   let store: Store;
@@ -49,7 +59,9 @@ describe('Reporting Page - desktop', () => {
         .onGet(/\/api\/v1\/calendar\/2019\/\d\/work-log\/entries$/)
         .reply(200, workLogResponse)
         .onDelete(/\/api\/v1\/work-log\/entries\/.*$/)
-        .reply(204);
+        .reply(204)
+        .onPut('/api/v1/work-log/entries/jd2')
+        .reply(200, updatedResponse);
 
     store = setupStore({
       authentication: {
@@ -215,7 +227,7 @@ describe('Reporting Page - desktop', () => {
     });
   });
 
-  describe('reporting', () => {
+  describe('reporting - calendar', () => {
     it('calendar view is selected by default', async () => {
       const wrapper = mount(
           <Provider store={store}>
@@ -228,7 +240,9 @@ describe('Reporting Page - desktop', () => {
       expect(wrapper.find(MonthlyReport)).toHaveLength(1);
       expect(wrapper.find(TableReport)).toHaveLength(0);
     });
+  });
 
+  describe('reporting - table', () => {
     it('shows table view after tab click', async () => {
       const wrapper = mount(
           <Provider store={store}>
@@ -244,7 +258,7 @@ describe('Reporting Page - desktop', () => {
       expect(wrapper.find(MonthlyReport)).toHaveLength(0);
     });
 
-    it('removes work log no remove button click', async () => {
+    it('removes work log on remove button click', async () => {
       const wrapper = mount(
           <Provider store={store}>
             <ReportingPageDesktop />
@@ -260,6 +274,29 @@ describe('Reporting Page - desktop', () => {
 
       expect(httpMock.history.delete).toHaveLength(1);
       expect(tableRows(wrapper)).toHaveLength(1);
+    });
+
+    it('edits work log', async () => {
+      const wrapper = mount(
+          <Provider store={store}>
+            <ReportingPageDesktop />
+          </Provider>
+      );
+      await flushAllPromises();
+      wrapper.update();
+      tableTab(wrapper).simulate('click');
+
+      editWorkLogButton(wrapper, 0).simulate('click');
+      typeExpression(wrapper, '[data-edit-work-log-workload]', '5h');
+      typeExpression(wrapper, '[data-edit-work-log-project]', ' projects,jld ');
+      updateButton(wrapper).simulate('click');
+      await flushAllPromises();
+      wrapper.update();
+
+      expect(httpMock.history.put).toHaveLength(1);
+      expect(tableRows(wrapper)).toHaveLength(2);
+      expect(tableRow(wrapper, 0).find('[data-workload-cell]').at(0).text()).toEqual('5h');
+      expect(tableRow(wrapper, 0).find('[data-tags-cell]').at(0).text()).toEqual('projects, jld');
     });
 
     function tableTab(wrapper) {
@@ -279,6 +316,27 @@ describe('Reporting Page - desktop', () => {
 
     function removeWorkLogButton(wrapper, rowIdx: number) {
       return tableRow(wrapper, rowIdx).find('[data-remove-button]').at(0);
+    }
+
+    function editWorkLogButton(wrapper, rowIdx: number) {
+      return tableRow(wrapper, rowIdx).find('[data-edit-button]').at(0);
+    }
+
+    function dialogInput(wrapper, selector: string) {
+      return wrapper.find(Dialog)
+          .find(TextField).filter(selector)
+          .find('input');
+    }
+
+    function updateButton(wrapper) {
+      return wrapper.find(Dialog)
+          .find(Button).filter('[data-update-button]')
+          .at(0);
+    }
+
+    function typeExpression(wrapper, selector: string, expression: string) {
+      const input = dialogInput(wrapper, selector);
+      input.simulate('change', {target: {value: expression}})
     }
   });
 
