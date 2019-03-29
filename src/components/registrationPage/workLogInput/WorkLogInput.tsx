@@ -13,6 +13,7 @@ import { TagsSuggestionFactory } from './TagsSuggestionFactory';
 import { DatesSuggestionFactory } from './DatesSuggestionFactory';
 import { ConfirmNewTagsDialog } from '../confirmNewTagsDialog/ConfirmNewTagsDialog';
 import { ParsedWorkLog } from '../../../workLogExpressionParser/ParsedWorkLog';
+import { ValidationStatus } from './ValidationStatus';
 
 interface WorkLogInputProps {
   workLog: ParsedWorkLog;
@@ -48,7 +49,7 @@ export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState
                 placeholder: '1d #my-project',
                 value: workLog.expression,
                 onChange: this.handleInputChange,
-                onKeyPress: this.handleSubmit
+                onKeyPress: this.handleSubmit,
               }}
               onSuggestionsFetchRequested={this.handleSuggestionsFetchRequested}
               onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
@@ -62,7 +63,8 @@ export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState
                   </Paper>
               )}
           />
-          <IconButton className='work-log-input__help' aria-label='Help' onClick={this.handleOpenHelp}>
+          <ValidationStatus workLog={workLog}/>
+          <IconButton aria-label='Help' onClick={this.handleOpenHelp}>
             <HelpIcon color='secondary'/>
           </IconButton>
           <WorkLogHelpDialog open={this.state.helpOpen} onClose={this.handleCloseHelp}/>

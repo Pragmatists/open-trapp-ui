@@ -8,6 +8,9 @@ export const theme = createMuiTheme({
         secondary: {
             main: '#2d6ca2',
         },
+        error: {
+            main: '#c7254e'
+        },
     },
     typography: {
         useNextVariants: true,

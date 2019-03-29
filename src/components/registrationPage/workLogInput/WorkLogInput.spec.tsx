@@ -9,6 +9,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 import { ConfirmNewTagsDialog } from '../confirmNewTagsDialog/ConfirmNewTagsDialog';
+import { ValidationStatus } from './ValidationStatus';
 
 const tags = ['projects', 'nvm', 'vacation'];
 
@@ -218,6 +219,38 @@ describe('WorkLogInput', () => {
     function cancelButton(wrapper) {
       return wrapper.find(DialogActions).at(0).find(Button).filter('[data-cancel-button]').at(0);
     }
+  });
+
+  describe('validation', () => {
+    it('does not show icon for empty input', () => {
+      const initialWorkLog = ParsedWorkLog.empty();
+      const wrapper = mount(
+          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={noop}/>
+      );
+
+      expect(wrapper.find('[data-error-indicator]')).toHaveLength(0);
+      expect(wrapper.find('[data-ok-indicator]')).toHaveLength(0);
+    });
+
+    it('shows success icon for valid expression', () => {
+      const initialWorkLog = new ParsedWorkLog('1h #new-tag @2019/03/01', ['2019/03/01'], ['new-tag'], '1h');
+      const wrapper = mount(
+          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={noop}/>
+      );
+
+      expect(wrapper.find('[data-error-indicator]')).toHaveLength(0);
+      expect(wrapper.find('[data-ok-indicator]').length).toBeGreaterThan(0);
+    });
+
+    it('shows error icon for invalid expression', () => {
+      const initialWorkLog = new ParsedWorkLog('1hasd', [], [], '');
+      const wrapper = mount(
+          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={noop}/>
+      );
+
+      expect(wrapper.find('[data-error-indicator]').length).toBeGreaterThan(0);
+      expect(wrapper.find('[data-ok-indicator]')).toHaveLength(0);
+    });
   });
 
   function type(wrapper, expression: string) {
