@@ -13,6 +13,7 @@ import { RegistrationPageMobile } from './components/registrationPage/Registrati
 import { SettingsPageMobile } from './components/settingsPage/SettingsPage.mobile';
 import { ReportingPageDesktop } from './components/reportingPage/ReportingPage.desktop';
 import { LeftMenu } from './components/leftMenu/LeftMenu';
+import { redirectIfNeeded } from './components/redirectIfNeeded';
 
 interface AppRoutingProps {
   width: Breakpoint;
@@ -24,14 +25,14 @@ const AppRoutingComponent = ({width}: AppRoutingProps) => (
       <LeftMenu/>
       {isWidthUp('md', width) ?
           <Switch>
-            <Route path='/' exact component={LandingPage}/>
+            <Route path='/' exact component={redirectIfNeeded(LandingPage)}/>
             <PrivateRoute path='/registration' component={RegistrationPageDesktop}/>
             <PrivateRoute path='/settings' component={SettingsPageDesktop}/>
             <PrivateRoute path='/reporting' component={ReportingPageDesktop}/>
             <Route component={NotFoundPage}/>
           </Switch> :
           <Switch>
-            <Route path='/' exact component={LandingPage}/>
+            <Route path='/' exact component={redirectIfNeeded(LandingPage)}/>
             <PrivateRoute path='/registration' component={RegistrationPageMobile}/>
             <PrivateRoute path='/settings' component={SettingsPageMobile}/>
             <Route component={NotFoundPage}/>
