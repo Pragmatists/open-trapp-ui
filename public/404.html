@@ -9,8 +9,10 @@
 <body>
 <script>
   (function redirect() {
+    var basePath = 'open-trapp-ui';
     if (document && document.location) {
-      document.location.replace(`/?redirect=${encodeURIComponent(document.location.pathname)}`);
+      var pathname = document.location.pathname.replace(`${basePath}/`, '');
+      document.location.replace(`/${basePath}?redirect=${encodeURIComponent(pathname)}`);
     }
   }());
 </script>
