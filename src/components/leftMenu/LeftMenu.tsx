@@ -81,8 +81,9 @@ class LeftMenuComponent extends Component<LeftMenuProps, {}> {
   }
 
   private handleListItemClick(path: string) {
-    const {history} = this.props;
+    const {history, onHideMenu} = this.props;
     history.push(path);
+    onHideMenu();
   }
 }
 
