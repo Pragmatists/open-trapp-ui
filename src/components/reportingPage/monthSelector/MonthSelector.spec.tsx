@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { mount } from 'enzyme';
-import moment from 'moment';
 import { noop } from 'lodash';
 import { MonthSelector } from './MonthSelector';
 import { Chip } from '@material-ui/core';
@@ -22,8 +21,7 @@ describe('Month Selector', () => {
   });
 
   it('allows to display only one month after current', () => {
-    const current = moment();
-    const currentMonth = new Month(current.year(), current.month() + 1);
+    const currentMonth = Month.current;
     const nextMonth = currentMonth.next;
     const wrapper = mount(
         <MonthSelector selectedMonth={{year: nextMonth.year, month: nextMonth.month}} onMonthChange={noop}/>

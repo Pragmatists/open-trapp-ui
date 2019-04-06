@@ -14,6 +14,7 @@ import { TableReport } from './tableReport/TableReport';
 import TableBody from '@material-ui/core/TableBody';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
+import { Month } from '../../utils/Month';
 
 const days = [
   {id: '2019/02/01', weekend: false, holiday: false},
@@ -52,6 +53,7 @@ describe('Reporting Page - desktop', () => {
   let store: Store;
 
   beforeEach(() => {
+    jest.spyOn(Month, 'current', 'get').mockReturnValue(new Month(2019, 3));
     httpMock = new MockAdapter(OpenTrappRestAPI.axios);
     httpMock
         .onGet(/\/api\/v1\/calendar\/2019\/\d$/)
