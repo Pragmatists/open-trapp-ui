@@ -5,6 +5,7 @@ import { OpenTrappRestAPI } from '../api/OpenTrappAPI';
 import { OpenTrappState } from './root.reducer';
 import { workLogLoadedAction } from './workLog.actions';
 import { Preset } from '../components/registrationPage/registration.model';
+import { LocalStorage } from '../utils/LocalStorage';
 
 export function changeWorkLog(workLog: ParsedWorkLog) {
   return (dispatch: Dispatch) => dispatch(workLogChangedAction(workLog));
@@ -24,11 +25,21 @@ export function saveWorkLog(workLog: ParsedWorkLog) {
 }
 
 export function createPreset(preset: Preset) {
-  return (dispatch: Dispatch) => dispatch(presetCreatedAction(preset));
+  return (dispatch: Dispatch, getState: () => OpenTrappState) => {
+    const state = getState();
+    const presets = state.registration.presets;
+    LocalStorage.presets = [preset, ...presets];
+    return dispatch(presetCreatedAction(preset));
+  };
 }
 
 export function removePreset(preset: Preset) {
-  return (dispatch: Dispatch) => dispatch(presetRemovedAction(preset));
+  return (dispatch: Dispatch, getState: () => OpenTrappState) => {
+    const state = getState();
+    const presets = state.registration.presets;
+    LocalStorage.presets = presets.filter(p => p.id !== preset.id);
+    return dispatch(presetRemovedAction(preset));
+  };
 }
 
 const workLogChangedAction = (workLog: ParsedWorkLog) => ({

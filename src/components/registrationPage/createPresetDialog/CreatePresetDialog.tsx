@@ -61,7 +61,10 @@ export class CreatePresetDialog extends Component<CreatePresetDialogProps, Creat
   }
 
   private onSaveClick = () => {
-    this.props.onClose(new Preset(this.state.selected))
+    this.props.onClose(new Preset(this.state.selected));
+    this.setState({
+      selected: []
+    });
   };
 
   private handleToggle(tag: string) {

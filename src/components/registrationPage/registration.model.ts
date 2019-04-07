@@ -2,9 +2,14 @@ import {v4 as uuid} from 'uuid';
 
 
 export class Preset {
-  readonly id: string;
 
-  constructor(readonly tags: string[]) {
-    this.id = uuid();
+  constructor(readonly tags: string[], readonly id: string = uuid()) {
+  }
+
+  serialize() {
+    return {
+      id: this.id,
+      tags: this.tags
+    }
   }
 }

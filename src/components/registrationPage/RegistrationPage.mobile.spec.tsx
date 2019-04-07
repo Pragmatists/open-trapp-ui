@@ -15,6 +15,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
+import { LocalStorage } from '../../utils/LocalStorage';
 
 const workLogResponse = [
   {employee: 'john.doe', day: '2019/02/01', workload: 480, projectNames: ['projects', 'nvm']},
@@ -52,6 +53,10 @@ describe('Registration Page - mobile', () => {
       },
       registration: registrationInitialState()
     });
+  });
+
+  afterEach(() => {
+    localStorage.removeItem(LocalStorage.PRESETS_KEY);
   });
 
   describe('day selector', () => {
@@ -114,6 +119,7 @@ describe('Registration Page - mobile', () => {
 
       expect(presets(wrapper)).toHaveLength(1);
       expect(presets(wrapper).at(0).text()).toEqual('projects, nvm');
+      expect(LocalStorage.presets.map(p => p.tags)).toEqual([['projects', 'nvm']]);
     });
 
     it('deletes preset', async () => {
@@ -130,6 +136,7 @@ describe('Registration Page - mobile', () => {
       deletePresetIcon(wrapper, 0).simulate('click');
 
       expect(presets(wrapper)).toHaveLength(0);
+      expect(LocalStorage.presets).toHaveLength(0);
     });
   });
 

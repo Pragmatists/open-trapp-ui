@@ -1,5 +1,6 @@
 import { REGISTRATION_CONSTANTS } from './constants';
 import { Preset } from '../components/registrationPage/registration.model';
+import { LocalStorage } from '../utils/LocalStorage';
 
 export interface RegistrationState {
   workLog: {
@@ -20,7 +21,7 @@ export const initialState: () => RegistrationState = () => ({
     workload: '',
     valid: false
   },
-  presets: []
+  presets: LocalStorage.presets
 });
 
 export function registration(state: RegistrationState = initialState(), action): RegistrationState {
