@@ -6,10 +6,10 @@ import { Store } from 'redux';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { setupStore } from '../../utils/testUtils';
-import { Header, HeaderComponent } from './Header';
+import { HeaderMobile, HeaderComponent } from './Header.mobile';
 import { UserDetails } from '../userDetails/UserDetails';
 
-describe('Header', () => {
+describe('Header - mobile', () => {
   let store: Store;
 
   it('renders Google login if user is not logged in', () => {
@@ -49,7 +49,7 @@ describe('Header', () => {
     const wrapper = mount(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/']}>
-            <Header/>
+            <HeaderMobile/>
           </MemoryRouter>
         </Provider>
     );

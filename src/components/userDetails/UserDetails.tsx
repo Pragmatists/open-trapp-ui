@@ -7,6 +7,7 @@ import './UserDetails.scss';
 interface UserDetailsProps {
   username: string;
   profilePicture: string;
+  avatarOnly?: boolean;
   onLogout: () => void;
 }
 
@@ -22,13 +23,13 @@ export class UserDetails extends Component<UserDetailsProps, UserDetailsState> {
   render() {
     const {anchorEl} = this.state;
     const open = Boolean(anchorEl);
-    const {username, profilePicture, onLogout} = this.props;
+    const {username, profilePicture, avatarOnly, onLogout} = this.props;
     return (
         <div className='user-details'>
           <div onClick={this.handleMenu} className='user-details__user user'>
             <Avatar alt={username}
                     src={profilePicture}/>
-            <div className='user__name'>{username}</div>
+            {!avatarOnly && <div className='user__name'>{username}</div>}
           </div>
           <Menu id='menu-appbar'
                 anchorEl={anchorEl}

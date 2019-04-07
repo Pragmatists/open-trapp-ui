@@ -88,15 +88,15 @@ function workLogsForUser(name: string, workLogs?: ReportingWorkLogDTO[]): { [p: 
 
 function mapStateToProps(state: OpenTrappState): RegistrationPageDataProps {
   const {selectedMonth, days} = state.calendar;
-  const {expression, workload} = state.registration;
   const {name} = state.authentication.user || {} as AuthorizedUser;
   const {workLogs, tags} = state.workLog;
+  const workLog = state.registration.workLog;
   const userWorkLogs = workLogsForUser(name, workLogs);
   return {
     selectedMonth,
     days,
     workLogs: userWorkLogs,
-    workLog: new ParsedWorkLog(expression, state.registration.days, state.registration.tags, workload),
+    workLog: new ParsedWorkLog(workLog.expression, workLog.days, workLog.tags, workLog.workload),
     tags
   };
 }

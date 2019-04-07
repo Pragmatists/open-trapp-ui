@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import GoogleLogin, { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { logout, login } from '../../redux/authentication.actions';
-import './Header.scss'
+import './Header.desktop.scss'
 import { UserDetails } from '../userDetails/UserDetails';
 import { withRouter } from 'react-router';
 import IconButton from '@material-ui/core/IconButton';
@@ -107,7 +107,7 @@ function mapDispatchToProps(dispatch: any): HeaderEventProps {
   };
 }
 
-export const Header = withRouter(connect(
+export const HeaderDesktop = withRouter(connect(
     mapStateToProps,
     mapDispatchToProps
 )(HeaderComponent) as any);

@@ -1,0 +1,30 @@
+.presets-selector {
+  &__list {
+    margin-top: 1em;
+    display: flex;
+    flex-direction: column;
+  }
+
+  div.chip {
+    margin: 0.5em 0;
+    height: auto;
+    padding: 0.7rem 0;
+    font-size: 1rem;
+    border-radius: 1.2rem;
+
+    span {
+      flex-grow: 1;
+      justify-content: center;
+    }
+
+    svg {
+      margin-right: 0.5em;
+    }
+  }
+
+  button.add-button {
+    position: absolute;
+    bottom: 1em;
+    right: 1em;
+  }
+}
