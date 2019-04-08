@@ -1,19 +1,16 @@
 import React, { Component } from 'react';
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import { Grid } from "@material-ui/core";
 import MenuIcon from '@material-ui/icons/Menu';
 import { connect } from 'react-redux';
 import GoogleLogin, { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { logout, login } from '../../redux/authentication.actions';
-import './Header.mobile.scss'
 import { UserDetails } from '../userDetails/UserDetails';
 import { withRouter } from 'react-router';
 import IconButton from '@material-ui/core/IconButton';
-import Hidden from '@material-ui/core/Hidden';
 import { toggleMenuVisibility } from '../../redux/leftMenu.actions';
+import './Header.mobile.scss'
 
 interface HeaderDataProps {
   isLoggedIn: boolean;
@@ -32,27 +29,19 @@ type HeaderProps = HeaderDataProps & HeaderEventProps;
 
 export class HeaderComponent extends Component<HeaderProps, {}> {
   render() {
-    const {isLoggedIn, history, onMenuButtonClick} = this.props;
+    const {isLoggedIn, onMenuButtonClick} = this.props;
     return (
-        <div className='header'>
-          <AppBar position='static'>
-            <Grid container justify='center'>
-              <Grid item xs={1} className='header__hamburger-container'>
-                <IconButton color='inherit' aria-label='Menu' onClick={onMenuButtonClick} data-left-menu-button>
-                  <MenuIcon fontSize='large'/>
-                </IconButton>
-              </Grid>
-              <Grid item xs={11}>
-                <Toolbar>
-                  <Typography variant='h5' color='inherit' className='header__text' onClick={() => history.push('/')}>
-                    Open<span>Trapp</span>
-                  </Typography>
-                  {isLoggedIn ? this.renderAuthorized() : this.renderUnauthorized()}
-                </Toolbar>
-              </Grid>
-            </Grid>
+          <AppBar position='static' className='header-mobile'>
+              <IconButton color='inherit' aria-label='Menu' onClick={onMenuButtonClick} data-left-menu-button >
+                <MenuIcon fontSize='large'/>
+              </IconButton>
+              <Typography variant='h5' color='inherit' className='header-mobile__text' onClick={this.handleHeaderClicked}>
+                Open<span>Trapp</span>
+              </Typography>
+            <div className='header-mobile__icon'>
+              {isLoggedIn ? this.renderAuthorized() : this.renderUnauthorized()}
+            </div>
           </AppBar>
-        </div>
     );
   }
 
@@ -84,6 +73,11 @@ export class HeaderComponent extends Component<HeaderProps, {}> {
 
   private handleErrorLogin = (response: any) => {
     console.log('handleErrorLogin', response);
+  };
+
+  private handleHeaderClicked = () => {
+    const {history} = this.props;
+    history.push('/registration');
   };
 }
 

@@ -1,4 +1,4 @@
-.header {
+.header-desktop {
   display: flex;
 
   &__hamburger-container {
@@ -8,10 +8,17 @@
 
   &__text {
     flex-grow: 1;
+    text-align: left;
 
     & > span {
       font-weight: 500;
     }
+  }
+
+  &__logo {
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-right: 16px;
   }
 
   &__icon {

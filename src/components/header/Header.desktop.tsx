@@ -15,6 +15,7 @@ import { withRouter } from 'react-router';
 import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
 import { toggleMenuVisibility } from '../../redux/leftMenu.actions';
+import openTrappIcon from '../../icons/openTrapp.svg';
 
 interface HeaderDataProps {
   isLoggedIn: boolean;
@@ -33,20 +34,20 @@ type HeaderProps = HeaderDataProps & HeaderEventProps;
 
 export class HeaderComponent extends Component<HeaderProps, {}> {
   render() {
-    const {isLoggedIn, history, onMenuButtonClick} = this.props;
+    const {isLoggedIn, onMenuButtonClick} = this.props;
     return (
-        <div className='header'>
+        <div className='header-desktop'>
           <AppBar position='static'>
             <Grid container justify='center'>
-              <Grid item xs={1} className='header__hamburger-container'>
+              <Grid item xs={1} className='header-desktop__hamburger-container'>
                 <IconButton color='inherit' aria-label='Menu' onClick={onMenuButtonClick} data-left-menu-button>
                   <MenuIcon fontSize='large'/>
                 </IconButton>
               </Grid>
               <Grid item xs={11} lg={10}>
                 <Toolbar>
-                  <ScheduleIcon className='header__icon' onClick={() => history.push('/')}/>
-                  <Typography variant='h5' color='inherit' className='header__text'>
+                  <img src={openTrappIcon} className='header-desktop__logo' onClick={this.handleHeaderClicked} />
+                  <Typography variant='h5' color='inherit' className='header-desktop__text' onClick={this.handleHeaderClicked}>
                     Open<span>Trapp</span>
                   </Typography>
                   {isLoggedIn ? this.renderAuthorized() : this.renderUnauthorized()}
@@ -87,6 +88,11 @@ export class HeaderComponent extends Component<HeaderProps, {}> {
 
   private handleErrorLogin = (response: any) => {
     console.log('handleErrorLogin', response);
+  };
+
+  private handleHeaderClicked = () => {
+    const {history} = this.props;
+    history.push('/registration');
   };
 }
 
