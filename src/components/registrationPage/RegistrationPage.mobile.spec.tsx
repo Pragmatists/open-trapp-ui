@@ -43,7 +43,9 @@ describe('Registration Page - mobile', () => {
         .onGet(/\/api\/v1\/calendar\/2019\/\d\/work-log\/entries$/)
         .reply(200, workLogResponse)
         .onGet('/api/v1/projects')
-        .reply(200, tagsResponse);
+        .reply(200, tagsResponse)
+        .onPost('/api/v1/employee/john.doe/work-log/entries')
+        .reply(201, {id: '123-456'});
     store = setupStore({
       authentication: {
         loggedIn: true,
@@ -140,6 +142,29 @@ describe('Registration Page - mobile', () => {
     });
   });
 
+  it('registers work log', async () => {
+    const wrapper = mount(
+        <Provider store={store}>
+          <RegistrationPageMobile/>
+        </Provider>
+    );
+    await flushAllPromises();
+    addPresetButton(wrapper).simulate('click');
+    tag(wrapper, 'nvm').simulate('click');
+    savePresetButton(wrapper).simulate('click');
+
+    preset(wrapper, 0).simulate('click');
+    saveWorkLogButton(wrapper).simulate('click');
+    await flushAllPromises();
+
+    expect(httpMock.history.post.length).toEqual(1);
+    expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
+      projectNames: ['nvm'],
+      workload: '8h',
+      day: moment().format('YYYY/MM/DD')
+    });
+  });
+
   function date(wrapper): string {
     return wrapper.find('[data-selector-date]').text();
   }
@@ -161,14 +186,22 @@ describe('Registration Page - mobile', () => {
   }
 
   function savePresetButton(wrapper) {
-    return wrapper.find(DialogActions).find(Button).filter('[data-save-button]');
+    return wrapper.find('[data-crate-preset-dialog]').find(DialogActions).find(Button).filter('[data-save-button]');
   }
 
   function presets(wrapper) {
     return wrapper.find('[data-presets-selector-list]').find(Chip).filter('[data-preset]')
   }
 
+  function preset(wrapper, chipIdx: number) {
+    return presets(wrapper).at(chipIdx);
+  }
+
   function deletePresetIcon(wrapper, chipIdx: number) {
-    return presets(wrapper).at(chipIdx).find('svg');
+    return preset(wrapper, chipIdx).find('svg');
+  }
+
+  function saveWorkLogButton(wrapper) {
+    return wrapper.find('[data-workload-dialog]').find(DialogActions).find(Button).filter('[data-save-button]');
   }
 });

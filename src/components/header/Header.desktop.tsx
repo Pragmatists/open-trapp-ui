@@ -37,7 +37,7 @@ export class HeaderComponent extends Component<HeaderProps, {}> {
     const {isLoggedIn, onMenuButtonClick} = this.props;
     return (
         <div className='header-desktop'>
-          <AppBar position='static'>
+          <AppBar position='static' color='secondary'>
             <Grid container justify='center'>
               <Grid item xs={1} className='header-desktop__hamburger-container'>
                 <IconButton color='inherit' aria-label='Menu' onClick={onMenuButtonClick} data-left-menu-button>

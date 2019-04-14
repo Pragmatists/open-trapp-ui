@@ -52,7 +52,7 @@ export const WorkLogHelpDialog = ({open, onClose}: WorkLogHelpDialogProps) => (
         </div>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color='secondary'>
+        <Button onClick={onClose} color='primary'>
           Close
         </Button>
       </DialogActions>

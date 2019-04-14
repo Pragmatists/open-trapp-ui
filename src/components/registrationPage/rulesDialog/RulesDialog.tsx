@@ -21,7 +21,7 @@ export class RulesDialog extends Component<{}, RulesDialogState> {
     return (
         <span>
           <IconButton className='work-log-input__help' aria-label='Help' onClick={this.onOpen}>
-            <HelpIcon color='secondary'/>
+            <HelpIcon color='primary'/>
           </IconButton>
           <Dialog open={this.state.open} className='rules-dialog'>
             <DialogTitle>Zasady</DialogTitle>
@@ -68,7 +68,7 @@ export class RulesDialog extends Component<{}, RulesDialogState> {
               </div>
             </DialogContent>
             <DialogActions>
-              <Button onClick={this.onClose} color='secondary'>
+              <Button onClick={this.onClose} color='primary'>
                 Close
               </Button>
             </DialogActions>

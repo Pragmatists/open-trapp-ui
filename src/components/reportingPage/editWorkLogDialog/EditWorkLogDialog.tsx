@@ -67,7 +67,7 @@ export class EditWorkLogDialog extends Component<EditWorkLogDialogProps, EditWor
             <Button onClick={() => onClose()} data-cancel-button>
               Cancel
             </Button>
-            <Button onClick={this.onUpdateClick} color='secondary' autoFocus data-update-button>
+            <Button onClick={this.onUpdateClick} color='primary' autoFocus data-update-button>
               Update
             </Button>
           </DialogActions>

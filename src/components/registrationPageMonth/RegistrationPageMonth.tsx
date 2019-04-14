@@ -38,11 +38,11 @@ export class RegistrationPageMonth extends Component<RegistrationPageMonthProps,
             <MonthlyReport days={days} workLogs={workLogs} selectedDays={selectedDays} onSelect={onDaysSelected}/>
           </Paper>
           <div className='registration-page-month__navigate-section'>
-            <Button variant="contained" color="secondary" onClick={this.onPrevious} data-prev-month-button>
+            <Button variant='contained' color='primary' onClick={this.onPrevious} data-prev-month-button>
               <NavigateBeforeIcon/>
               Previous
             </Button>
-            <Button variant="contained" color="secondary" onClick={this.onNext} data-next-month-button>
+            <Button variant='contained' color='primary' onClick={this.onNext} data-next-month-button>
               Next
               <NavigateNextIcon/>
             </Button>

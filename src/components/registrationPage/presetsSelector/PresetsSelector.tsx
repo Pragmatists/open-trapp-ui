@@ -32,7 +32,7 @@ export class PresetsSelector extends Component<PresetsSelectorProps, PresetsSele
           <CreatePresetDialog onClose={this.onCloseDialog} open={dialogOpen} tags={tags} />
           {isEmpty(presets) ? this.renderPlaceholder() : this.renderPresets()}
           <Fab onClick={this.onCreatePreset}
-               color='secondary'
+               color='primary'
                className='presets-selector__add-button add-button'
                data-create-preset-button>
             <AddIcon/>

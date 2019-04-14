@@ -12,4 +12,8 @@ export class Preset {
       tags: this.tags
     }
   }
+
+  toString() {
+    return this.tags.map(t => `#${t}`).join(', ');
+  }
 }

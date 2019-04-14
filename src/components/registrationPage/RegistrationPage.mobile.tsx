@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEmpty } from 'lodash';
+import { isEmpty, isNil } from 'lodash';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { loadTags, loadWorkLogs } from '../../redux/workLog.actions';
 import { DaySelector } from './daySelector/DaySelector';
 import { ParsedWorkLog } from '../../workLogExpressionParser/ParsedWorkLog';
 import moment from 'moment';
-import { changeWorkLog, createPreset, removePreset } from '../../redux/registration.actions';
+import { changeWorkLog, createPreset, removePreset, saveWorkLog } from '../../redux/registration.actions';
 import { PresetsSelector } from './presetsSelector/PresetsSelector';
 import { Preset } from './registration.model';
+import { WorkloadDialog } from './workloadDialog/WorkloadDialog';
 
 interface RegistrationPageDataProps {
   selectedMonth: { year: number, month: number };
@@ -22,11 +23,19 @@ interface RegistrationPageEventProps {
   onWorkLogChange: (workLog: ParsedWorkLog) => void;
   onRemovePreset: (preset: Preset) => void;
   onCreatePreset: (preset: Preset) => void;
+  onSaveWorkLog: (workLog: ParsedWorkLog) => void;
 }
 
 type RegistrationPageProps = RegistrationPageDataProps & RegistrationPageEventProps;
 
-class RegistrationPageMobileComponent extends Component<RegistrationPageProps, {}> {
+interface RegistrationPageMobileState {
+  selectedPreset?: Preset;
+}
+
+class RegistrationPageMobileComponent extends Component<RegistrationPageProps, RegistrationPageMobileState> {
+  state = {
+    selectedPreset: undefined as Preset
+  };
 
   componentDidMount(): void {
     const {selectedMonth, init} = this.props;
@@ -35,6 +44,7 @@ class RegistrationPageMobileComponent extends Component<RegistrationPageProps, {
 
   render() {
     const {presets, tags, onRemovePreset, onCreatePreset} = this.props;
+    const {selectedPreset} = this.state;
     return (
         <div className='registration-page'>
           <DaySelector selectedDay={this.selectedDay} onChange={this.handleDayChange}/>
@@ -42,7 +52,8 @@ class RegistrationPageMobileComponent extends Component<RegistrationPageProps, {
                            onClick={this.handlePresetClicked}
                            onCreate={onCreatePreset}
                            onRemove={onRemovePreset}
-                           tags={tags} />
+                           tags={tags}/>
+          <WorkloadDialog open={!isNil(selectedPreset)} onClose={this.handleWorkloadDialogClose} />
         </div>
     );
   }
@@ -58,9 +69,26 @@ class RegistrationPageMobileComponent extends Component<RegistrationPageProps, {
     onWorkLogChange(newWorkLog);
   };
 
-  private handlePresetClicked: (preset: Preset) => {
+  private handlePresetClicked = (preset: Preset) => this.setState({
+    selectedPreset: preset
+  });
 
-  };
+  private handleWorkloadDialogClose = (workload?: string) => {
+    const {onSaveWorkLog} = this.props;
+    const {selectedPreset} = this.state;
+    if (workload) {
+      const workLog = new ParsedWorkLog(
+          `${workload} ${selectedPreset.toString()} @${this.selectedDay}`,
+          [this.selectedDay],
+          selectedPreset.tags,
+          workload
+      );
+      onSaveWorkLog(workLog);
+    }
+    this.setState({
+      selectedPreset: undefined
+    });
+  }
 }
 
 function mapStateToProps(state: OpenTrappState): RegistrationPageDataProps {
@@ -89,6 +117,9 @@ function mapDispatchToProps(dispatch): RegistrationPageEventProps {
     },
     onRemovePreset(preset: Preset) {
       dispatch(removePreset(preset));
+    },
+    onSaveWorkLog(workLog: ParsedWorkLog) {
+      dispatch(saveWorkLog(workLog));
     }
   }
 }

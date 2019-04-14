@@ -31,7 +31,7 @@ export class CreatePresetDialog extends Component<CreatePresetDialogProps, Creat
     const {selected} = this.state;
     const sortedTags = sortBy(uniq(tags.map(trim)));
     return (
-        <Dialog open={open} onClose={() => onClose()} fullWidth={true}>
+        <Dialog open={open} onClose={() => onClose()} fullWidth={true} data-crate-preset-dialog>
           <DialogTitle>Create preset</DialogTitle>
           <DialogContent data-crate-preset-dialog-content>
             <List>
@@ -52,7 +52,7 @@ export class CreatePresetDialog extends Component<CreatePresetDialogProps, Creat
             <Button onClick={() => onClose()} data-cancel-button>
               Cancel
             </Button>
-            <Button onClick={this.onSaveClick} color='secondary' autoFocus data-save-button>
+            <Button onClick={this.onSaveClick} color='primary' autoFocus data-save-button>
               Save
             </Button>
           </DialogActions>

@@ -52,7 +52,7 @@ export class WorkLogSelector extends Component<WorkLogSelectorProps, {}> {
     return (
         <Chip key={idx}
               label={<ChipLabel label={label} workload={workload}/>}
-              color='secondary'
+              color='primary'
               className='chip'
               variant={isSelected ? 'default' : 'outlined'}
               onClick={() => this.onClick(label)}

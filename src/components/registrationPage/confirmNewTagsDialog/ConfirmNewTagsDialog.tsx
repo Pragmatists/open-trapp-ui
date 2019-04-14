@@ -28,7 +28,7 @@ export const ConfirmNewTagsDialog = ({open, newTags, onClose, workLog}: ConfirmN
         <Button onClick={() => onClose(workLog, false)} data-cancel-button>
           Cancel
         </Button>
-        <Button onClick={() => onClose(workLog, true)} color='secondary' autoFocus data-confirm-button>
+        <Button onClick={() => onClose(workLog, true)} color='primary' autoFocus data-confirm-button>
           Confirm
         </Button>
       </DialogActions>

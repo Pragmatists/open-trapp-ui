@@ -48,7 +48,7 @@ export class MonthSelector extends Component<MonthSelectorProps, MonthSelectorSt
     return (
         <Chip key={idx}
               label={month.toString()}
-              color='secondary'
+              color='primary'
               variant={isSelected ? 'default' : 'outlined'}
               className='chip'
               onClick={() => onMonthChange(month.year, month.month)}

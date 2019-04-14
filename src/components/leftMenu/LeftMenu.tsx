@@ -53,7 +53,7 @@ class LeftMenuComponent extends Component<LeftMenuProps, {}> {
                       selected={path === '/'}
                       onClick={() => this.handleListItemClick('/')}>
               <ListItemIcon>
-                <DashboardIcon color='secondary'/>
+                <DashboardIcon color='primary'/>
               </ListItemIcon>
               <ListItemText primary='Landing page'/>
             </ListItem>
@@ -62,7 +62,7 @@ class LeftMenuComponent extends Component<LeftMenuProps, {}> {
                       disabled={!userLoggedIn}
                       onClick={() => this.handleListItemClick('/registration')}>
               <ListItemIcon>
-                <CreateIcon color='secondary'/>
+                <CreateIcon color='primary'/>
               </ListItemIcon>
               <ListItemText primary='Registration'/>
             </ListItem>
@@ -71,7 +71,7 @@ class LeftMenuComponent extends Component<LeftMenuProps, {}> {
                       selected={path === '/reporting'}
                       onClick={() => this.handleListItemClick('/reporting')}>
               <ListItemIcon>
-                <ListIcon color='secondary'/>
+                <ListIcon color='primary'/>
               </ListItemIcon>
               <ListItemText primary='Reporting'/>
             </ListItem>

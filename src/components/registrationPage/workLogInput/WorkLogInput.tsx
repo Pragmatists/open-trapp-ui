@@ -65,7 +65,7 @@ export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState
           />
           <ValidationStatus workLog={workLog}/>
           <IconButton aria-label='Help' onClick={this.handleOpenHelp}>
-            <HelpIcon color='secondary'/>
+            <HelpIcon color='primary'/>
           </IconButton>
           <WorkLogHelpDialog open={this.state.helpOpen} onClose={this.handleCloseHelp}/>
           <ConfirmNewTagsDialog workLog={workLog}

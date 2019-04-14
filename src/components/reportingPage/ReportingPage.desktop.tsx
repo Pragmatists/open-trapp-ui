@@ -95,8 +95,8 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
                 <Tabs value={reportType}
                       onChange={() => {}}
                       variant='fullWidth'
-                      indicatorColor='secondary'
-                      textColor='secondary'
+                      indicatorColor='primary'
+                      textColor='primary'
                       className='report__tabs'>
                   <Tab icon={<CalendarIcon/>} onClick={() => onReportTypeChange(ReportType.CALENDAR)} data-reporting-calendar-tab/>
                   <Tab icon={<ListIcon/>} onClick={() => onReportTypeChange(ReportType.TABLE)} data-reporting-table-tab/>

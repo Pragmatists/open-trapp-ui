@@ -18,7 +18,7 @@ export const LandingPage = () => (
       </Grid>
       <Grid item container justify='center' xs={12}>
         <Grid item xs={9} md={3} className='landing-page-card card' data-landing-page-card>
-          <ScheduleIcon className='card__icon' color='secondary'/>
+          <ScheduleIcon className='card__icon' color='primary'/>
           <h2 className='card__title' data-card-title>Easy time capture</h2>
           <Divider variant='middle' className='card__divider'/>
           <div className='card__text' data-card-text>
@@ -26,7 +26,7 @@ export const LandingPage = () => (
           </div>
         </Grid>
         <Grid item xs={9} md={3} className='landing-page-card card' data-landing-page-card>
-          <EqualizerIcon className='card__icon' color='secondary'/>
+          <EqualizerIcon className='card__icon' color='primary'/>
           <h2 className='card__title' data-card-title>Intuitive reporting</h2>
           <Divider variant='middle' className='card__divider'/>
           <div className='card__text' data-card-text>
@@ -34,7 +34,7 @@ export const LandingPage = () => (
           </div>
         </Grid>
         <Grid item xs={9} md={3} className='landing-page-card card' data-landing-page-card>
-          <PersonIcon className='card__icon' color='secondary'/>
+          <PersonIcon className='card__icon' color='primary'/>
           <h2 className='card__title' data-card-title>OpenID integration</h2>
           <Divider variant='middle' className='card__divider'/>
           <div className='card__text' data-card-text>
