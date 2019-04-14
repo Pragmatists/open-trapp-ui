@@ -2,6 +2,7 @@ import { Dispatch } from 'redux';
 import { OpenTrappRestAPI } from '../api/OpenTrappAPI';
 import { WORK_LOG_CONSTANTS } from './constants';
 import { ReportingWorkLogDTO } from '../api/dtos';
+import { errorNotificationAction, infoNotificationAction } from './notifications.actions';
 
 export function loadWorkLogs(year: number, month: number) {
   return (dispatch: Dispatch) => {
@@ -23,7 +24,11 @@ export function updateWorkLog(id: string, tags: string[], workload: string) {
   return (dispatch: Dispatch) => {
     OpenTrappRestAPI.updateWorkLog(id, tags, workload)
         .then(workLog => dispatch(workLogUpdatedAction(workLog)))
-        .catch(err => console.error(err));
+        .then(() => dispatch(infoNotificationAction('Work log updated')))
+        .catch(err => {
+          dispatch(errorNotificationAction('Updating work log failed'));
+          return console.error(err);
+        });
   }
 }
 
@@ -31,7 +36,11 @@ export function removeWorkLog(id: string) {
   return (dispatch: Dispatch) => {
     OpenTrappRestAPI.removeWorkLog(id)
         .then(() => dispatch(workLogRemovedAction(id)))
-        .catch(err => console.error(err));
+        .then(() => dispatch(infoNotificationAction('Work log removed')))
+        .catch(err => {
+          dispatch(errorNotificationAction('Removing work log failed'));
+          return console.error(err);
+        });
   }
 }
 

@@ -6,6 +6,7 @@ import { OpenTrappState } from './root.reducer';
 import { workLogLoadedAction } from './workLog.actions';
 import { Preset } from '../components/registrationPage/registration.model';
 import { LocalStorage } from '../utils/LocalStorage';
+import { errorNotificationAction, infoNotificationAction } from './notifications.actions';
 
 export function changeWorkLog(workLog: ParsedWorkLog) {
   return (dispatch: Dispatch) => dispatch(workLogChangedAction(workLog));
@@ -18,9 +19,13 @@ export function saveWorkLog(workLog: ParsedWorkLog) {
 
     Promise.all(workLog.days.map(d => OpenTrappRestAPI.saveWorkLog(d, workLog.tags, workLog.workload, username)))
         .then(() => dispatch(workLogSavedAction()))
+        .then(() => dispatch(infoNotificationAction('Work log created')))
         .then(() => OpenTrappRestAPI.workLogEntriesForMonth(state.calendar.selectedMonth.year, state.calendar.selectedMonth.month))
         .then(entries => dispatch(workLogLoadedAction(entries)))
-        .catch(err => console.error(err));
+        .catch(err => {
+          dispatch(errorNotificationAction('Saving work log failed'));
+          return console.error(err);
+        });
   };
 }
 
