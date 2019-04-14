@@ -18,8 +18,8 @@ export const DaySelector = ({selectedDay, onChange}: DaySelectorProps) => {
       <div className='day-selector'>
         <div className='day-selector__name' data-day-name>{day.format('dddd') + todayText}</div>
         <div className='day-selector__selector selector'>
-          <Fab color="secondary"
-               aria-label="Previous"
+          <Fab color='primary'
+               aria-label='Previous'
                data-selector-previous
                onClick={() => onChange(day.subtract(1, 'days').format('YYYY/MM/DD'))}>
             <ArrowBack />
@@ -27,8 +27,8 @@ export const DaySelector = ({selectedDay, onChange}: DaySelectorProps) => {
           <div className='selector__date' data-selector-date>
             {day.format('DD.MM.YYYY')}
           </div>
-          <Fab color="secondary"
-               aria-label="Next"
+          <Fab color='primary'
+               aria-label='Next'
                data-selector-next
                onClick={() => onChange(day.add(1, 'days').format('YYYY/MM/DD'))}>
             <ArrowForward />

@@ -31,7 +31,7 @@ export class HeaderComponent extends Component<HeaderProps, {}> {
   render() {
     const {isLoggedIn, onMenuButtonClick} = this.props;
     return (
-          <AppBar position='static' className='header-mobile'>
+          <AppBar position='static' className='header-mobile' color='secondary'>
               <IconButton color='inherit' aria-label='Menu' onClick={onMenuButtonClick} data-left-menu-button >
                 <MenuIcon fontSize='large'/>
               </IconButton>

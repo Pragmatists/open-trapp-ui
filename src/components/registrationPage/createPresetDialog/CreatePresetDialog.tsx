@@ -41,6 +41,7 @@ export class CreatePresetDialog extends Component<CreatePresetDialogProps, Creat
                             onClick={() => this.handleToggle(tag)}
                             data-tag={tag}>
                     <Checkbox checked={includes(selected, tag)}
+                              color='primary'
                               tabIndex={-1}
                               disableRipple />
                     <ListItemText primary={tag}/>
