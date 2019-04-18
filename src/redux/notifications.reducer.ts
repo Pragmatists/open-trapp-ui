@@ -26,7 +26,7 @@ export interface NotificationsState {
   notifications: Notification[];
 }
 
-const initialState: () => NotificationsState = () => ({
+export const initialState: () => NotificationsState = () => ({
   notifications: []
 });
 
