@@ -16,6 +16,7 @@ import { ReportingPageDesktop } from './components/reportingPage/ReportingPage.d
 import { LeftMenu } from './components/leftMenu/LeftMenu';
 import { redirectIfNeeded } from './components/redirectIfNeeded';
 import { Notifications } from './components/notifications/Notifications';
+import { ReportingPageMobile } from './components/reportingPage/ReportingPage.mobile';
 
 interface AppRoutingProps {
   width: Breakpoint;
@@ -28,8 +29,8 @@ const AppRoutingComponent = ({width}: AppRoutingProps) => isWidthUp('md', width)
       <Switch>
         <Route path='/' exact component={redirectIfNeeded(LandingPage)}/>
         <PrivateRoute path='/registration' component={RegistrationPageDesktop}/>
-        <PrivateRoute path='/settings' component={SettingsPageDesktop}/>
         <PrivateRoute path='/reporting' component={ReportingPageDesktop}/>
+        <PrivateRoute path='/settings' component={SettingsPageDesktop}/>
         <Route component={NotFoundPage}/>
       </Switch>
       <Notifications />
@@ -40,6 +41,7 @@ const AppRoutingComponent = ({width}: AppRoutingProps) => isWidthUp('md', width)
       <Switch>
         <Route path='/' exact component={redirectIfNeeded(LandingPage)}/>
         <PrivateRoute path='/registration' component={RegistrationPageMobile}/>
+        <PrivateRoute path='/reporting' component={ReportingPageMobile}/>
         <PrivateRoute path='/settings' component={SettingsPageMobile}/>
         <Route component={NotFoundPage}/>
       </Switch>

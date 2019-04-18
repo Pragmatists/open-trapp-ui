@@ -2,13 +2,13 @@ import { ReportingWorkLogDTO } from '../api/dtos';
 import { WORK_LOG_CONSTANTS } from './constants';
 
 export interface WorkLogState {
-  workLogs?: ReportingWorkLogDTO[];
-  tags?: string[];
+  workLogs: ReportingWorkLogDTO[];
+  tags: string[];
 }
 
 const initialState: WorkLogState = {
-  workLogs: undefined,
-  tags: undefined
+  workLogs: [],
+  tags: []
 };
 
 export function workLog(state: WorkLogState = initialState, action: any): WorkLogState {
