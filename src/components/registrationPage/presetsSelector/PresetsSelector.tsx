@@ -14,7 +14,6 @@ interface PresetsSelectorProps {
   presets: Preset[];
   tags: string[];
   onClick: (preset: Preset) => void;
-  onRemove: (preset: Preset) => void;
   onCreate: (preset: Preset) => void;
 }
 
@@ -65,15 +64,13 @@ export class PresetsSelector extends Component<PresetsSelectorProps, PresetsSele
     );
   }
 
-  private renderPreset = (preset: Preset) => {
-    const {onRemove, onClick} = this.props;
+  private renderPreset = (preset: Preset, idx: number) => {
+    const {onClick} = this.props;
     const text = preset.tags.join(', ');
     return (
-        <ListItem>
-          <Chip key={preset.id}
-                label={text}
+        <ListItem key={idx}>
+          <Chip label={text}
                 onClick={() => onClick(preset)}
-                onDelete={() => onRemove(preset)}
                 className='presets-selector__chip chip'
                 data-preset/>
         </ListItem>

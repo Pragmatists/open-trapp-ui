@@ -1,6 +1,5 @@
 import { REGISTRATION_CONSTANTS } from './constants';
 import { Preset } from '../components/registrationPage/registration.model';
-import { LocalStorage } from '../utils/LocalStorage';
 import moment from 'moment';
 
 interface WorkLogState {
@@ -25,7 +24,7 @@ export const initialState: (workLogState?: Partial<WorkLogState>) => Registratio
     valid: false,
     ...workLogState
   },
-  presets: LocalStorage.presets,
+  presets: [],
 });
 
 export function registration(state: RegistrationState = initialState(), action): RegistrationState {
@@ -34,10 +33,8 @@ export function registration(state: RegistrationState = initialState(), action):
       return {...state, workLog: action.payload};
     case REGISTRATION_CONSTANTS.WORK_LOG_SAVED:
       return initialState();
-    case REGISTRATION_CONSTANTS.PRESET_CREATED:
-      return {...state, presets: [action.payload, ...state.presets]};
-    case REGISTRATION_CONSTANTS.PRESET_REMOVED:
-      return {...state, presets: state.presets.filter(p => p.id !== action.payload.id)};
+    case REGISTRATION_CONSTANTS.PRESETS_LOADED:
+      return {...state, presets: action.payload};
     default:
       return state;
   }

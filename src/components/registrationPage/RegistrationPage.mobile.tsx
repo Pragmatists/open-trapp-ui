@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { isEmpty, isNil } from 'lodash';
+import { isNil } from 'lodash';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { loadTags, loadWorkLogs, removeWorkLog } from '../../redux/workLog.actions';
 import { DaySelector } from './daySelector/DaySelector';
 import { ParsedWorkLog } from '../../workLogExpressionParser/ParsedWorkLog';
-import moment from 'moment';
-import { changeWorkLog, createPreset, removePreset, saveWorkLog } from '../../redux/registration.actions';
+import { changeWorkLog, loadPresets, saveWorkLog } from '../../redux/registration.actions';
 import { PresetsSelector } from './presetsSelector/PresetsSelector';
 import { Preset } from './registration.model';
 import { WorkloadDialog } from './workloadDialog/WorkloadDialog';
@@ -25,8 +24,6 @@ interface RegistrationPageDataProps {
 interface RegistrationPageEventProps {
   init: (year: number, month: number) => void;
   onWorkLogChange: (workLog: ParsedWorkLog) => void;
-  onRemovePreset: (preset: Preset) => void;
-  onCreatePreset: (preset: Preset) => void;
   onSaveWorkLog: (workLog: ParsedWorkLog) => void;
   onDeleteWorkLog: (workLog: ReportingWorkLogDTO) => void;
 }
@@ -48,7 +45,7 @@ class RegistrationPageMobileComponent extends Component<RegistrationPageProps, R
   }
 
   render() {
-    const {presets, tags, onRemovePreset, onCreatePreset, workLogs, onDeleteWorkLog} = this.props;
+    const {presets, tags, workLogs, onDeleteWorkLog} = this.props;
     const {selectedPreset} = this.state;
     return (
         <div className='registration-page'>
@@ -57,8 +54,7 @@ class RegistrationPageMobileComponent extends Component<RegistrationPageProps, R
           <Divider />
           <PresetsSelector presets={presets}
                            onClick={this.handlePresetClicked}
-                           onCreate={onCreatePreset}
-                           onRemove={onRemovePreset}
+                           onCreate={() => {}}
                            tags={tags}/>
           <WorkloadDialog open={!isNil(selectedPreset)} onClose={this.handleWorkloadDialogClose} />
         </div>
@@ -123,15 +119,10 @@ function mapDispatchToProps(dispatch): RegistrationPageEventProps {
     init(year: number, month: number) {
       dispatch(loadWorkLogs(year, month));
       dispatch(loadTags());
+      dispatch(loadPresets());
     },
     onWorkLogChange(workLog: ParsedWorkLog) {
       dispatch(changeWorkLog(workLog));
-    },
-    onCreatePreset(preset: Preset) {
-      dispatch(createPreset(preset));
-    },
-    onRemovePreset(preset: Preset) {
-      dispatch(removePreset(preset));
     },
     onSaveWorkLog(workLog: ParsedWorkLog) {
       dispatch(saveWorkLog(workLog));

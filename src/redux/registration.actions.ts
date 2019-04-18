@@ -5,7 +5,6 @@ import { OpenTrappRestAPI } from '../api/OpenTrappAPI';
 import { OpenTrappState } from './root.reducer';
 import { workLogLoadedAction } from './workLog.actions';
 import { Preset } from '../components/registrationPage/registration.model';
-import { LocalStorage } from '../utils/LocalStorage';
 import { errorNotificationAction, infoNotificationAction } from './notifications.actions';
 
 export function changeWorkLog(workLog: ParsedWorkLog) {
@@ -29,21 +28,12 @@ export function saveWorkLog(workLog: ParsedWorkLog) {
   };
 }
 
-export function createPreset(preset: Preset) {
-  return (dispatch: Dispatch, getState: () => OpenTrappState) => {
-    const state = getState();
-    const presets = state.registration.presets;
-    LocalStorage.presets = [preset, ...presets];
-    return dispatch(presetCreatedAction(preset));
-  };
-}
-
-export function removePreset(preset: Preset) {
-  return (dispatch: Dispatch, getState: () => OpenTrappState) => {
-    const state = getState();
-    const presets = state.registration.presets;
-    LocalStorage.presets = presets.filter(p => p.id !== preset.id);
-    return dispatch(presetRemovedAction(preset));
+export function loadPresets() {
+  return (dispatch: Dispatch) => {
+    OpenTrappRestAPI.presets
+        .then(presets => presets.map(p => new Preset(p)))
+        .then(presets => dispatch(presetsLoadedAction(presets)))
+        .catch(err => console.error(err));
   };
 }
 
@@ -62,12 +52,7 @@ const workLogSavedAction = () => ({
   type: REGISTRATION_CONSTANTS.WORK_LOG_SAVED
 });
 
-const presetCreatedAction = (preset: Preset) => ({
-  type: REGISTRATION_CONSTANTS.PRESET_CREATED,
-  payload: preset
-});
-
-const presetRemovedAction = (preset: Preset) => ({
-  type: REGISTRATION_CONSTANTS.PRESET_REMOVED,
-  payload: preset
+const presetsLoadedAction = (presets: Preset[]) => ({
+  type: REGISTRATION_CONSTANTS.PRESETS_LOADED,
+  payload: presets
 });

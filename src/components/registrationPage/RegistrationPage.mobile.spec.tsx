@@ -34,6 +34,11 @@ const tagsResponse = chain(workLogResponse)
     .uniq()
     .value();
 
+const presetsResponse = [
+    ['vacation'],
+    ['projects', 'nvm']
+];
+
 describe('Registration Page - mobile', () => {
   let httpMock: MockAdapter;
   let store: Store;
@@ -45,6 +50,8 @@ describe('Registration Page - mobile', () => {
         .reply(200, workLogResponse)
         .onGet('/api/v1/projects')
         .reply(200, tagsResponse)
+        .onGet('/api/v1/projects/presets')
+        .reply(200, presetsResponse)
         .onPost('/api/v1/employee/john.doe/work-log/entries')
         .reply(201, {id: '123-456'})
         .onDelete(/\/api\/v1\/work-log\/entries\/.*$/)
@@ -147,52 +154,29 @@ describe('Registration Page - mobile', () => {
   });
 
   describe('presets selector', () => {
-    it('creates preset', async () => {
+    it('displays list of presets', async () => {
       const wrapper = mount(
           <Provider store={store}>
             <RegistrationPageMobile/>
           </Provider>
       );
       await flushAllPromises();
+      wrapper.update();
 
-      addPresetButton(wrapper).simulate('click');
-      tag(wrapper, 'projects').simulate('click');
-      tag(wrapper, 'nvm').simulate('click');
-      savePresetButton(wrapper).simulate('click');
-
-      expect(presets(wrapper)).toHaveLength(1);
-      expect(presets(wrapper).at(0).text()).toEqual('projects, nvm');
-      expect(LocalStorage.presets.map(p => p.tags)).toEqual([['projects', 'nvm']]);
-    });
-
-    it('deletes preset', async () => {
-      const wrapper = mount(
-          <Provider store={store}>
-            <RegistrationPageMobile/>
-          </Provider>
-      );
-      await flushAllPromises();
-      addPresetButton(wrapper).simulate('click');
-      tag(wrapper, 'projects').simulate('click');
-      savePresetButton(wrapper).simulate('click');
-
-      deletePresetIcon(wrapper, 0).simulate('click');
-
-      expect(presets(wrapper)).toHaveLength(0);
-      expect(LocalStorage.presets).toHaveLength(0);
+      expect(presets(wrapper)).toHaveLength(2);
+      expect(presets(wrapper).at(0).text()).toEqual('vacation');
+      expect(presets(wrapper).at(1).text()).toEqual('projects, nvm');
     });
   });
 
-  it('registers work log', async () => {
+  it('registers work log for existing preset', async () => {
     const wrapper = mount(
         <Provider store={store}>
           <RegistrationPageMobile/>
         </Provider>
     );
     await flushAllPromises();
-    addPresetButton(wrapper).simulate('click');
-    tag(wrapper, 'nvm').simulate('click');
-    savePresetButton(wrapper).simulate('click');
+    wrapper.update();
 
     preset(wrapper, 0).simulate('click');
     saveWorkLogButton(wrapper).simulate('click');
@@ -200,7 +184,7 @@ describe('Registration Page - mobile', () => {
 
     expect(httpMock.history.post.length).toEqual(1);
     expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
-      projectNames: ['nvm'],
+      projectNames: ['vacation'],
       workload: '8h',
       day: '2019/02/04'
     });
@@ -218,28 +202,12 @@ describe('Registration Page - mobile', () => {
     return wrapper.find('[data-selector-previous]').at(0);
   }
 
-  function addPresetButton(wrapper) {
-    return wrapper.find(Fab).filter('[data-create-preset-button]');
-  }
-
-  function tag(wrapper, label: string) {
-    return wrapper.find(DialogContent).find(ListItem).filter(`[data-tag="${label}"]`);
-  }
-
-  function savePresetButton(wrapper) {
-    return wrapper.find('[data-crate-preset-dialog]').find(DialogActions).find(Button).filter('[data-save-button]');
-  }
-
   function presets(wrapper) {
     return wrapper.find('[data-presets-selector-list]').find(Chip).filter('[data-preset]')
   }
 
   function preset(wrapper, chipIdx: number) {
     return presets(wrapper).at(chipIdx);
-  }
-
-  function deletePresetIcon(wrapper, chipIdx: number) {
-    return preset(wrapper, chipIdx).find('svg');
   }
 
   function saveWorkLogButton(wrapper) {

@@ -69,6 +69,11 @@ class OpenTrappAPI {
         .then(axiosResp => axiosResp.data);
   }
 
+  get presets(): Promise<string[][]> {
+    return this.axios.get<string[][]>('/projects/presets')
+        .then(axiosResp => axiosResp.data);
+  }
+
   get axios() {
     return this.axiosInstance;
   }
