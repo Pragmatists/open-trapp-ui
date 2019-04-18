@@ -1,27 +1,31 @@
 import { REGISTRATION_CONSTANTS } from './constants';
 import { Preset } from '../components/registrationPage/registration.model';
 import { LocalStorage } from '../utils/LocalStorage';
+import moment from 'moment';
 
-export interface RegistrationState {
-  workLog: {
-    expression: string;
-    tags: string[];
-    days: string[];
-    workload: string;
-    valid: boolean;
-  },
-  presets: Preset[]
+interface WorkLogState {
+  expression: string;
+  tags: string[];
+  days: string[];
+  workload: string;
+  valid: boolean;
 }
 
-export const initialState: () => RegistrationState = () => ({
+export interface RegistrationState {
+  workLog: WorkLogState;
+  presets: Preset[];
+}
+
+export const initialState: (workLogState?: Partial<WorkLogState>) => RegistrationState = (workLogState) => ({
   workLog: {
     expression: '',
     tags: [],
-    days: [],
+    days: [moment().format('YYYY/MM/DD')],
     workload: '',
-    valid: false
+    valid: false,
+    ...workLogState
   },
-  presets: LocalStorage.presets
+  presets: LocalStorage.presets,
 });
 
 export function registration(state: RegistrationState = initialState(), action): RegistrationState {

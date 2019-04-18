@@ -1,14 +1,5 @@
-.presets-selector {
-  &__list {
-    margin-top: 1em;
-  }
-
-  &__placeholder {
-    text-align: center;
-    margin-top: 2em;
-  }
-
-  div.chip {
+.work-logs {
+  .work-log {
     flex-grow: 1;
     height: auto;
     padding: 0.7rem 0;
@@ -23,11 +14,12 @@
     svg {
       margin-right: 0.5em;
     }
-  }
 
-  button.add-button {
-    position: absolute;
-    bottom: 1em;
-    right: 1em;
+    .chip-label {
+      margin: 0 0.5em;
+      flex-grow: 1;
+      display: flex;
+      justify-content: space-between;
+    }
   }
 }

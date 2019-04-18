@@ -6,6 +6,9 @@ import Fab from '@material-ui/core/Fab';
 import { isEmpty } from 'lodash';
 import './PresetsSelector.scss';
 import { CreatePresetDialog } from '../createPresetDialog/CreatePresetDialog';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListSubheader from '@material-ui/core/ListSubheader';
 
 interface PresetsSelectorProps {
   presets: Preset[];
@@ -29,7 +32,7 @@ export class PresetsSelector extends Component<PresetsSelectorProps, PresetsSele
     const {dialogOpen} = this.state;
     return (
         <div className='presets-selector'>
-          <CreatePresetDialog onClose={this.onCloseDialog} open={dialogOpen} tags={tags} />
+          <CreatePresetDialog onClose={this.onCloseDialog} open={dialogOpen} tags={tags}/>
           {isEmpty(presets) ? this.renderPlaceholder() : this.renderPresets()}
           <Fab onClick={this.onCreatePreset}
                color='primary'
@@ -53,11 +56,12 @@ export class PresetsSelector extends Component<PresetsSelectorProps, PresetsSele
   private renderPresets() {
     const {presets} = this.props;
     return (
-        <div className='presets-selector__list' data-presets-selector-list>
+        <List className='presets-selector__list' data-presets-selector-list>
+          <ListSubheader>Click preset to report</ListSubheader>
           {
             presets.map(this.renderPreset)
           }
-        </div>
+        </List>
     );
   }
 
@@ -65,12 +69,14 @@ export class PresetsSelector extends Component<PresetsSelectorProps, PresetsSele
     const {onRemove, onClick} = this.props;
     const text = preset.tags.join(', ');
     return (
-        <Chip key={preset.id}
-              label={text}
-              onClick={() => onClick(preset)}
-              onDelete={() => onRemove(preset)}
-              className='presets-selector__chip chip'
-              data-preset/>
+        <ListItem>
+          <Chip key={preset.id}
+                label={text}
+                onClick={() => onClick(preset)}
+                onDelete={() => onRemove(preset)}
+                className='presets-selector__chip chip'
+                data-preset/>
+        </ListItem>
     )
   };
 

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { isEmpty, isNil } from 'lodash';
 import { OpenTrappState } from '../../redux/root.reducer';
-import { loadTags, loadWorkLogs } from '../../redux/workLog.actions';
+import { loadTags, loadWorkLogs, removeWorkLog } from '../../redux/workLog.actions';
 import { DaySelector } from './daySelector/DaySelector';
 import { ParsedWorkLog } from '../../workLogExpressionParser/ParsedWorkLog';
 import moment from 'moment';
@@ -10,12 +10,16 @@ import { changeWorkLog, createPreset, removePreset, saveWorkLog } from '../../re
 import { PresetsSelector } from './presetsSelector/PresetsSelector';
 import { Preset } from './registration.model';
 import { WorkloadDialog } from './workloadDialog/WorkloadDialog';
+import { WorkLogs } from './workLogs/WorkLogs';
+import { ReportingWorkLogDTO } from '../../api/dtos';
+import { Divider } from '@material-ui/core';
 
 interface RegistrationPageDataProps {
   selectedMonth: { year: number, month: number };
   workLog: ParsedWorkLog;
   presets: Preset[];
   tags: string[];
+  workLogs: ReportingWorkLogDTO[];
 }
 
 interface RegistrationPageEventProps {
@@ -24,6 +28,7 @@ interface RegistrationPageEventProps {
   onRemovePreset: (preset: Preset) => void;
   onCreatePreset: (preset: Preset) => void;
   onSaveWorkLog: (workLog: ParsedWorkLog) => void;
+  onDeleteWorkLog: (workLog: ReportingWorkLogDTO) => void;
 }
 
 type RegistrationPageProps = RegistrationPageDataProps & RegistrationPageEventProps;
@@ -43,11 +48,13 @@ class RegistrationPageMobileComponent extends Component<RegistrationPageProps, R
   }
 
   render() {
-    const {presets, tags, onRemovePreset, onCreatePreset} = this.props;
+    const {presets, tags, onRemovePreset, onCreatePreset, workLogs, onDeleteWorkLog} = this.props;
     const {selectedPreset} = this.state;
     return (
         <div className='registration-page'>
           <DaySelector selectedDay={this.selectedDay} onChange={this.handleDayChange}/>
+          <WorkLogs workLogs={workLogs} onDelete={onDeleteWorkLog} />
+          <Divider />
           <PresetsSelector presets={presets}
                            onClick={this.handlePresetClicked}
                            onCreate={onCreatePreset}
@@ -60,7 +67,7 @@ class RegistrationPageMobileComponent extends Component<RegistrationPageProps, R
 
   private get selectedDay(): string {
     const {workLog} = this.props;
-    return isEmpty(workLog.days) ? moment().format('YYYY/MM/DD') : workLog.days[0];
+    return workLog.days[0];
   }
 
   private handleDayChange = (day: string) => {
@@ -90,7 +97,6 @@ class RegistrationPageMobileComponent extends Component<RegistrationPageProps, R
     });
   }
 }
-
 function mapStateToProps(state: OpenTrappState): RegistrationPageDataProps {
   const {selectedMonth} = state.calendar;
   const {workLog, presets} = state.registration;
@@ -98,9 +104,18 @@ function mapStateToProps(state: OpenTrappState): RegistrationPageDataProps {
   return {
     selectedMonth,
     workLog: new ParsedWorkLog(expression, days, tags, workload),
+    workLogs: state.workLog.workLogs.filter(forSelected(state)).filter(forCurrentUser(state)),
     presets,
     tags: state.workLog.tags
   };
+}
+
+function forSelected(state: OpenTrappState) {
+  return workLog => workLog.day === state.registration.workLog.days[0];
+}
+
+function forCurrentUser(state: OpenTrappState) {
+  return workLog => workLog.employee === state.authentication.user.name;
 }
 
 function mapDispatchToProps(dispatch): RegistrationPageEventProps {
@@ -120,6 +135,9 @@ function mapDispatchToProps(dispatch): RegistrationPageEventProps {
     },
     onSaveWorkLog(workLog: ParsedWorkLog) {
       dispatch(saveWorkLog(workLog));
+    },
+    onDeleteWorkLog(workLog: ReportingWorkLogDTO) {
+      dispatch(removeWorkLog(workLog.id));
     }
   }
 }
