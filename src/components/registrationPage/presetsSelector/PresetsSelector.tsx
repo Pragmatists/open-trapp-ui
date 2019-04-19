@@ -63,6 +63,7 @@ export class PresetsSelector extends Component<PresetsSelectorProps, PresetsSele
           <Chip label={text}
                 onClick={() => onClick(preset)}
                 className='presets-selector__chip chip'
+                color={'primary'}
                 data-preset/>
         </ListItem>
     )
