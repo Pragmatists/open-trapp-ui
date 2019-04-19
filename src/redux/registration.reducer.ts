@@ -32,7 +32,10 @@ export function registration(state: RegistrationState = initialState(), action):
     case REGISTRATION_CONSTANTS.WORK_LOG_CHANGED:
       return {...state, workLog: action.payload};
     case REGISTRATION_CONSTANTS.WORK_LOG_SAVED:
-      return {...initialState(), presets: state.presets};
+      return {
+        workLog: initialState({days: state.workLog.days}).workLog,
+        presets: state.presets
+      };
     case REGISTRATION_CONSTANTS.PRESETS_LOADED:
       return {...state, presets: action.payload};
     default:
