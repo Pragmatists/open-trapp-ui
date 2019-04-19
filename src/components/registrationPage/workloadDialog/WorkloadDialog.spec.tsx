@@ -1,16 +1,16 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
-import { noop } from 'lodash';
-import { WorkloadDialog } from './WorkloadDialog';
+import {mount} from 'enzyme';
+import {noop} from 'lodash';
+import {WorkloadDialog} from './WorkloadDialog';
 import DialogActions from '@material-ui/core/DialogActions';
-import { Button } from '@material-ui/core';
-import { Slider } from '@material-ui/lab';
+import {Button} from '@material-ui/core';
+import {Slider} from '@material-ui/lab';
 
 
 describe('Workload dialog', () => {
 
   it('displays number of hours', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
         <WorkloadDialog open={true} onClose={noop} />
     );
 
@@ -18,7 +18,7 @@ describe('Workload dialog', () => {
   });
 
   it('displays number of minutes', () => {
-    const wrapper = shallow(
+    const wrapper = mount(
         <WorkloadDialog open={true} onClose={noop} />
     );
 
@@ -27,7 +27,7 @@ describe('Workload dialog', () => {
 
   it('closes dialog on CANCEL click', () => {
     const onClose = jest.fn();
-    const wrapper = shallow(
+    const wrapper = mount(
         <WorkloadDialog open={true} onClose={onClose} />
     );
 
