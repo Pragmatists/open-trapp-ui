@@ -1,17 +1,16 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { isNil } from 'lodash';
-import { OpenTrappState } from '../../redux/root.reducer';
-import { loadTags, loadWorkLogs, removeWorkLog } from '../../redux/workLog.actions';
-import { DaySelector } from './daySelector/DaySelector';
-import { ParsedWorkLog } from '../../workLogExpressionParser/ParsedWorkLog';
-import { changeWorkLog, loadPresets, saveWorkLog } from '../../redux/registration.actions';
-import { PresetsSelector } from './presetsSelector/PresetsSelector';
-import { Preset } from './registration.model';
-import { WorkloadDialog } from './workloadDialog/WorkloadDialog';
-import { WorkLogs } from './workLogs/WorkLogs';
-import { ReportingWorkLogDTO } from '../../api/dtos';
-import { Divider } from '@material-ui/core';
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {isNil} from 'lodash';
+import {OpenTrappState} from '../../redux/root.reducer';
+import {loadTags, loadWorkLogs, removeWorkLog} from '../../redux/workLog.actions';
+import {DaySelector} from './daySelector/DaySelector';
+import {ParsedWorkLog} from '../../workLogExpressionParser/ParsedWorkLog';
+import {changeWorkLog, loadPresets, saveWorkLog} from '../../redux/registration.actions';
+import {PresetsSelector} from './presetsSelector/PresetsSelector';
+import {Preset} from './registration.model';
+import {WorkloadDialog} from './workloadDialog/WorkloadDialog';
+import {WorkLogs} from './workLogs/WorkLogs';
+import {ReportingWorkLogDTO} from '../../api/dtos';
 
 interface RegistrationPageDataProps {
   selectedMonth: { year: number, month: number };
@@ -51,7 +50,6 @@ class RegistrationPageMobileComponent extends Component<RegistrationPageProps, R
         <div className='registration-page'>
           <DaySelector selectedDay={this.selectedDay} onChange={this.handleDayChange}/>
           <WorkLogs workLogs={workLogs} onDelete={onDeleteWorkLog} />
-          <Divider />
           <PresetsSelector presets={presets}
                            onClick={this.handlePresetClicked}
                            onCreate={() => {}}

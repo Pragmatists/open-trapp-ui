@@ -1,10 +1,10 @@
 .work-logs {
   .work-log {
-    flex-grow: 1;
     height: auto;
     padding: 0.7rem 0;
     font-size: 1rem;
     border-radius: 1.2rem;
+    margin: 0.7rem;
 
     span {
       flex-grow: 1;
@@ -17,9 +17,12 @@
 
     .chip-label {
       margin: 0 0.5em;
-      flex-grow: 1;
       display: flex;
-      justify-content: space-between;
+
+      &__workload {
+        margin-left: 0.7em;
+        font-weight: bold;
+      }
     }
   }
 }
