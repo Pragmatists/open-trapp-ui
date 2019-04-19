@@ -4,7 +4,7 @@ import {Preset} from '../registration.model';
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import './PresetsSelector.scss';
-import {CreatePresetDialog} from '../createPresetDialog/CreatePresetDialog';
+import {CreateWorkLogDialog} from '../createWorkLogDialog/CreateWorkLogDialog';
 import List from '@material-ui/core/List';
 import ListSubheader from '@material-ui/core/ListSubheader';
 
@@ -29,7 +29,7 @@ export class PresetsSelector extends Component<PresetsSelectorProps, PresetsSele
     const {dialogOpen} = this.state;
     return (
       <div className='presets-selector'>
-        <CreatePresetDialog onClose={this.onCloseDialog} open={dialogOpen} tags={tags} />
+        <CreateWorkLogDialog onClose={this.onCloseDialog} open={dialogOpen} tags={tags} />
         {this.renderPresets()}
         <Fab onClick={this.onCreatePreset}
              color='secondary'

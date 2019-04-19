@@ -11,17 +11,17 @@ import { ListItem } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
 
-interface CreatePresetDialogProps {
+interface CreateWorkLogDialogProps {
   onClose: (preset?: Preset) => void;
   open: boolean;
   tags: string[];
 }
 
-interface CreatePresetDialogState {
+interface CreateWorkLogDialogState {
   selected: string[];
 }
 
-export class CreatePresetDialog extends Component<CreatePresetDialogProps, CreatePresetDialogState> {
+export class CreateWorkLogDialog extends Component<CreateWorkLogDialogProps, CreateWorkLogDialogState> {
   state = {
     selected: []
   };

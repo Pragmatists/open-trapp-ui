@@ -1,15 +1,15 @@
 import React from 'react';
 import { mount, shallow } from 'enzyme';
 import { noop } from 'lodash';
-import { CreatePresetDialog } from './CreatePresetDialog';
+import { CreateWorkLogDialog } from './CreateWorkLogDialog';
 import { ListItem } from '@material-ui/core';
 
 const tagList = ['projects', 'nvm', 'internal', 'standup'];
 
-describe('Create Preset Dialog', () => {
+describe('Create Work Log Dialog', () => {
   it('displays sorted list of tags', () => {
     const wrapper = mount(
-        <CreatePresetDialog onClose={noop} open={true} tags={tagList} />
+        <CreateWorkLogDialog onClose={noop} open={true} tags={tagList} />
     );
 
     expect(tagsText(wrapper)).toEqual(['internal', 'nvm', 'projects', 'standup']);
@@ -18,7 +18,7 @@ describe('Create Preset Dialog', () => {
   it('closes dialog on CANCEL click', () => {
     const onClose = jest.fn();
     const wrapper = shallow(
-        <CreatePresetDialog onClose={onClose} open={true} tags={tagList} />
+        <CreateWorkLogDialog onClose={onClose} open={true} tags={tagList} />
     );
 
     cancelButton(wrapper).simulate('click');
@@ -29,7 +29,7 @@ describe('Create Preset Dialog', () => {
   it('closes dialog on CANCEL click when tags are selected', () => {
     const onClose = jest.fn();
     const wrapper = shallow(
-        <CreatePresetDialog onClose={onClose} open={true} tags={tagList} />
+        <CreateWorkLogDialog onClose={onClose} open={true} tags={tagList} />
     );
 
     tag(wrapper, 'projects').simulate('click');
@@ -42,7 +42,7 @@ describe('Create Preset Dialog', () => {
   it('emits selected tags on SAVE click', () => {
     const onClose = jest.fn();
     const wrapper = shallow(
-        <CreatePresetDialog onClose={onClose} open={true} tags={tagList} />
+        <CreateWorkLogDialog onClose={onClose} open={true} tags={tagList} />
     );
 
     tag(wrapper, 'projects').simulate('click');
