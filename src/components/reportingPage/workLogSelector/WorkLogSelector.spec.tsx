@@ -108,6 +108,36 @@ describe('WorkLogSelector', () => {
     expect(onChange).toHaveBeenCalledWith(['john.doe', 'tom.kowalsky']);
   });
 
+  it('emits all selected on ALL button click', () => {
+    const onChange = jest.fn();
+    const wrapper = mount(
+        <WorkLogSelector title='Employees'
+                         chipLabel={workLog => workLog.employee}
+                         workLogs={workLogs}
+                         selected={[]}
+                         onSelectionChange={onChange}/>
+    );
+
+    allButton(wrapper).simulate('click');
+
+    expect(onChange).toHaveBeenCalledWith(['john.doe', 'tom.kowalsky']);
+  });
+
+  it('emits none selected on NONE button click', () => {
+    const onChange = jest.fn();
+    const wrapper = mount(
+        <WorkLogSelector title='Employees'
+                         chipLabel={workLog => workLog.employee}
+                         workLogs={workLogs}
+                         selected={[]}
+                         onSelectionChange={onChange}/>
+    );
+
+    noneButton(wrapper).simulate('click');
+
+    expect(onChange).toHaveBeenCalledWith([]);
+  });
+
   function header(wrapper): ReactWrapper {
     return wrapper.find('[data-work-log-selector-title]').at(0);
   }
@@ -135,5 +165,13 @@ describe('WorkLogSelector', () => {
 
   function chipWorkload(wrapper, label: string): string {
     return chip(wrapper, label).find('[data-chip-workload]').at(0).text();
+  }
+
+  function allButton(wrapper) {
+    return wrapper.find('[data-button-select-all]').hostNodes();
+  }
+
+  function noneButton(wrapper) {
+    return wrapper.find('[data-button-select-none]').hostNodes();
   }
 });

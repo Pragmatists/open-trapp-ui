@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
-import './WorkLogSelector.scss';
 import { Chip } from '@material-ui/core';
 import { isArray, chain, xor, includes } from 'lodash';
 import { ReportingWorkLog } from '../reporting.model';
 import { formatWorkload } from '../../../utils/workLogUtils';
+import Button from '@material-ui/core/Button';
+import AddIcon from '@material-ui/icons/Add';
+import ClearIcon from '@material-ui/icons/Clear';
+import './WorkLogSelector.scss';
 
 interface ChipLabelProps {
   label: string;
@@ -28,7 +31,7 @@ interface WorkLogSelectorProps {
 
 export class WorkLogSelector extends Component<WorkLogSelectorProps, {}> {
   render() {
-    const {title} = this.props;
+    const {title, onSelectionChange} = this.props;
     const labels = this.labels;
     return (
         <div className='work-log-selector'>
@@ -39,7 +42,14 @@ export class WorkLogSelector extends Component<WorkLogSelectorProps, {}> {
             }
           </div>
           <div className='work-log-selector__footer'>
-
+            <Button data-button-select-none size='small' onClick={() => onSelectionChange([])}>
+              <ClearIcon />
+              None
+            </Button>
+            <Button data-button-select-all size='small' onClick={() => onSelectionChange(labels)}>
+              <AddIcon />
+              All
+            </Button>
           </div>
         </div>
     );
