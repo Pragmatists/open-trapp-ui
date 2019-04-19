@@ -31,9 +31,9 @@ export class CreateWorkLogDialog extends Component<CreateWorkLogDialogProps, Cre
     const {selected} = this.state;
     const sortedTags = sortBy(uniq(tags.map(trim)));
     return (
-        <Dialog open={open} onClose={() => onClose()} fullWidth={true} data-crate-preset-dialog>
-          <DialogTitle>Create preset</DialogTitle>
-          <DialogContent data-crate-preset-dialog-content>
+        <Dialog open={open} onClose={() => onClose()} fullWidth={true} data-create-work-log-dialog>
+          <DialogTitle>Create Work Log</DialogTitle>
+          <DialogContent data-create-work-log-dialog-content>
             <List>
               {sortedTags.map(tag => (
                   <ListItem dense button key={tag}
