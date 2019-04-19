@@ -15,7 +15,7 @@ export class WorkLogs extends Component<WorkLogsProps, {}> {
   render() {
     return (
       <List className='work-logs'>
-        <ListSubheader>Reported time</ListSubheader>
+        <ListSubheader className='work-logs__title'>Reported time</ListSubheader>
         {this.props.workLogs.sort(this.workloadDesc).map(workLog => (
           <Chip data-work-log
                 key={workLog.id}

@@ -4,6 +4,10 @@
     margin-top: 2em;
   }
 
+  &__title {
+    position: inherit;
+  }
+
   div.chip {
     height: auto;
     padding: 0.7rem 0;
@@ -13,7 +17,7 @@
   }
 
   button.add-button {
-    position: absolute;
+    position: fixed;
     bottom: 1em;
     right: 1em;
   }

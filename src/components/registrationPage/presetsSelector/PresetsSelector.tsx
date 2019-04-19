@@ -45,7 +45,7 @@ export class PresetsSelector extends Component<PresetsSelectorProps, PresetsSele
     const {presets} = this.props;
     return (
       <List className='presets-selector__list' data-presets-selector-list>
-        <ListSubheader>Suggested projects</ListSubheader>
+        <ListSubheader className='presets-selector__title'>Suggested projects</ListSubheader>
         {
           presets.map(this.renderPreset)
         }

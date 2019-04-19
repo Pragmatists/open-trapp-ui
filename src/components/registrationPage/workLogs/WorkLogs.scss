@@ -1,4 +1,9 @@
 .work-logs {
+
+  &__title {
+    position: inherit !important;
+  }
+
   .work-log {
     height: auto;
     padding: 0.7rem 0;
