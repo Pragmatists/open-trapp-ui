@@ -1,5 +1,5 @@
-import { REGISTRATION_CONSTANTS } from './constants';
-import { Preset } from '../components/registrationPage/registration.model';
+import {REGISTRATION_CONSTANTS} from './constants';
+import {Preset} from '../components/registrationPage/registration.model';
 import moment from 'moment';
 
 interface WorkLogState {
@@ -32,7 +32,7 @@ export function registration(state: RegistrationState = initialState(), action):
     case REGISTRATION_CONSTANTS.WORK_LOG_CHANGED:
       return {...state, workLog: action.payload};
     case REGISTRATION_CONSTANTS.WORK_LOG_SAVED:
-      return initialState();
+      return {...initialState(), presets: state.presets};
     case REGISTRATION_CONSTANTS.PRESETS_LOADED:
       return {...state, presets: action.payload};
     default:

@@ -5,6 +5,7 @@ import { formatWorkload } from '../../../utils/workLogUtils';
 import './WorkLogs.scss';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import ListSubheader from "@material-ui/core/ListSubheader";
 
 interface WorkLogsProps {
   workLogs: ReportingWorkLogDTO[];
@@ -15,6 +16,7 @@ export class WorkLogs extends Component<WorkLogsProps, {}> {
   render() {
     return (
         <List className='work-logs'>
+          <ListSubheader>Reported time</ListSubheader>
           {this.props.workLogs.sort(this.workloadDesc).map(workLog => (
               <ListItem key={workLog.id}>
                 <Chip data-work-log

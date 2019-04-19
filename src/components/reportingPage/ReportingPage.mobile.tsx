@@ -31,7 +31,7 @@ class ReportingPageMobileComponent extends Component<ReportingPageProps, {}> {
         <List>
           <ListSubheader>{`I'm sticky`}</ListSubheader>
           {this.props.workLogs.map(workLog =>
-              <ListItem>
+              <ListItem key={workLog.id}>
                 <MobileWorkLog key={workLog.id} workLog={workLog}/>
               </ListItem>
           )}

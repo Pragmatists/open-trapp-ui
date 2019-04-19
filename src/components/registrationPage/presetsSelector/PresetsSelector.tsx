@@ -32,7 +32,7 @@ export class PresetsSelector extends Component<PresetsSelectorProps, PresetsSele
     return (
         <div className='presets-selector'>
           <CreatePresetDialog onClose={this.onCloseDialog} open={dialogOpen} tags={tags}/>
-          {isEmpty(presets) ? this.renderPlaceholder() : this.renderPresets()}
+          {this.renderPresets()}
           <Fab onClick={this.onCreatePreset}
                color='primary'
                className='presets-selector__add-button add-button'
@@ -43,20 +43,11 @@ export class PresetsSelector extends Component<PresetsSelectorProps, PresetsSele
     );
   }
 
-  private renderPlaceholder() {
-    return (
-        <div className='presets-selector__placeholder' data-presets-selector-placeholder>
-          <p>You don't have any presets yet</p>
-          <p>Click the button below to create one</p>
-        </div>
-    );
-  }
-
   private renderPresets() {
     const {presets} = this.props;
     return (
         <List className='presets-selector__list' data-presets-selector-list>
-          <ListSubheader>Click preset to report</ListSubheader>
+          <ListSubheader>Suggested projects</ListSubheader>
           {
             presets.map(this.renderPreset)
           }

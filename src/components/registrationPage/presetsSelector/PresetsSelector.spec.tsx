@@ -11,15 +11,6 @@ const presets = [
 ];
 
 describe('Presets selector', () => {
-  it('displays placeholder if user has no presets', () => {
-    const wrapper = shallow(
-        <PresetsSelector presets={[]} onClick={noop} tags={[]} onCreate={noop}/>
-    );
-
-    expect(wrapper.find('[data-presets-selector-list]')).toHaveLength(0);
-    expect(wrapper.find('[data-presets-selector-placeholder]')).toHaveLength(1);
-  });
-
   it('displays list of presets', () => {
     const wrapper = shallow(
         <PresetsSelector presets={presets} onClick={noop} tags={[]} onCreate={noop}/>

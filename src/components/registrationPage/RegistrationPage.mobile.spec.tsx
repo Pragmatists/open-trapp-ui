@@ -1,22 +1,19 @@
-import { mount, ReactWrapper } from 'enzyme';
-import { Provider } from 'react-redux';
+import {mount, ReactWrapper} from 'enzyme';
+import {Provider} from 'react-redux';
 import * as React from 'react';
-import { Store } from 'redux';
+import {Store} from 'redux';
 import MockAdapter from 'axios-mock-adapter';
-import { chain } from 'lodash';
-import { RegistrationPageMobile } from './RegistrationPage.mobile';
-import { flushAllPromises, setupStore } from '../../utils/testUtils';
-import { initialState as registrationInitialState } from '../../redux/registration.reducer';
-import { OpenTrappRestAPI } from '../../api/OpenTrappAPI';
-import { ListItem } from '@material-ui/core';
-import Fab from '@material-ui/core/Fab';
-import DialogContent from '@material-ui/core/DialogContent';
+import {chain} from 'lodash';
+import {RegistrationPageMobile} from './RegistrationPage.mobile';
+import {flushAllPromises, setupStore} from '../../utils/testUtils';
+import {initialState as registrationInitialState} from '../../redux/registration.reducer';
+import {OpenTrappRestAPI} from '../../api/OpenTrappAPI';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
-import { LocalStorage } from '../../utils/LocalStorage';
-import { WorkLogs } from './workLogs/WorkLogs';
-import { ReportingWorkLogDTO } from '../../api/dtos';
+import {LocalStorage} from '../../utils/LocalStorage';
+import {WorkLogs} from './workLogs/WorkLogs';
+import {ReportingWorkLogDTO} from '../../api/dtos';
 
 const workLogResponse: ReportingWorkLogDTO[] = [
   {id: '1', link: 'link', employee: 'john.doe', day: '2019/02/01', workload: 480, projectNames: ['projects', 'nvm']},
