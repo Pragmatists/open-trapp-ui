@@ -35,3 +35,12 @@ export interface ReportingWorkLogDTO {
   readonly employee: string,
   readonly day: string
 }
+
+export interface AffectedEntriesDTO {
+  readonly entriesAffected: number;
+}
+
+export interface BulkEditDTO {
+  readonly query: string;
+  readonly expression: string;
+}

@@ -21,6 +21,7 @@ import { MonthlyReport } from '../monthlyReport/MonthlyReport';
 import { WorkLog } from '../monthlyReport/MonthlyReport.model';
 import { ReportType } from '../../redux/reporting.reducer';
 import { TableReport } from './tableReport/TableReport';
+import { BulkEditDialog } from './bulkEditDialog/BulkEditDialog';
 
 interface Selection {
   month: { year: number, month: number };
@@ -64,8 +65,9 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
         <div className='reporting-page'>
           <Grid container justify='center' spacing={24}>
             <Grid item lg={10} xs={11}>
-              <div className='reporting-page__header'>
-                <span>Review reports</span> by month, project and employee
+              <div className='reporting-page__header header'>
+                <div className='header__text'><span>Review reports</span> by month, project and employee</div>
+                <BulkEditDialog />
               </div>
               <Divider variant='fullWidth'/>
             </Grid>

@@ -59,6 +59,6 @@ describe('Edit work log dialog', () => {
 
   function typeExpression(wrapper, selector: string, expression: string) {
     const input = dialogInput(wrapper, selector);
-    input.simulate('change', {target: {value: expression}})
+    input.simulate('change', {target: {value: expression}});
   }
 });

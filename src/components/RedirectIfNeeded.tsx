@@ -2,7 +2,7 @@ import React from 'react';
 import { parse } from "querystring";
 import { Redirect } from 'react-router';
 
-export const redirectIfNeeded = (ComposedComponent) => {
+export const RedirectIfNeeded = (ComposedComponent) => {
   return (props) => {
     const params = parse(props.location.search.replace('?', ''));
     const redirect = params.redirect as string;

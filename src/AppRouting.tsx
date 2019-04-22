@@ -14,7 +14,7 @@ import { RegistrationPageMobile } from './components/registrationPage/Registrati
 import { SettingsPageMobile } from './components/settingsPage/SettingsPage.mobile';
 import { ReportingPageDesktop } from './components/reportingPage/ReportingPage.desktop';
 import { LeftMenu } from './components/leftMenu/LeftMenu';
-import { redirectIfNeeded } from './components/redirectIfNeeded';
+import { RedirectIfNeeded } from './components/RedirectIfNeeded';
 import { Notifications } from './components/notifications/Notifications';
 import { ReportingPageMobile } from './components/reportingPage/ReportingPage.mobile';
 
@@ -27,7 +27,7 @@ const AppRoutingComponent = ({width}: AppRoutingProps) => isWidthUp('md', width)
       <HeaderDesktop/>
       <LeftMenu/>
       <Switch>
-        <Route path='/' exact component={redirectIfNeeded(LandingPage)}/>
+        <Route path='/' exact component={RedirectIfNeeded(LandingPage)}/>
         <PrivateRoute path='/registration' component={RegistrationPageDesktop}/>
         <PrivateRoute path='/reporting' component={ReportingPageDesktop}/>
         <PrivateRoute path='/settings' component={SettingsPageDesktop}/>
@@ -39,7 +39,7 @@ const AppRoutingComponent = ({width}: AppRoutingProps) => isWidthUp('md', width)
       <HeaderMobile/>
       <LeftMenu/>
       <Switch>
-        <Route path='/' exact component={redirectIfNeeded(LandingPage)}/>
+        <Route path='/' exact component={RedirectIfNeeded(LandingPage)}/>
         <PrivateRoute path='/registration' component={RegistrationPageMobile}/>
         <PrivateRoute path='/reporting' component={ReportingPageMobile}/>
         <PrivateRoute path='/settings' component={SettingsPageMobile}/>

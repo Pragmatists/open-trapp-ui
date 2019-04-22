@@ -1,11 +1,17 @@
 .reporting-page {
-  &__header {
-    font-size: 1.2rem;
-    margin-top: 32px;
-    margin-bottom: 16px;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.4em;
+    margin-bottom: 0.7em;
 
-    & > span {
-      font-size: 2rem;
+    &__text {
+      font-size: 1.2rem;
+
+      & > span {
+        font-size: 2rem;
+      }
     }
   }
   .report {

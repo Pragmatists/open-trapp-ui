@@ -1,8 +1,9 @@
 import { Dispatch } from 'redux';
 import { OpenTrappRestAPI } from '../api/OpenTrappAPI';
 import { WORK_LOG_CONSTANTS } from './constants';
-import { ReportingWorkLogDTO } from '../api/dtos';
+import { BulkEditDTO, ReportingWorkLogDTO } from '../api/dtos';
 import { errorNotificationAction, infoNotificationAction } from './notifications.actions';
+import { OpenTrappState } from './root.reducer';
 
 export function loadWorkLogs(year: number, month: number) {
   return (dispatch: Dispatch) => {
@@ -39,6 +40,20 @@ export function removeWorkLog(id: string) {
         .then(() => dispatch(infoNotificationAction('Work log removed')))
         .catch(err => {
           dispatch(errorNotificationAction('Removing work log failed'));
+          return console.error(err);
+        });
+  }
+}
+
+export function bulkEditWorkLogs(editDto: BulkEditDTO) {
+  return (dispatch: Dispatch, getState: () => OpenTrappState) => {
+    const state = getState();
+    const {year, month} = state.calendar.selectedMonth;
+    OpenTrappRestAPI.bulkEdit(editDto)
+        .then(() => OpenTrappRestAPI.workLogEntriesForMonth(year, month))
+        .then(entries => dispatch(workLogLoadedAction(entries)))
+        .catch(err => {
+          dispatch(errorNotificationAction('Bulk edit failed'));
           return console.error(err);
         });
   }

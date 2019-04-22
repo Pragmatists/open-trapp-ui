@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { AuthorizedUser, MonthDTO, ReportingWorkLogDTO } from './dtos';
+import { AffectedEntriesDTO, AuthorizedUser, BulkEditDTO, MonthDTO, ReportingWorkLogDTO } from './dtos';
 import { LocalStorage } from '../utils/LocalStorage';
 
 class OpenTrappAPI {
@@ -62,6 +62,16 @@ class OpenTrappAPI {
   removeWorkLog(id: string): Promise<void> {
     return this.axios.delete(`/work-log/entries/${id}`)
         .then(() => undefined);
+  }
+
+  validateBulkEditQuery(query: string): Promise<AffectedEntriesDTO> {
+    return this.axios.get<AffectedEntriesDTO>(`/work-log/bulk-update/${query}`)
+        .then(axiosResp => axiosResp.data);
+  }
+
+  bulkEdit(requestBody: BulkEditDTO): Promise<AffectedEntriesDTO> {
+    return this.axios.post<AffectedEntriesDTO>('/work-log/bulk-update', requestBody)
+        .then(axiosResp => axiosResp.data);
   }
 
   get tags(): Promise<string[]> {
