@@ -15,6 +15,7 @@ import { EditWorkLogDialog } from '../editWorkLogDialog/EditWorkLogDialog';
 
 interface TableReportProps {
   workLogs: ReportingWorkLog[];
+  tags: string[]
   onRemoveWorkLog: (id: string) => void;
   onEditWorkLog: (workLog: EditedWorkLog) => void;
   username: string;
@@ -30,12 +31,15 @@ export class TableReport extends Component<TableReportProps, TableReportState> {
   };
 
   render() {
-    const {workLogs} = this.props;
+    const {workLogs, tags} = this.props;
     const workLogsByDay = groupBy(workLogs, w => w.day);
     const days = keys(workLogsByDay);
     return (
         <div className='table-report'>
-          <EditWorkLogDialog workLog={this.state.editedWorkLog} onClose={this.onEditFinished} open={this.state.editedWorkLog !== undefined} />
+          <EditWorkLogDialog workLog={this.state.editedWorkLog}
+                             tags={tags}
+                             onClose={this.onEditFinished}
+                             open={this.state.editedWorkLog !== undefined} />
           <Table className='table-report__table table'>
             <TableHead>
               <TableRow>

@@ -1,5 +1,5 @@
 import { startsWith, chain } from 'lodash';
-import { SuggestionItem } from './Suggestion';
+import { SuggestionItem } from '../../Suggestion';
 
 export class TagsSuggestionFactory {
   constructor(private tags: string[]) {}

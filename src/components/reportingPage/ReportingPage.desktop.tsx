@@ -4,7 +4,7 @@ import { OpenTrappState } from '../../redux/root.reducer';
 import { Grid } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import { changeMonth, loadMonth } from '../../redux/calendar.actions';
-import { loadWorkLogs, removeWorkLog, updateWorkLog } from '../../redux/workLog.actions';
+import { loadTags, loadWorkLogs, removeWorkLog, updateWorkLog } from '../../redux/workLog.actions';
 import './ReportingPage.desktop.scss';
 import { MonthSelector } from './monthSelector/MonthSelector';
 import { WorkLogSelector } from './workLogSelector/WorkLogSelector';
@@ -33,6 +33,7 @@ interface Selection {
 
 interface ReportingPageDataProps {
   workLogs: ReportingWorkLog[];
+  tags: string[]
   selection: Selection;
   days: DayDTO[];
   reportType: ReportType;
@@ -60,7 +61,7 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
 
   render() {
     const {
-      selection, username, workLogs, days, reportType,
+      selection, username, workLogs, tags, days, reportType,
       onMonthChange, onTagsChange, onEmployeesChange, onReportTypeChange, onRemoveWorkLog, onEditWorkLog
     } = this.props;
     return (
@@ -110,6 +111,7 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
                                                                       workLogs={this.workLogsForSelectedUsersAndTags}/>
                 }
                 {reportType === ReportType.TABLE && <TableReport workLogs={this.filteredWorkLogs}
+                                                                 tags={tags}
                                                                  onRemoveWorkLog={onRemoveWorkLog}
                                                                  onEditWorkLog={onEditWorkLog}
                                                                  username={username}/>
@@ -163,8 +165,8 @@ function tagsForUser(workLogs: ReportingWorkLogDTO[], username: string): string[
 }
 
 function mapStateToProps(state: OpenTrappState): ReportingPageDataProps {
-  const {selectedMonth, days} = state.calendar;
-  const {workLogs = []} = state.workLog;
+  const {selectedMonth, days = []} = state.calendar;
+  const {workLogs = [], tags = []} = state.workLog;
   const {selectedTags, selectedEmployees, reportType} = state.reporting;
   const {name} = state.authentication.user;
   return {
@@ -175,7 +177,8 @@ function mapStateToProps(state: OpenTrappState): ReportingPageDataProps {
     },
     username: name,
     workLogs: workLogs.map(w => new ReportingWorkLog(w)),
-    days: days || [],
+    days,
+    tags,
     reportType
   };
 }
@@ -185,6 +188,7 @@ function mapDispatchToProps(dispatch): ReportingPageEventProps {
     init(year: number, month: number) {
       dispatch(loadMonth(year, month));
       dispatch(loadWorkLogs(year, month));
+      dispatch(loadTags());
     },
     onMonthChange(year: number, month: number) {
       dispatch(changeMonth(year, month));

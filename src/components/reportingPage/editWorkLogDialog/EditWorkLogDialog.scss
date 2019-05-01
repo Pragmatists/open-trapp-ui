@@ -1,7 +1,12 @@
 .edit-work-log {
+  div:last-child > div {
+    overflow-y: visible;
+  }
+
   &__content {
     display: flex;
     flex-direction: column;
+    overflow-y: visible;
 
     .text-field {
       margin: 8px 0;

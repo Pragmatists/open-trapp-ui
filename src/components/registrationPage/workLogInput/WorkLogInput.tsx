@@ -7,7 +7,7 @@ import './WorkLogInput.scss'
 import { WorkLogHelpDialog } from "../workLogHelpDialog/WorkLogHelpDialog";
 import { WorkLogExpressionParser } from '../../../workLogExpressionParser/WorkLogExpressionParser';
 import Autosuggest from 'react-autosuggest';
-import { Suggestion, SuggestionItem } from './Suggestion';
+import { Suggestion, SuggestionItem } from '../../Suggestion';
 import { isEmpty, noop, difference } from 'lodash';
 import { TagsSuggestionFactory } from './TagsSuggestionFactory';
 import { DatesSuggestionFactory } from './DatesSuggestionFactory';
