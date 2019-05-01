@@ -21,7 +21,7 @@ export function login(idToken: string, onSuccess: () => void) {
 
 export function logout() {
   return (dispatch: Dispatch) => {
-    localStorage.removeItem('OpenTrappUser');
+    LocalStorage.clearAuthorizedUser();
     dispatch(logoutAction());
   }
 }

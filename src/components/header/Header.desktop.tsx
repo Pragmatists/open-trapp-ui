@@ -3,7 +3,6 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { Grid } from "@material-ui/core";
-import ScheduleIcon from '@material-ui/icons/Schedule';
 import MenuIcon from '@material-ui/icons/Menu';
 import { connect } from 'react-redux';
 import GoogleLogin, { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
@@ -74,8 +73,12 @@ export class HeaderComponent extends Component<HeaderProps, {}> {
   }
 
   private renderAuthorized() {
-    const {onLogout, username = '', profilePicture = ''} = this.props;
-    return <UserDetails onLogout={onLogout}
+    const {onLogout, username = '', profilePicture = '', history} = this.props;
+    const logoutAndRedirect = () => {
+      onLogout();
+      history.push('/');
+    };
+    return <UserDetails onLogout={logoutAndRedirect}
                         username={username}
                         profilePicture={profilePicture}/>;
   }

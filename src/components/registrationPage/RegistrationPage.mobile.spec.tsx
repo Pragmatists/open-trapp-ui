@@ -11,7 +11,6 @@ import {OpenTrappRestAPI} from '../../api/OpenTrappAPI';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
-import {LocalStorage} from '../../utils/LocalStorage';
 import {WorkLogs} from './workLogs/WorkLogs';
 import {ReportingWorkLogDTO} from '../../api/dtos';
 
@@ -68,10 +67,6 @@ describe('Registration Page - mobile', () => {
       },
       registration: registrationInitialState({days: ['2019/02/04']})
     });
-  });
-
-  afterEach(() => {
-    localStorage.removeItem(LocalStorage.PRESETS_KEY);
   });
 
   describe('day selector', () => {
