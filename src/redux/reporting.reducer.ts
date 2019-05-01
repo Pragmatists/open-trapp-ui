@@ -2,7 +2,8 @@ import { REPORTING_CONSTANTS } from './constants';
 
 export enum ReportType {
   CALENDAR,
-  TABLE
+  TABLE,
+  PROJECTS
 }
 
 export interface ReportingState {

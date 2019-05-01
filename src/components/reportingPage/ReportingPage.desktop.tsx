@@ -17,11 +17,13 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import CalendarIcon from '@material-ui/icons/CalendarToday';
 import ListIcon from '@material-ui/icons/ViewList';
+import ChartIcon from '@material-ui/icons/BarChart';
 import { MonthlyReport } from '../monthlyReport/MonthlyReport';
 import { WorkLog } from '../monthlyReport/MonthlyReport.model';
 import { ReportType } from '../../redux/reporting.reducer';
 import { TableReport } from './tableReport/TableReport';
 import { BulkEditDialog } from './bulkEditDialog/BulkEditDialog';
+import { ProjectsReport } from './projectsReport/ProjectsReport';
 
 interface Selection {
   month: { year: number, month: number };
@@ -102,6 +104,7 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
                       className='report__tabs'>
                   <Tab icon={<CalendarIcon/>} onClick={() => onReportTypeChange(ReportType.CALENDAR)} data-reporting-calendar-tab/>
                   <Tab icon={<ListIcon/>} onClick={() => onReportTypeChange(ReportType.TABLE)} data-reporting-table-tab/>
+                  <Tab icon={<ChartIcon/>} onClick={() => onReportTypeChange(ReportType.PROJECTS)} data-reporting-projects-tab/>
                 </Tabs>
                 {reportType === ReportType.CALENDAR && <MonthlyReport days={days}
                                                                       workLogs={this.workLogsForSelectedUsersAndTags}/>
@@ -111,6 +114,7 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
                                                                  onEditWorkLog={onEditWorkLog}
                                                                  username={username}/>
                 }
+                {reportType === ReportType.PROJECTS && <ProjectsReport workLogs={this.filteredWorkLogs} />}
               </Paper>
             </Grid>
           </Grid>

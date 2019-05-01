@@ -15,6 +15,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import { Month } from '../../utils/Month';
+import { ProjectsReport } from './projectsReport/ProjectsReport';
 
 const days = [
   {id: '2019/02/01', weekend: false, holiday: false},
@@ -241,6 +242,7 @@ describe('Reporting Page - desktop', () => {
 
       expect(wrapper.find(MonthlyReport)).toHaveLength(1);
       expect(wrapper.find(TableReport)).toHaveLength(0);
+      expect(wrapper.find(ProjectsReport)).toHaveLength(0);
     });
   });
 
@@ -258,6 +260,7 @@ describe('Reporting Page - desktop', () => {
 
       expect(wrapper.find(TableReport)).toHaveLength(1);
       expect(wrapper.find(MonthlyReport)).toHaveLength(0);
+      expect(wrapper.find(ProjectsReport)).toHaveLength(0);
     });
 
     it('removes work log on remove button click', async () => {
@@ -339,6 +342,28 @@ describe('Reporting Page - desktop', () => {
     function typeExpression(wrapper, selector: string, expression: string) {
       const input = dialogInput(wrapper, selector);
       input.simulate('change', {target: {value: expression}})
+    }
+  });
+
+  describe('reporting - projects', () => {
+    it('shows projects view after tab click', async () => {
+      const wrapper = mount(
+          <Provider store={store}>
+            <ReportingPageDesktop />
+          </Provider>
+      );
+      await flushAllPromises();
+      wrapper.update();
+
+      projectsTab(wrapper).simulate('click');
+
+      expect(wrapper.find(ProjectsReport)).toHaveLength(1);
+      expect(wrapper.find(TableReport)).toHaveLength(0);
+      expect(wrapper.find(MonthlyReport)).toHaveLength(0);
+    });
+
+    function projectsTab(wrapper) {
+      return wrapper.find('[data-reporting-projects-tab]').at(0);
     }
   });
 
