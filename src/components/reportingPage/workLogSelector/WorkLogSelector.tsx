@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Chip } from '@material-ui/core';
-import { isArray, chain, xor, includes } from 'lodash';
+import { xor, uniq } from 'lodash';
 import { ReportingWorkLog } from '../reporting.model';
 import { formatWorkload } from '../../../utils/workLogUtils';
 import Button from '@material-ui/core/Button';
@@ -23,7 +23,7 @@ const ChipLabel = ({label, workload}: ChipLabelProps) => (
 interface WorkLogSelectorProps {
   title: string;
   workLogs: ReportingWorkLog[];
-  chipLabel: (workLog: ReportingWorkLog) => any;
+  chipLabel: (workLog: ReportingWorkLog) => string|string[];
   selected?: string[];
   onSelectionChange: (values: string[]) => void;
   workLogFilter?: (workLog: ReportingWorkLog) => boolean;
@@ -57,7 +57,7 @@ export class WorkLogSelector extends Component<WorkLogSelectorProps, {}> {
 
   private renderChip = (label: string, idx: number) => {
     const {selected = []} = this.props;
-    const isSelected = includes(selected, label);
+    const isSelected = selected.includes(label);
     const workload = this.workloadForLabel(label);
     return (
         <Chip key={idx}
@@ -70,14 +70,13 @@ export class WorkLogSelector extends Component<WorkLogSelectorProps, {}> {
     );
   };
 
-  private workloadForLabel(label: string) {
+  private workloadForLabel(label: string): number {
     const {workLogs, chipLabel, workLogFilter = () => true} = this.props;
-    return chain(workLogs)
-        .filter(w => chipLabel(w) === label || includes(chipLabel(w), label))
+    return workLogs
+        .filter(w => chipLabel(w) === label || chipLabel(w).includes(label))
         .filter(workLogFilter)
         .map(w => w.workload)
-        .sum()
-        .value();
+        .reduce((previousValue, currentValue) => previousValue + currentValue, 0);
   }
 
   private onClick(label: string) {
@@ -87,11 +86,10 @@ export class WorkLogSelector extends Component<WorkLogSelectorProps, {}> {
 
   private get labels(): string[] {
     const {workLogs, chipLabel} = this.props;
-    return chain(workLogs)
+    const labels = workLogs
         .map(chipLabel)
-        .map(v => isArray(v) ? v : [v])
-        .flatten()
-        .uniq()
-        .value();
+        .map(v => Array.isArray(v) ? v : [v])
+        .reduce(((prev, curr) => [...prev, ...curr]), []);
+    return uniq(labels);
   }
 }

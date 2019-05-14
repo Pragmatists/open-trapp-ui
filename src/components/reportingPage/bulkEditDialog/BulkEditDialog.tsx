@@ -10,7 +10,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import TextField from '@material-ui/core/TextField';
 import { Month } from '../../../utils/Month';
 import { AffectedEntriesDTO, ReportingWorkLogDTO } from '../../../api/dtos';
-import { chain } from 'lodash';
+import { uniq } from 'lodash';
 import { BulkEditQuery } from './BulkEditQuery';
 import { OpenTrappRestAPI } from '../../../api/OpenTrappAPI';
 import './BulkEditDialog.scss';
@@ -117,12 +117,11 @@ class BulkEditDialogComponent extends Component<BulkEditDialogProps, BulkEditDia
 }
 
 function tagsForUser(workLogs: ReportingWorkLogDTO[], username: string): string[] {
-  return chain(workLogs)
+  const tags = workLogs
       .filter(w => w.employee === username)
       .map(w => w.projectNames)
-      .flatten()
-      .uniq()
-      .value();
+      .reduce((prev, curr) => [...prev, ...curr], []);
+  return uniq(tags);
 }
 
 function mapStateToProps(state: OpenTrappState): BulkEditDialogDataProps {

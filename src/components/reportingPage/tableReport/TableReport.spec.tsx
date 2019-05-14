@@ -23,7 +23,7 @@ const username = 'john.doe';
 describe('Table report', () => {
   it('displays work logs grouped by days and employees', () => {
     const wrapper = mount(
-      <TableReport workLogs={workLogs} onRemoveWorkLog={noop} onEditWorkLog={noop} username={username}/>
+      <TableReport workLogs={workLogs} onRemoveWorkLog={noop} onEditWorkLog={noop} username={username} tags={[]}/>
     );
 
     expect(wrapper.find(TableCell).filter('[data-day-cell]')).toHaveLength(3);
@@ -34,7 +34,7 @@ describe('Table report', () => {
 
   it('displays workload pretty formatted', () => {
     const wrapper = mount(
-        <TableReport workLogs={workLogs} onRemoveWorkLog={noop} onEditWorkLog={noop} username={username}/>
+        <TableReport workLogs={workLogs} onRemoveWorkLog={noop} onEditWorkLog={noop} username={username} tags={[]}/>
     );
 
     expect(workloadCellsText(wrapper)).toEqual(['7h 30m', '7h', '1d', '1h', '5h 30m']);
@@ -42,7 +42,7 @@ describe('Table report', () => {
 
   it(`displays action buttons only for current user's entries`, () => {
     const wrapper = mount(
-        <TableReport workLogs={workLogs} onRemoveWorkLog={noop} onEditWorkLog={noop} username={username}/>
+        <TableReport workLogs={workLogs} onRemoveWorkLog={noop} onEditWorkLog={noop} username={username} tags={[]}/>
     );
 
     expect(hasRowRemoveButton(row(wrapper, 0))).toBeFalsy();
@@ -60,7 +60,7 @@ describe('Table report', () => {
   it('removes work log', () => {
     const onRemove = jest.fn();
     const wrapper = mount(
-        <TableReport workLogs={workLogs} onRemoveWorkLog={onRemove} onEditWorkLog={noop} username={username}/>
+        <TableReport workLogs={workLogs} onRemoveWorkLog={onRemove} onEditWorkLog={noop} username={username} tags={[]}/>
     );
 
     removeWorkLogButton(wrapper, 2).simulate('click');
@@ -71,7 +71,7 @@ describe('Table report', () => {
   it('displays edit dialog on button click', () => {
     const onRemove = jest.fn();
     const wrapper = mount(
-        <TableReport workLogs={workLogs} onRemoveWorkLog={onRemove} onEditWorkLog={noop} username={username}/>
+        <TableReport workLogs={workLogs} onRemoveWorkLog={onRemove} onEditWorkLog={noop} username={username} tags={[]}/>
     );
 
     editWorkLogButton(wrapper, 2).simulate('click');

@@ -10,7 +10,7 @@ import { MonthSelector } from './monthSelector/MonthSelector';
 import { WorkLogSelector } from './workLogSelector/WorkLogSelector';
 import { changeEmployees, changeReportType, changeTags } from '../../redux/reporting.actions';
 import { EditedWorkLog, ReportingWorkLog } from './reporting.model';
-import { chain, includes, intersection, isEmpty } from 'lodash';
+import { chain, includes, intersection, isEmpty, uniq } from 'lodash';
 import { DayDTO, ReportingWorkLogDTO } from '../../api/dtos';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
@@ -148,20 +148,18 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
 
   private get filteredWorkLogs(): ReportingWorkLog[] {
     const {workLogs} = this.props;
-    return chain(workLogs)
+    return workLogs
         .filter(this.employeesFilter)
-        .filter(this.tagsFilter)
-        .value();
+        .filter(this.tagsFilter);
   }
 }
 
 function tagsForUser(workLogs: ReportingWorkLogDTO[], username: string): string[] {
-  return chain(workLogs)
+  const tags = workLogs
       .filter(w => w.employee === username)
       .map(w => w.projectNames)
-      .flatten()
-      .uniq()
-      .value();
+      .reduce((curr, prev) => [...curr, ...prev], []);
+  return uniq(tags);
 }
 
 function mapStateToProps(state: OpenTrappState): ReportingPageDataProps {

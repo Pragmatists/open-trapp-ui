@@ -58,6 +58,6 @@ export class ProjectsReport extends Component<ProjectsReportProps, {}> {
         .map(pair => ({project: pair[0], workload: sum(pair[1].map(w => w.workload))}))
         .map(p => ({project: p.project, workload: p.workload, share: p.workload / totalWorkload}))
         .sortBy(p => p.project)
-        .value();
+        .value() as RowData[];
   }
 }

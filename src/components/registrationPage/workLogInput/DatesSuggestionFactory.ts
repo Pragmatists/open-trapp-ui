@@ -1,4 +1,4 @@
-import { startsWith, chain } from 'lodash';
+import { startsWith } from 'lodash';
 import { TimeProvider } from '../../../utils/dateTimeUtils';
 import { SuggestionItem } from '../../Suggestion';
 import { WorkLogExpressionParser } from '../../../workLogExpressionParser/WorkLogExpressionParser';
@@ -27,19 +27,17 @@ export class DatesSuggestionFactory {
 
   suggestions(text: string, prefix: string): SuggestionItem[] {
     const rawPrefix = prefix.replace('@', '');
-
-    return chain(DatesSuggestionFactory.POSSIBLE_SUGGESTIONS)
+    return DatesSuggestionFactory.POSSIBLE_SUGGESTIONS
         .map(suggestion => ({
           label: suggestion,
           day: this.mapSuggestionToDay(suggestion)
         }))
         .filter(suggestion => startsWith(suggestion.label, rawPrefix) || startsWith(suggestion.day, rawPrefix))
-        .take(5)
+        .slice(0, 5)
         .map(suggestion => ({
           label: suggestion.label,
           value: text.replace(new RegExp(`${prefix}$`), `@${suggestion.label} `)
-        }))
-        .value();
+        }));
   }
 
   private mapSuggestionToDay(suggestion: string) {

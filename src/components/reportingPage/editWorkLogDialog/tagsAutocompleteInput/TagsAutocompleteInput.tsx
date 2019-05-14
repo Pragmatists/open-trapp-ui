@@ -88,6 +88,6 @@ export class TagsAutocompleteInput extends Component<TagsAutocompleteInputProps,
           label: tag,
           value: text.replace(new RegExp(`${prefix}$`), `${tag}, `)
         }))
-        .value();
+        .value() as SuggestionItem[];
   };
 }
