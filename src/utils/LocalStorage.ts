@@ -8,7 +8,7 @@ export class LocalStorage {
     const storageUser = localStorage.getItem(LocalStorage.AUTHORIZED_USER_KEY);
     const user: AuthorizedUser = storageUser ? JSON.parse(storageUser) : undefined;
     if (!user) {
-      return;
+      return null;
     }
     if (isExpired(user.token)) {
       localStorage.removeItem(LocalStorage.AUTHORIZED_USER_KEY);

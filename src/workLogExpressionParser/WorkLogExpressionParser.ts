@@ -46,8 +46,8 @@ export class WorkLogExpressionParser {
   }
 
   private daysFromRangeExpression(expression: string): { noDateExpression: string; datesRange: string[]; } {
-    const fromDateSelector = /\@[A-Z0-9/a-z-\+]+\~/g;
-    const toDateSelector = /\~\@[A-Z0-9/a-z-\+]+/g;
+    const fromDateSelector = /@[A-Z0-9/a-z-+]+~/g;
+    const toDateSelector = /~@[A-Z0-9/a-z-+]+/g;
     const fromDateMatch = expression.match(fromDateSelector);
     const toDateMatch = expression.match(toDateSelector);
     const fromDate = fromDateMatch[0].substring(0, fromDateMatch[0].length - 1);

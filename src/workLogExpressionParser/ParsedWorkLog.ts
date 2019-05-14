@@ -1,8 +1,8 @@
 import { isEmpty, size } from 'lodash';
 
 export class ParsedWorkLog {
-  static readonly DATE_RANGE_PATTERN = /\@[A-Z0-9/a-z-\+]+\~\@[A-Z0-9/a-z-\+]+/g;
-  static readonly DATE_PATTERN = /\@[A-Z0-9/a-z-\+]+/g;
+  static readonly DATE_RANGE_PATTERN = /@[A-Z0-9/a-z-+]+~@[A-Z0-9/a-z-+]+/g;
+  static readonly DATE_PATTERN = /@[A-Z0-9/a-z-+]+/g;
 
   constructor(
       readonly expression: string,

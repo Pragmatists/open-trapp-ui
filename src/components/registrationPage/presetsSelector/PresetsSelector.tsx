@@ -25,7 +25,7 @@ export class PresetsSelector extends Component<PresetsSelectorProps, PresetsSele
   };
 
   render() {
-    const {presets, tags} = this.props;
+    const {tags} = this.props;
     const {dialogOpen} = this.state;
     return (
       <div className='presets-selector'>

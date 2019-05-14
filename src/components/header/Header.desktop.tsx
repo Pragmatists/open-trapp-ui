@@ -45,7 +45,7 @@ export class HeaderComponent extends Component<HeaderProps, {}> {
               </Grid>
               <Grid item xs={11} lg={10}>
                 <Toolbar>
-                  <img src={openTrappIcon} className='header-desktop__logo' onClick={this.handleHeaderClicked} />
+                  <img src={openTrappIcon} alt='' className='header-desktop__logo' onClick={this.handleHeaderClicked} />
                   <Typography variant='h5' color='inherit' className='header-desktop__text' onClick={this.handleHeaderClicked}>
                     Open<span>Trapp</span>
                   </Typography>

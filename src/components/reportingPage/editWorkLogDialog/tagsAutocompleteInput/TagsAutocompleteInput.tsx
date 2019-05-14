@@ -3,7 +3,7 @@ import TextField from '@material-ui/core/TextField';
 import Autosuggest from 'react-autosuggest';
 import { Suggestion, SuggestionItem } from '../../../Suggestion';
 import { Paper } from '@material-ui/core';
-import { chain, startsWith, last } from 'lodash';
+import { startsWith, last } from 'lodash';
 import './TagsAutocompleteInput.scss';
 
 interface TagsAutocompleteInputProps {
@@ -79,15 +79,14 @@ export class TagsAutocompleteInput extends Component<TagsAutocompleteInputProps,
   private getSuggestions = (text: string) => {
     const {tags} = this.props;
     const prefix = last(text.split(',').map(t => t.trim()));
-    return chain(tags)
+    return tags
         .filter(tag => startsWith(tag.toLowerCase(), prefix))
-        .take(5)
-        .sort()
+        .slice(0, 5)
         .map(tag => tag.trim())
+        .sort()
         .map(tag => ({
           label: tag,
           value: text.replace(new RegExp(`${prefix}$`), `${tag}, `)
-        }))
-        .value() as SuggestionItem[];
+        }));
   };
 }
