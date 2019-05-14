@@ -1,0 +1,18 @@
+.day-card {
+  flex-grow: 1;
+
+  .card-content {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  &__work-log {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__actions {
+    justify-content: flex-end;
+  }
+}

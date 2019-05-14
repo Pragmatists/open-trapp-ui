@@ -5,6 +5,7 @@ import {formatWorkload} from '../../../utils/workLogUtils';
 import './WorkLogs.scss';
 import List from '@material-ui/core/List';
 import ListSubheader from "@material-ui/core/ListSubheader";
+import ListItem from '@material-ui/core/ListItem';
 
 interface WorkLogsProps {
   workLogs: ReportingWorkLogDTO[];
@@ -13,21 +14,24 @@ interface WorkLogsProps {
 
 export class WorkLogs extends Component<WorkLogsProps, {}> {
   render() {
+    const {workLogs, onDelete} = this.props;
     return (
       <List className='work-logs'>
         <ListSubheader className='work-logs__title'>Reported time</ListSubheader>
-        {this.props.workLogs.sort(this.workloadDesc).map(workLog => (
-          <Chip data-work-log
-                key={workLog.id}
-                className='work-log'
-                onDelete={() => this.props.onDelete(workLog)}
-                label={<ChipLabel workLog={workLog} />} />
+        {workLogs.sort(WorkLogs.workloadDesc).map(workLog => (
+            <ListItem>
+              <Chip data-work-log
+                    key={workLog.id}
+                    className='work-log'
+                    onDelete={() => onDelete(workLog)}
+                    label={<ChipLabel workLog={workLog} />} />
+            </ListItem>
         ))}
       </List>
     );
   }
 
-  private workloadDesc = (workLog1, workLog2) => workLog2.workload - workLog1.workload;
+  private static workloadDesc = (workLog1, workLog2) => workLog2.workload - workLog1.workload;
 }
 
 const ChipLabel = ({workLog}: { workLog: ReportingWorkLogDTO }) => (

@@ -9,11 +9,12 @@ import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import * as React from 'react';
 import { ReportingPageMobile } from './ReportingPage.mobile';
-import { MobileWorkLog } from './mobileWorkLog/MobileWorkLog';
+import { DayCard } from './dayCard/DayCard';
 
 const workLogResponse = [
   {id: 'jd1', employee: 'john.doe', projectNames: ['projects', 'nvm'], workload: 480, day: '2019/03/01'},
   {id: 'jd2', employee: 'john.doe', projectNames: ['projects', 'nvm'], workload: 420, day: '2019/03/02'},
+  {id: 'jd3', employee: 'john.doe', projectNames: ['internal'], workload: 30, day: '2019/03/02'},
   {id: 'tk1', employee: 'tom.kowalsky', projectNames: ['projects', 'jld'], workload: 330, day: '2019/03/01'},
   {id: 'th2', employee: 'tom.kowalsky', projectNames: ['internal', 'self-dev'], workload: 480, day: '2019/03/03'}
 ];
@@ -51,7 +52,7 @@ describe('Reporting page - mobile', () => {
 
   });
 
-  it('shows list of worklogs', async () => {
+  it('shows list of days', async () => {
     const wrapper = mount(
         <Provider store={store}>
           <ReportingPageMobile />
@@ -60,6 +61,10 @@ describe('Reporting page - mobile', () => {
     await flushAllPromises();
     wrapper.update();
 
-    expect(wrapper.find(MobileWorkLog)).toHaveLength(2);
+    expect(wrapper.find(DayCard)).toHaveLength(2);
   });
+
+  it('moves to registration view on EDIT day click', async () => {
+    // TODO
+  })
 });
