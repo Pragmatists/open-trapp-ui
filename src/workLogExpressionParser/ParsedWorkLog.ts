@@ -20,6 +20,12 @@ export class ParsedWorkLog {
     return new ParsedWorkLog('', [], [], undefined);
   }
 
+  static from(tags: string[], day: string, workload: string) {
+    const joinedTags = tags.map(t => `#${t}`).join(', ');
+    const dayString = day ? '' : `@${day}`;
+    return new ParsedWorkLog(`${workload} ${joinedTags} ${dayString}`, [day], tags, workload);
+  }
+
   withDays(days: string[]): ParsedWorkLog {
     const daysExpression = ParsedWorkLog.daysToExpression(days);
     const newExpression = this.newExpression(daysExpression);

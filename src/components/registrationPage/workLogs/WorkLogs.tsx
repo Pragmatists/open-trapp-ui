@@ -19,9 +19,8 @@ export class WorkLogs extends Component<WorkLogsProps, {}> {
       <List className='work-logs'>
         <ListSubheader className='work-logs__title'>Reported time</ListSubheader>
         {workLogs.sort(WorkLogs.workloadDesc).map(workLog => (
-            <ListItem>
+            <ListItem key={workLog.id}>
               <Chip data-work-log
-                    key={workLog.id}
                     className='work-log'
                     onDelete={() => onDelete(workLog)}
                     label={<ChipLabel workLog={workLog} />} />

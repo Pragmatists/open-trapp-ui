@@ -44,7 +44,7 @@ describe('Workload dialog', () => {
 
     saveButton(wrapper).simulate('click');
 
-    expect(onClose).toHaveBeenCalledWith('8h');
+    expect(onClose).toHaveBeenCalledWith('1d');
   });
 
   it('emits selected workload on SAVE click', () => {

@@ -13,9 +13,9 @@ export function loadWorkLogs(year: number, month: number) {
   };
 }
 
-export function loadTags() {
+export function loadTags(numberOfPastMonths?: number) {
   return (dispatch: Dispatch) => {
-    OpenTrappRestAPI.tags
+    OpenTrappRestAPI.tags(numberOfPastMonths)
         .then(tags => dispatch(tagsLoadedAction(tags)))
         .catch(err => console.error(err));
   };

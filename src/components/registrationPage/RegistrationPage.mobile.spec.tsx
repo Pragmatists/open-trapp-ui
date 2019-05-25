@@ -13,6 +13,8 @@ import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
 import {WorkLogs} from './workLogs/WorkLogs';
 import {ReportingWorkLogDTO} from '../../api/dtos';
+import { ListItem } from '@material-ui/core';
+import { CreateWorkLogDialog } from './createWorkLogDialog/CreateWorkLogDialog';
 
 const workLogResponse: ReportingWorkLogDTO[] = [
   {id: '1', link: 'link', employee: 'john.doe', day: '2019/02/01', workload: 480, projectNames: ['projects', 'nvm']},
@@ -44,10 +46,10 @@ describe('Registration Page - mobile', () => {
     httpMock
         .onGet(/\/api\/v1\/calendar\/2019\/\d\/work-log\/entries$/)
         .reply(200, workLogResponse)
-        .onGet('/api/v1/projects')
-        .reply(200, tagsResponse)
         .onGet('/api/v1/projects/presets')
         .reply(200, presetsResponse)
+        .onGet(/\/api\/v1\/projects.*/)
+        .reply(200, tagsResponse)
         .onPost('/api/v1/employee/john.doe/work-log/entries')
         .reply(201, {id: '123-456'})
         .onDelete(/\/api\/v1\/work-log\/entries\/.*$/)
@@ -177,7 +179,30 @@ describe('Registration Page - mobile', () => {
     expect(httpMock.history.post.length).toEqual(1);
     expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
       projectNames: ['vacation'],
-      workload: '8h',
+      workload: '1d',
+      day: '2019/02/04'
+    });
+  });
+
+  it('registers work log for custom tags', async () => {
+    const wrapper = mount(
+        <Provider store={store}>
+          <RegistrationPageMobile/>
+        </Provider>
+    );
+    await flushAllPromises();
+    wrapper.update();
+
+    customWorkLogButton(wrapper).simulate('click');
+    tag(wrapper, 'nvm').simulate('click');
+    nextButton(wrapper).simulate('click');
+    saveButton(wrapper).simulate('click');
+    await flushAllPromises();
+
+    expect(httpMock.history.post.length).toEqual(1);
+    expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
+      projectNames: ['nvm'],
+      workload: '1d',
       day: '2019/02/04'
     });
   });
@@ -204,5 +229,25 @@ describe('Registration Page - mobile', () => {
 
   function saveWorkLogButton(wrapper) {
     return wrapper.find('[data-workload-dialog]').find(DialogActions).find(Button).filter('[data-save-button]');
+  }
+
+  function customWorkLogButton(wrapper) {
+    return wrapper.find('[data-custom-work-log-button]').hostNodes();
+  }
+
+  function tags(wrapper) {
+    return wrapper.find(CreateWorkLogDialog).find(ListItem);
+  }
+
+  function tag(wrapper, label: string) {
+    return tags(wrapper).filter(`[data-tag="${label}"]`)
+  }
+
+  function nextButton(wrapper) {
+    return wrapper.find('[data-next-button]').hostNodes();
+  }
+
+  function saveButton(wrapper) {
+    return wrapper.find('[data-save-button]').hostNodes();
   }
 });

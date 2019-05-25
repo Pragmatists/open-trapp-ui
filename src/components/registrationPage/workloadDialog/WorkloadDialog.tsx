@@ -4,8 +4,8 @@ import DialogContent from '@material-ui/core/DialogContent';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
-import './WorkloadDialog.scss';
 import {Workload} from "../workload/Workload";
+import { formatWorkload } from '../../../utils/workLogUtils';
 
 interface WorkloadDialogProps {
   open: boolean;
@@ -61,13 +61,6 @@ export class WorkloadDialog extends Component<WorkloadDialogProps, WorkloadDialo
 
   private get workload(): string {
     const {hours, minutes} = this.state;
-    if (hours > 0 && minutes > 0) {
-      return `${hours}h ${minutes}m`;
-    } else if (hours > 0) {
-      return `${hours}h`;
-    } else if (minutes > 0) {
-      return `${minutes}m`;
-    }
-    return '';
+    return formatWorkload(hours * 60 + minutes);
   }
 }

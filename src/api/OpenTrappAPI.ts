@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import moment from 'moment';
 import { AffectedEntriesDTO, AuthorizedUser, BulkEditDTO, MonthDTO, ReportingWorkLogDTO } from './dtos';
 import { LocalStorage } from '../utils/LocalStorage';
 
@@ -74,13 +75,17 @@ class OpenTrappAPI {
         .then(axiosResp => axiosResp.data);
   }
 
-  get tags(): Promise<string[]> {
-    return this.axios.get<string[]>('/projects')
+  tags(numberOfPastMonths?: number): Promise<string[]> {
+    const url = numberOfPastMonths ?
+        `/projects?dateFrom=${moment().subtract(numberOfPastMonths, 'months').format('YYYY-MM-DD')}` :
+        '/projects';
+    return this.axios.get<string[]>(url)
         .then(axiosResp => axiosResp.data);
   }
 
-  get presets(): Promise<string[][]> {
-    return this.axios.get<string[][]>('/projects/presets')
+  presets(limit?: number): Promise<string[][]> {
+    const url = limit ? `/projects/presets?limit=${limit}` : '/projects/presets';
+    return this.axios.get<string[][]>(url)
         .then(axiosResp => axiosResp.data);
   }
 

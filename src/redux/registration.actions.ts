@@ -28,9 +28,9 @@ export function saveWorkLog(workLog: ParsedWorkLog) {
   };
 }
 
-export function loadPresets() {
+export function loadPresets(limit?: number) {
   return (dispatch: Dispatch) => {
-    OpenTrappRestAPI.presets
+    OpenTrappRestAPI.presets(limit)
         .then(presets => presets.map(p => new Preset(p)))
         .then(presets => dispatch(presetsLoadedAction(presets)))
         .catch(err => console.error(err));
