@@ -2,6 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { DayCard } from './DayCard';
 import { noop } from 'lodash';
+import moment from 'moment';
 
 describe('Day card', () => {
   const workLog = {
@@ -11,10 +12,10 @@ describe('Day card', () => {
 
   it('displays date in header', () => {
     const wrapper = mount(
-        <DayCard day='2019/04/18' workLogs={[]} onEditClick={noop}/>
+        <DayCard day='2019/04/18' weekend={false} workLogs={[]} onEditClick={noop}/>
     );
 
-    expect(wrapper.find('[data-day-card-day]').hostNodes().text()).toEqual('2019/04/18');
+    expect(wrapper.find('[data-day-card-day]').hostNodes().text()).toEqual('2019/04/18Thursday');
   });
 
   it('displays work logs list', () => {
@@ -24,7 +25,7 @@ describe('Day card', () => {
         ];
 
     const wrapper = mount(
-        <DayCard day='2019/04/18' workLogs={workLogs} onEditClick={noop}/>
+        <DayCard day='2019/04/18' weekend={false} workLogs={workLogs} onEditClick={noop}/>
     );
 
     expect(wrapper.find('[data-day-card-work-log]')).toHaveLength(2);
@@ -32,7 +33,7 @@ describe('Day card', () => {
 
   it('displays workload', () => {
     const wrapper = mount(
-        <DayCard day='2019/04/18' workLogs={[workLog]} onEditClick={noop}/>
+        <DayCard day='2019/04/18' weekend={false} workLogs={[workLog]} onEditClick={noop}/>
     );
 
     expect(wrapper.find('[data-day-card-workload]').text()).toEqual('1d');
@@ -40,7 +41,7 @@ describe('Day card', () => {
 
   it('displays project names', () => {
     const wrapper = mount(
-        <DayCard day='2019/04/18' workLogs={[workLog]} onEditClick={noop}/>
+        <DayCard day='2019/04/18' weekend={false} workLogs={[workLog]} onEditClick={noop}/>
     );
 
     expect(wrapper.find('[data-day-card-project-names]').text()).toEqual('projects, nvm');
@@ -49,12 +50,42 @@ describe('Day card', () => {
   it('emits EDIT button click', () => {
     const onClick = jest.fn();
     const wrapper = mount(
-        <DayCard day='2019/04/18' workLogs={[]} onEditClick={onClick}/>
+        <DayCard day='2019/04/18' weekend={false} workLogs={[]} onEditClick={onClick}/>
     );
 
     editButton(wrapper).simulate('click');
 
     expect(onClick).toHaveBeenCalled();
+  });
+
+  it('displays reminder if no work logs and past date', () => {
+    const yesterday = moment().subtract(1, 'day').format('YYYY/MM/DD');
+
+    const wrapper = mount(
+        <DayCard day={yesterday} weekend={false} workLogs={[]} onEditClick={noop}/>
+    );
+
+    expect(wrapper.find('[data-day-card-reminder]').text())
+        .toEqual('You should report work time for this day!');
+    expect(wrapper.find('[data-day-card-list]')).toHaveLength(0);
+  });
+
+  it('does not display reminder if weekend', () => {
+    const wrapper = mount(
+        <DayCard day='2019/05/26' weekend={true} workLogs={[]} onEditClick={noop}/>
+    );
+
+    expect(wrapper.find('[data-day-card-reminder]')).toHaveLength(0);
+    expect(wrapper.find('[data-day-card-list]')).toHaveLength(0);
+  });
+
+  it('collapse card content if weekend or day in the future', () => {
+    const yesterday = moment().add(1, 'day').format('YYYY/MM/DD');
+    const wrapper = mount(
+        <DayCard day={yesterday} weekend={true} workLogs={[]} onEditClick={noop}/>
+    );
+
+    expect(wrapper.find('[data-day-card-reminder]')).toHaveLength(0);
   });
 
   function editButton(wrapper) {

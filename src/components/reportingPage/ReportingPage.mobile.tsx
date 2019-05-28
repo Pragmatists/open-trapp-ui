@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { groupBy, toPairs } from 'lodash';
+import { groupBy } from 'lodash';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { loadWorkLogs } from '../../redux/workLog.actions';
 import { DayCard } from './dayCard/DayCard';
-import { ReportingWorkLogDTO } from '../../api/dtos';
+import { DayDTO, ReportingWorkLogDTO } from '../../api/dtos';
 import { List } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
+import { loadMonth } from '../../redux/calendar.actions';
 
 interface ReportingPageDataProps {
-  selectedMonth: { month: number, year: number },
-  workLogs: ReportingWorkLogDTO[]
+  selectedMonth: { month: number, year: number };
+  workLogs: ReportingWorkLogDTO[];
+  days: DayDTO[];
 }
 
 interface ReportingPageEventProps {
@@ -33,7 +35,10 @@ class ReportingPageMobileComponent extends Component<ReportingPageProps, {}> {
         <List>
           {this.workLogsByDay.map(day =>
               <ListItem key={day.day}>
-                <DayCard day={day.day} workLogs={day.workLogs} onEditClick={() => onEditDay(day.day)}/>
+                <DayCard day={day.day}
+                         weekend={day.weekend}
+                         workLogs={day.workLogs}
+                         onEditClick={() => onEditDay(day.day)} data-day-card={day.day}/>
               </ListItem>
           )}
         </List>
@@ -41,26 +46,29 @@ class ReportingPageMobileComponent extends Component<ReportingPageProps, {}> {
   }
 
   private get workLogsByDay() {
-    const {workLogs} = this.props;
+    const {workLogs, days} = this.props;
     const groupedWorkLogs = groupBy(workLogs, w => w.day);
-    return toPairs(groupedWorkLogs)
-        .map(p => ({day: p[0], workLogs: p[1]}))
+    return days
+        .sort((d1, d2) => d2.id.localeCompare(d1.id))
+        .map(d => ({day: d.id, weekend: d.weekend, workLogs: groupedWorkLogs[d.id] || []}));
   }
 }
 
 function mapStateToProps(state: OpenTrappState): ReportingPageDataProps {
   const {calendar, workLog, authentication} = state;
-  const {selectedMonth} = calendar;
+  const {selectedMonth, days = []} = calendar;
   const workLogs = workLog.workLogs.filter(workLog => workLog.employee === authentication.user.name);
   return {
     selectedMonth,
-    workLogs
+    workLogs,
+    days
   };
 }
 
 function mapDispatchToProps(dispatch): ReportingPageEventProps {
   return {
     init(year: number, month: number) {
+      dispatch(loadMonth(year, month));
       dispatch(loadWorkLogs(year, month));
     },
     onEditDay(day: string) {

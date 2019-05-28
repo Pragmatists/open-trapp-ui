@@ -4,6 +4,10 @@
   .card-content {
     padding-top: 0;
     padding-bottom: 0;
+
+    &__reminder {
+      color: #c7254e;
+    }
   }
 
   &__work-log {
