@@ -15,7 +15,7 @@ import List from '@material-ui/core/List';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import { Chip } from '@material-ui/core';
 import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/core/SvgIcon/SvgIcon';
+import AddIcon from '@material-ui/icons/Add';
 import './RegistrationPage.mobile.scss';
 
 interface RegistrationPageDataProps {
@@ -76,7 +76,7 @@ class RegistrationPageMobileComponent extends Component<RegistrationPageProps, R
           <WorkloadDialog open={!isNil(selectedPreset)} onClose={this.handleWorkloadDialogClose} />
           <CreateWorkLogDialog onClose={this.handleCustomWorkLogDialogClose} open={customWorkLogDialogOpen} tags={tags} />
           <Fab onClick={this.handleCustomWorkLogClicked}
-               color='secondary'
+               color='primary'
                className='registration-page__add-button add-button'
                data-custom-work-log-button>
             <AddIcon />
