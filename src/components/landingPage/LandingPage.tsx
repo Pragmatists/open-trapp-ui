@@ -8,7 +8,7 @@ import './LandingPage.scss';
 
 export const LandingPage = () => (
   <div className='landing-page'>
-    <Grid container spacing={24}>
+    <Grid container spacing={3}>
       <Grid item container justify='center' xs={12} className='landing-page__header header'>
         <Grid item xs={9} className='header__content'>
           <h1>Welcome to OpenTrapp!</h1>

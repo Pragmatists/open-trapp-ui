@@ -43,7 +43,7 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
     const {days, workLogs, workLog, selectedMonth, onMonthChange, onWorkLogInputChange, onSaveWorkLog, tags} = this.props;
     return (
         <div className='registration-page'>
-          <Grid container justify='center' spacing={24}>
+          <Grid container justify='center' spacing={3}>
             <Grid item lg={10} md={11} xs={11}>
               <div className='registration-page__header'>
                 <span>Report your time</span> using our expression language, to make it quick!

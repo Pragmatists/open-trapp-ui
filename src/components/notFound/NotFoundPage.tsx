@@ -4,7 +4,7 @@ import './NotFoundPage.scss'
 
 export const NotFoundPage = () => (
     <div className='not-found'>
-      <Grid container justify='center' xs={12} spacing={24}>
+      <Grid container justify='center' xs={12} spacing={3}>
         <Grid item container xs={9}>
           <Grid item xs={12}>
             <div className='not-found__code'>404</div>

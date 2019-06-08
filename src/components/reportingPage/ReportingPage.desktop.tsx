@@ -66,7 +66,7 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
     } = this.props;
     return (
         <div className='reporting-page'>
-          <Grid container justify='center' spacing={24}>
+          <Grid container justify='center' spacing={3}>
             <Grid item lg={10} xs={11}>
               <div className='reporting-page__header header'>
                 <div className='header__text'><span>Review reports</span> by month, project and employee</div>
@@ -74,7 +74,7 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
               </div>
               <Divider variant='fullWidth'/>
             </Grid>
-            <Grid item container lg={10} xs={11} spacing={32}>
+            <Grid item container lg={10} xs={11} spacing={4}>
               <Grid item lg={2} sm={12} data-months-selector>
                 <MonthSelector selectedMonth={selection.month} onMonthChange={onMonthChange}/>
               </Grid>

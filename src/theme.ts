@@ -13,7 +13,6 @@ export const theme = createMuiTheme({
         },
     },
     typography: {
-        useNextVariants: true,
         fontFamily: [
             '-apple-system',
             'BlinkMacSystemFont',

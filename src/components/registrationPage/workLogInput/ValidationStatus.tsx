@@ -11,7 +11,7 @@ interface ValidationStatusProps {
 export const ValidationStatus = ({workLog}: ValidationStatusProps) => {
     if (workLog.valid) {
         return (
-            <OkIcon nativeColor='#5BC440' data-ok-indicator />
+            <OkIcon htmlColor='#5BC440' data-ok-indicator />
         )
     } else if (!isEmpty(workLog.expression)) {
         return (
