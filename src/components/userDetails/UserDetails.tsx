@@ -8,7 +8,7 @@ interface UserDetailsProps {
   username: string;
   profilePicture: string;
   avatarOnly?: boolean;
-  onLogout: () => void;
+  onLogout: VoidFunction;
 }
 
 interface UserDetailsState {

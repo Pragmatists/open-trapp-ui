@@ -20,9 +20,9 @@ interface HeaderDataProps {
 }
 
 interface HeaderEventProps {
-  onGoogleToken: (token: string, onSuccess: () => void) => void;
-  onLogout: () => void;
-  onMenuButtonClick: () => void;
+  onGoogleToken: (token: string, onSuccess: VoidFunction) => void;
+  onLogout: VoidFunction;
+  onMenuButtonClick: VoidFunction;
 }
 
 type HeaderProps = HeaderDataProps & HeaderEventProps;

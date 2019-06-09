@@ -1,0 +1,19 @@
+.admin-page {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    font-size: 2rem;
+    margin-top: 32px;
+    margin-bottom: 16px;
+  }
+
+  &__content {
+    margin: 16px 0;
+  }
+
+  &__placeholder {
+    padding: 16px 8px;
+  }
+}

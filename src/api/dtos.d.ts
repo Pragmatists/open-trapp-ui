@@ -44,3 +44,9 @@ export interface BulkEditDTO {
   readonly query: string;
   readonly expression: string;
 }
+
+export interface ServiceAccountDTO {
+  name: string;
+  clientID: string;
+  owner: string;
+}

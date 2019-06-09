@@ -29,7 +29,7 @@ interface LeftMenuDataProps {
 }
 
 interface LeftMenuEventProps {
-  onHideMenu: () => void;
+  onHideMenu: VoidFunction;
 }
 
 type LeftMenuProps = LeftMenuDataProps & LeftMenuOwnProps & LeftMenuEventProps;

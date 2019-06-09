@@ -8,7 +8,7 @@ import './WorkLogHelpDialog.scss'
 
 interface WorkLogHelpDialogProps {
   open: boolean;
-  onClose: () => void;
+  onClose: VoidFunction;
 }
 
 export const WorkLogHelpDialog = ({open, onClose}: WorkLogHelpDialogProps) => (

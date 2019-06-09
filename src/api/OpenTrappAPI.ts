@@ -1,6 +1,13 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import moment from 'moment';
-import { AffectedEntriesDTO, AuthorizedUser, BulkEditDTO, MonthDTO, ReportingWorkLogDTO } from './dtos';
+import {
+  AffectedEntriesDTO,
+  AuthorizedUser,
+  BulkEditDTO,
+  MonthDTO,
+  ReportingWorkLogDTO,
+  ServiceAccountDTO
+} from './dtos';
 import { LocalStorage } from '../utils/LocalStorage';
 
 class OpenTrappAPI {
@@ -86,6 +93,11 @@ class OpenTrappAPI {
   presets(limit?: number): Promise<string[][]> {
     const url = limit ? `/projects/presets?limit=${limit}` : '/projects/presets';
     return this.axios.get<string[][]>(url)
+        .then(axiosResp => axiosResp.data);
+  }
+
+  get serviceAccounts(): Promise<ServiceAccountDTO[]> {
+    return this.axios.get<ServiceAccountDTO[]>('/admin/service-accounts')
         .then(axiosResp => axiosResp.data);
   }
 

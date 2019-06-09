@@ -4,7 +4,7 @@ import { OpenTrappRestAPI } from '../api/OpenTrappAPI';
 import { AuthorizedUser } from '../api/dtos';
 import { LocalStorage } from '../utils/LocalStorage';
 
-export function login(idToken: string, onSuccess: () => void) {
+export function login(idToken: string, onSuccess: VoidFunction) {
   return (dispatch: Dispatch) => {
     dispatch(loginStartedAction());
 

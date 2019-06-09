@@ -6,6 +6,7 @@ import { registration, RegistrationState } from './registration.reducer';
 import { reporting, ReportingState } from './reporting.reducer';
 import { leftMenu, LeftMenuState } from './leftMenu.reducer';
 import { notifications, NotificationsState } from './notifications.reducer';
+import { admin, AdminState } from './admin.reducer';
 
 export interface OpenTrappState {
   authentication: AuthenticationState;
@@ -15,6 +16,7 @@ export interface OpenTrappState {
   reporting: ReportingState;
   leftMenu: LeftMenuState;
   notifications: NotificationsState;
+  admin: AdminState;
 }
 
 export const rootReducer = combineReducers({
@@ -24,5 +26,6 @@ export const rootReducer = combineReducers({
   registration,
   reporting,
   leftMenu,
-  notifications
+  notifications,
+  admin
 });

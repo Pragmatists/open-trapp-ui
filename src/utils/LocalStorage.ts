@@ -11,7 +11,7 @@ export class LocalStorage {
       return null;
     }
     if (isExpired(user.token)) {
-      localStorage.removeItem(LocalStorage.AUTHORIZED_USER_KEY);
+      LocalStorage.clearAuthorizedUser();
       return null;
     }
     return user;

@@ -20,7 +20,7 @@ interface DayCardProps {
   day: string;
   weekend: boolean;
   workLogs: WorkLogDTO[];
-  onEditClick: () => void;
+  onEditClick: VoidFunction;
 }
 
 export class DayCard extends Component<DayCardProps, {}> {
