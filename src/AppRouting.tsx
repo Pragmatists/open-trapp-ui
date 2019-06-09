@@ -39,7 +39,7 @@ const AppRoutingComponent = ({width}: AppRoutingProps) => isWidthUp('md', width)
     </div> :
     <div>
       <HeaderMobile/>
-      <LeftMenu/>
+      <LeftMenu mobileVersion={true}/>
       <Switch>
         <Route path='/' exact component={RedirectIfNeeded(LandingPage)}/>
         <PrivateRoute path='/registration' component={RegistrationPageMobile}/>

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import Drawer from '@material-ui/core/Drawer';
+import { connect } from 'react-redux';
 import { match, withRouter } from 'react-router';
 import { History, Location } from 'history';
+import { includes } from 'lodash';
+import Drawer from '@material-ui/core/Drawer';
 import { IconButton } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
@@ -12,20 +14,23 @@ import CreateIcon from '@material-ui/icons/Create';
 import CloseIcon from '@material-ui/icons/Close';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ListIcon from '@material-ui/icons/List';
+import BuildIcon from '@material-ui/icons/Build';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { toggleMenuVisibility } from '../../redux/leftMenu.actions';
-import { connect } from 'react-redux';
+import { AuthorizedUser } from '../../api/dtos';
 import './LeftMenu.scss';
 
 interface LeftMenuOwnProps {
   history: History<any>;
   location: Location<any>;
   match: match<any>;
+  mobileVersion?: boolean;
 }
 
 interface LeftMenuDataProps {
   open: boolean;
   userLoggedIn: boolean;
+  userRoles: string[];
 }
 
 interface LeftMenuEventProps {
@@ -75,6 +80,17 @@ class LeftMenuComponent extends Component<LeftMenuProps, {}> {
               </ListItemIcon>
               <ListItemText primary='Reporting'/>
             </ListItem>
+            {
+              this.showAdminPage &&
+              <ListItem button
+                        selected={path === '/admin'}
+                        onClick={() => this.handleListItemClick('/admin')}>
+                <ListItemIcon>
+                  <BuildIcon color='primary'/>
+                </ListItemIcon>
+                <ListItemText primary='Admin'/>
+              </ListItem>
+            }
           </List>
         </Drawer>
     );
@@ -85,14 +101,20 @@ class LeftMenuComponent extends Component<LeftMenuProps, {}> {
     history.push(path);
     onHideMenu();
   }
+
+  private get showAdminPage() {
+    const {userLoggedIn, userRoles, mobileVersion} = this.props;
+    return !mobileVersion && userLoggedIn && includes(userRoles, 'ADMIN');
+  }
 }
 
 function mapStateToProps(state: OpenTrappState, ownProps: LeftMenuOwnProps): LeftMenuDataProps {
   const {open} = state.leftMenu;
-  const {loggedIn} = state.authentication;
+  const {loggedIn, user = {} as AuthorizedUser} = state.authentication;
   return {
     open,
     userLoggedIn: loggedIn,
+    userRoles: user.roles,
     ...ownProps
   };
 }

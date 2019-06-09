@@ -69,6 +69,21 @@ describe('Left menu', () => {
     expect(selectedItemsText(wrapper)).toEqual(['Reporting']);
   });
 
+  it('navigates to ADMIN page on menu item click', () => {
+    store = initializeStore(true, true, true);
+    const wrapper = mount(
+        <Provider store={store}>
+          <MemoryRouter initialEntries={['/']}>
+            <LeftMenu/>
+          </MemoryRouter>
+        </Provider>
+    );
+
+    listItem(wrapper, 'Admin').simulate('click');
+
+    expect(selectedItemsText(wrapper)).toEqual(['Admin']);
+  });
+
   it('only LANDING PAGE entry is enabled if user not logged in', () => {
     store = initializeStore(false, true);
     const wrapper = mount(
@@ -80,6 +95,32 @@ describe('Left menu', () => {
     );
 
     expect(enabledItemsText(wrapper)).toEqual(['Landing page']);
+  });
+
+  it('ADMIN entry is not visible if user does not have ADMIN role', () => {
+    store = initializeStore(true, true, false);
+    const wrapper = mount(
+        <Provider store={store}>
+          <MemoryRouter initialEntries={['/']}>
+            <LeftMenu/>
+          </MemoryRouter>
+        </Provider>
+    );
+
+    expect(itemsText(wrapper)).not.toContain('Admin');
+  });
+
+  it('ADMIN entry is not visible if mobile version', () => {
+    store = initializeStore(true, true, true);
+    const wrapper = mount(
+        <Provider store={store}>
+          <MemoryRouter initialEntries={['/']}>
+            <LeftMenu mobileVersion={true}/>
+          </MemoryRouter>
+        </Provider>
+    );
+
+    expect(itemsText(wrapper)).not.toContain('Admin');
   });
 
   function closeButton(wrapper: ReactWrapper): ReactWrapper {
@@ -108,12 +149,18 @@ describe('Left menu', () => {
         .map(w => w.find(ListItemText).at(0).text());
   }
 
-  function initializeStore(authorizedUser: boolean, menuVisible: boolean) {
+  function itemsText(wrapper: ReactWrapper): string[] {
+    return listItems(wrapper)
+        .map(w => w.find(ListItemText).at(0).text());
+  }
+
+  function initializeStore(authorizedUser: boolean, menuVisible: boolean, admin = false) {
     return setupStore({
       authentication: authorizedUser ? {
         loggedIn: true,
         user: {
-          name: 'john.doe'
+          name: 'john.doe',
+          roles: admin ? ['ADMIN'] : []
         }
       } : {loggedIn: false},
       leftMenu: {open: menuVisible}
