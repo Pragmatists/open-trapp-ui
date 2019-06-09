@@ -86,17 +86,17 @@ describe('Left menu', () => {
     return wrapper.find('[data-close-menu-button]').at(0);
   }
 
-  function listItems(wrapper: ReactWrapper): ReactWrapper {
+  function listItems(wrapper: ReactWrapper) {
     return wrapper.find(ListItem);
   }
 
   function selectedItemsText(wrapper: ReactWrapper): string[] {
     return listItems(wrapper)
-        .filterWhere(w => w.prop('selected') === true)
+        .filterWhere(w => w.prop('selected'))
         .map(w => w.find(ListItemText).at(0).text());
   }
 
-  function listItem(wrapper: ReactWrapper, label: string): ReactWrapper {
+  function listItem(wrapper: ReactWrapper, label: string) {
     return listItems(wrapper)
         .filterWhere(w => w.find(ListItemText).at(0).text() === label)
         .at(0);
