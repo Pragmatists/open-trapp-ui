@@ -1,7 +1,7 @@
 import { Dispatch } from 'redux';
 import { OpenTrappRestAPI } from '../api/OpenTrappAPI';
 import { ADMIN_CONSTANTS } from './constants';
-import { ServiceAccountDTO } from '../api/dtos';
+import { AuthorizedUserDTO, ServiceAccountDTO } from '../api/dtos';
 
 export function loadServiceAccounts() {
   return (dispatch: Dispatch) => {
@@ -11,7 +11,20 @@ export function loadServiceAccounts() {
   };
 }
 
+export function loadAuthorizedUsers() {
+  return (dispatch: Dispatch) => {
+    OpenTrappRestAPI.authorizedUsers
+        .then(authorizedUsers => dispatch(authorizedUsersLoadedAction(authorizedUsers)))
+        .catch(err => console.error(err));
+  };
+}
+
 const serviceAccountsLoadedAction = (serviceAccounts: ServiceAccountDTO[]) => ({
   type: ADMIN_CONSTANTS.SERVICE_ACCOUNTS_LOADED,
   payload: serviceAccounts
+});
+
+const authorizedUsersLoadedAction = (authorizedUsers: AuthorizedUserDTO[]) => ({
+  type: ADMIN_CONSTANTS.AUTHORIZED_USERS_LOADED,
+  payload: authorizedUsers
 });

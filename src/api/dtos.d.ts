@@ -50,3 +50,9 @@ export interface ServiceAccountDTO {
   clientID: string;
   owner: string;
 }
+
+export interface AuthorizedUserDTO {
+  email: string;
+  name: string;
+  roles: string[];
+}

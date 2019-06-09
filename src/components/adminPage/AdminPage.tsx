@@ -6,12 +6,14 @@ import Divider from '@material-ui/core/Divider';
 import './AdminPage.scss';
 import Paper from '@material-ui/core/Paper';
 import { ServiceAccountsList } from './serviceAccountsList/ServiceAccountsList';
-import { loadServiceAccounts } from '../../redux/admin.actions';
-import { ServiceAccountDTO } from '../../api/dtos';
+import { loadAuthorizedUsers, loadServiceAccounts } from '../../redux/admin.actions';
+import { AuthorizedUserDTO, ServiceAccountDTO } from '../../api/dtos';
+import { UsersList } from './usersList/UsersList';
 
 
 interface AdminPageDataProps {
-  serviceAccounts: ServiceAccountDTO[]
+  serviceAccounts: ServiceAccountDTO[];
+  users: AuthorizedUserDTO[];
 }
 
 interface AdminPageEventProps {
@@ -28,7 +30,7 @@ class AdminPageComponent extends Component<AdminPageProps, {}> {
   }
 
   render() {
-    const {serviceAccounts} = this.props;
+    const {serviceAccounts, users} = this.props;
     return (
         <div className='admin-page'>
           <Grid container justify='center' spacing={3}>
@@ -45,6 +47,19 @@ class AdminPageComponent extends Component<AdminPageProps, {}> {
                 }
               </Paper>
             </Grid>
+            <Grid item lg={10} md={11} xs={11}>
+              <div className='admin-page__header'>
+                Users
+              </div>
+              <Divider variant='fullWidth'/>
+              <Paper className='admin-page__content'>
+                {
+                  users ?
+                      <UsersList users={users}/> :
+                      <div className='admin-page__placeholder' data-authorized-users-loading>Loading...</div>
+                }
+              </Paper>
+            </Grid>
           </Grid>
         </div>
     );
@@ -52,9 +67,10 @@ class AdminPageComponent extends Component<AdminPageProps, {}> {
 }
 
 function mapStateToProps(state: OpenTrappState): AdminPageDataProps {
-  const {serviceAccounts} = state.admin;
+  const {serviceAccounts, authorizedUsers} = state.admin;
   return {
-    serviceAccounts
+    serviceAccounts,
+    users: authorizedUsers
   };
 }
 
@@ -62,6 +78,7 @@ function mapDispatchToProps(dispatch): AdminPageEventProps {
   return {
     init() {
       dispatch(loadServiceAccounts());
+      dispatch(loadAuthorizedUsers());
     }
   };
 }

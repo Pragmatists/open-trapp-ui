@@ -25,9 +25,9 @@ export class ServiceAccountsList extends Component<ServiceAccountsListProps, {}>
           <TableBody>
             {accounts.map(account => (
                 <TableRow key={account.clientID} data-service-account-row>
-                  <TableCell>{account.name}</TableCell>
-                  <TableCell>{account.clientID}</TableCell>
-                  <TableCell>{account.owner}</TableCell>
+                  <TableCell data-account-name>{account.name}</TableCell>
+                  <TableCell data-account-client-id>{account.clientID}</TableCell>
+                  <TableCell data-account-owner>{account.owner}</TableCell>
                 </TableRow>
             ))}
           </TableBody>

@@ -3,6 +3,7 @@ import moment from 'moment';
 import {
   AffectedEntriesDTO,
   AuthorizedUser,
+  AuthorizedUserDTO,
   BulkEditDTO,
   MonthDTO,
   ReportingWorkLogDTO,
@@ -98,6 +99,11 @@ class OpenTrappAPI {
 
   get serviceAccounts(): Promise<ServiceAccountDTO[]> {
     return this.axios.get<ServiceAccountDTO[]>('/admin/service-accounts')
+        .then(axiosResp => axiosResp.data);
+  }
+
+  get authorizedUsers(): Promise<AuthorizedUserDTO[]> {
+    return this.axios.get<AuthorizedUserDTO[]>('/admin/authorized-users')
         .then(axiosResp => axiosResp.data);
   }
 
