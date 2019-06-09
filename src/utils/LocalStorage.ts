@@ -18,10 +18,10 @@ export class LocalStorage {
   }
 
   static set authorizedUser(user: AuthorizedUser) {
-    localStorage.setItem(this.AUTHORIZED_USER_KEY, JSON.stringify(user));
+    localStorage.setItem(LocalStorage.AUTHORIZED_USER_KEY, JSON.stringify(user));
   }
 
   static clearAuthorizedUser() {
-    localStorage.removeItem(this.AUTHORIZED_USER_KEY);
+    localStorage.removeItem(LocalStorage.AUTHORIZED_USER_KEY);
   }
 }

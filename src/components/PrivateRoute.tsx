@@ -1,11 +1,14 @@
 import { Redirect, Route } from 'react-router';
-import React, { Component } from 'react';
+import React, { Component, FC } from 'react';
 import { LocalStorage } from '../utils/LocalStorage';
 
-export const PrivateRoute = ({...props}) => (
-  <Route {...props}
-         render={props => (LocalStorage.authorizedUser ?
-             <Component {...props} /> :
-             <Redirect to={{pathname: '/', state: {from: props.location}}}/>
-         )}/>
-);
+export const PrivateRoute = ({component, path}: {component: (typeof Component | FC), path: string}) => {
+  const Inner = component;
+  return (
+      <Route path={path}
+             render={props => (LocalStorage.authorizedUser ?
+                     <Inner/> :
+                     <Redirect to={{pathname: '/', state: {from: props.location}}}/>
+             )}/>
+  );
+};
