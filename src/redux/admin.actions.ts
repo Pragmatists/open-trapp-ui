@@ -11,6 +11,14 @@ export function loadServiceAccounts() {
   };
 }
 
+export function deleteServiceAccount(id: string) {
+  return (dispatch: Dispatch) => {
+    OpenTrappRestAPI.deleteServiceAccount(id)
+        .then(() => dispatch(serviceAccountDeletedAction(id)))
+        .catch(err => console.error(err));
+  };
+}
+
 export function loadAuthorizedUsers() {
   return (dispatch: Dispatch) => {
     OpenTrappRestAPI.authorizedUsers
@@ -22,6 +30,11 @@ export function loadAuthorizedUsers() {
 const serviceAccountsLoadedAction = (serviceAccounts: ServiceAccountDTO[]) => ({
   type: ADMIN_CONSTANTS.SERVICE_ACCOUNTS_LOADED,
   payload: serviceAccounts
+});
+
+const serviceAccountDeletedAction = (id: string) => ({
+  type: ADMIN_CONSTANTS.SERVICE_ACCOUNT_DELETED,
+  payload: id
 });
 
 const authorizedUsersLoadedAction = (authorizedUsers: AuthorizedUserDTO[]) => ({

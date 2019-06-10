@@ -5,6 +5,7 @@ import {
   AuthorizedUser,
   AuthorizedUserDTO,
   BulkEditDTO,
+  CreateServiceAccountResponseDTO,
   MonthDTO,
   ReportingWorkLogDTO,
   ServiceAccountDTO
@@ -100,6 +101,15 @@ class OpenTrappAPI {
   get serviceAccounts(): Promise<ServiceAccountDTO[]> {
     return this.axios.get<ServiceAccountDTO[]>('/admin/service-accounts')
         .then(axiosResp => axiosResp.data);
+  }
+
+  creteServiceAccount(name: string): Promise<CreateServiceAccountResponseDTO> {
+    return this.axios.post<CreateServiceAccountResponseDTO>('/admin/service-accounts', {name})
+        .then(axiosResp => axiosResp.data);
+  }
+
+  deleteServiceAccount(id: string): Promise<{}> {
+    return this.axios.delete(`/admin/service-accounts/${id}`);
   }
 
   get authorizedUsers(): Promise<AuthorizedUserDTO[]> {

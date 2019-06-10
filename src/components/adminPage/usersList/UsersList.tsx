@@ -24,14 +24,18 @@ export class UsersList extends Component<UsersListProps, {}> {
           </TableHead>
           <TableBody>
             {users.map(user => (
-                <TableRow key={user.name} data-authorized-user-row>
-                  <TableCell data-user-name>{user.name}</TableCell>
-                  <TableCell data-user-email>{user.email}</TableCell>
-                  <TableCell data-user-roles>{user.roles.join(', ')}</TableCell>
-                </TableRow>
+                <AuthorizedUserRow key={user.name} user={user}/>
             ))}
           </TableBody>
         </Table>
     );
   }
 }
+
+const AuthorizedUserRow = ({user}: {user: AuthorizedUserDTO}) => (
+    <TableRow data-authorized-user-row>
+      <TableCell data-user-name>{user.name}</TableCell>
+      <TableCell data-user-email>{user.email}</TableCell>
+      <TableCell data-user-roles>{user.roles.join(', ')}</TableCell>
+    </TableRow>
+);

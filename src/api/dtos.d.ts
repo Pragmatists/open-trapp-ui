@@ -56,3 +56,8 @@ export interface AuthorizedUserDTO {
   name: string;
   roles: string[];
 }
+
+export interface CreateServiceAccountResponseDTO {
+  clientID: string;
+  secret: string;
+}
