@@ -11,7 +11,7 @@ import { WorkLogSelector } from './workLogSelector/WorkLogSelector';
 import { changeEmployees, changeReportType, changeTags } from '../../redux/reporting.actions';
 import { EditedWorkLog, ReportingWorkLog } from './reporting.model';
 import { chain, includes, intersection, isEmpty, uniq } from 'lodash';
-import { DayDTO, ReportingWorkLogDTO } from '../../api/dtos';
+import { AuthorizedUser, DayDTO, ReportingWorkLogDTO } from '../../api/dtos';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -166,14 +166,14 @@ function mapStateToProps(state: OpenTrappState): ReportingPageDataProps {
   const {selectedMonth, days = []} = state.calendar;
   const {workLogs = [], tags = []} = state.workLog;
   const {selectedTags, selectedEmployees, reportType} = state.reporting;
-  const {name} = state.authentication.user;
+  const {user = {} as AuthorizedUser} = state.authentication;
   return {
     selection: {
       month: selectedMonth,
-      tags: selectedTags ? selectedTags : tagsForUser(workLogs, name),
-      employees: selectedEmployees ? selectedEmployees : [name]
+      tags: selectedTags ? selectedTags : tagsForUser(workLogs, user.name),
+      employees: selectedEmployees ? selectedEmployees : [user.name]
     },
-    username: name,
+    username: user.name,
     workLogs: workLogs.map(w => new ReportingWorkLog(w)),
     days,
     tags,
