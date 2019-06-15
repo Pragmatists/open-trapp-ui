@@ -92,6 +92,34 @@ describe('WorkLogSelector', () => {
     expect(chip(wrapper, 'nvm').find('[data-chip-workload]')).toHaveLength(0);
   });
 
+  it('hides ineligible employees', () => {
+    const wrapper = mount(
+        <WorkLogSelector title='Employees'
+                         chipLabel={workLog => workLog.employee}
+                         hideIneligible={true}
+                         workLogs={workLogs}
+                         workLogFilter={workLog => !isEmpty(intersection(['nvm'], workLog.projectNames))}
+                         onSelectionChange={noop}/>
+    );
+
+    expect(chipsLabels(wrapper)).toEqual(['john.doe'])
+  });
+
+  it('shows ineligible employees on click', () => {
+    const wrapper = mount(
+        <WorkLogSelector title='Employees'
+                         chipLabel={workLog => workLog.employee}
+                         hideIneligible={true}
+                         workLogs={workLogs}
+                         workLogFilter={workLog => !isEmpty(intersection(['nvm'], workLog.projectNames))}
+                         onSelectionChange={noop}/>
+    );
+
+    ineligibleButton(wrapper).simulate('click');
+
+    expect(chipsLabels(wrapper).sort()).toEqual(['john.doe', 'tom.kowalsky'])
+  });
+
   it('emits selection change on click', () => {
     const onChange = jest.fn();
     const selected = ['john.doe'];
@@ -173,5 +201,9 @@ describe('WorkLogSelector', () => {
 
   function noneButton(wrapper) {
     return wrapper.find('[data-button-select-none]').hostNodes();
+  }
+
+  function ineligibleButton(wrapper) {
+    return wrapper.find('[data-button-ineligible]').hostNodes();
   }
 });

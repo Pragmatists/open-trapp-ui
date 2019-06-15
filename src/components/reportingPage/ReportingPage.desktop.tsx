@@ -6,8 +6,6 @@ import Divider from '@material-ui/core/Divider';
 import { changeMonth, loadMonth } from '../../redux/calendar.actions';
 import { loadTags, loadWorkLogs, removeWorkLog, updateWorkLog } from '../../redux/workLog.actions';
 import './ReportingPage.desktop.scss';
-import { MonthSelector } from './monthSelector/MonthSelector';
-import { WorkLogSelector } from './workLogSelector/WorkLogSelector';
 import { changeEmployees, changeReportType, changeTags } from '../../redux/reporting.actions';
 import { EditedWorkLog, ReportingWorkLog } from './reporting.model';
 import { chain, includes, intersection, isEmpty, uniq } from 'lodash';
@@ -24,6 +22,7 @@ import { ReportType } from '../../redux/reporting.reducer';
 import { TableReport } from './tableReport/TableReport';
 import { BulkEditDialog } from './bulkEditDialog/BulkEditDialog';
 import { ProjectsReport } from './projectsReport/ProjectsReport';
+import { ReportingFilters } from './reportingFilters/ReportingFilters';
 
 interface Selection {
   month: { year: number, month: number };
@@ -74,27 +73,13 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
               </div>
               <Divider variant='fullWidth'/>
             </Grid>
-            <Grid item container lg={10} xs={11} spacing={4}>
-              <Grid item lg={2} sm={12} data-months-selector>
-                <MonthSelector selectedMonth={selection.month} onMonthChange={onMonthChange}/>
-              </Grid>
-              <Grid item lg={5} sm={12} data-projects-selector>
-                <WorkLogSelector title='Projects'
-                                 chipLabel={workLog => workLog.projectNames}
-                                 workLogs={workLogs}
-                                 selected={selection.tags}
-                                 workLogFilter={this.employeesFilter}
-                                 onSelectionChange={onTagsChange}/>
-              </Grid>
-              <Grid item lg={5} sm={12} data-employees-selector>
-                <WorkLogSelector title='Employees'
-                                 chipLabel={workLog => workLog.employee}
-                                 workLogs={workLogs}
-                                 selected={selection.employees}
-                                 workLogFilter={this.tagsFilter}
-                                 onSelectionChange={onEmployeesChange}/>
-              </Grid>
-            </Grid>
+            <ReportingFilters workLogs={workLogs}
+                              onTagsChange={onTagsChange}
+                              onEmployeesChange={onEmployeesChange}
+                              onMonthChange={onMonthChange}
+                              selection={selection}
+                              employeesFilter={this.employeesFilter}
+                              tagsFilter={this.tagsFilter}/>
             <Grid item container lg={10} xs={11}>
               <Paper className='reporting-page__report report'>
                 <Tabs value={reportType}

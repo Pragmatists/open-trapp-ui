@@ -1,37 +1,40 @@
 import React, { Component } from 'react';
-import { Chip } from '@material-ui/core';
 import { xor, uniq } from 'lodash';
 import { ReportingWorkLog } from '../reporting.model';
-import { formatWorkload } from '../../../utils/workLogUtils';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
+import VisiblityIcon from '@material-ui/icons/Visibility';
+import VisiblityOffIcon from '@material-ui/icons/VisibilityOff';
+import { SelectorChip } from './SelectorChip';
 import './WorkLogSelector.scss';
-
-interface ChipLabelProps {
-  label: string;
-  workload: number;
-}
-
-const ChipLabel = ({label, workload}: ChipLabelProps) => (
-    <div className='chip-content'>
-      <div className='chip-content__label' data-chip-label>{label}</div>
-      {workload > 0 ? <div className='chip-content__workload' data-chip-workload>{formatWorkload(workload)}</div> : undefined}
-    </div>
-);
 
 interface WorkLogSelectorProps {
   title: string;
   workLogs: ReportingWorkLog[];
-  chipLabel: (workLog: ReportingWorkLog) => string|string[];
+  chipLabel: (workLog: ReportingWorkLog) => string | string[];
   selected?: string[];
   onSelectionChange: (values: string[]) => void;
   workLogFilter?: (workLog: ReportingWorkLog) => boolean;
+  hideIneligible?: boolean;
 }
 
-export class WorkLogSelector extends Component<WorkLogSelectorProps, {}> {
+interface WorkLogSelectorState {
+  hideIneligible: boolean;
+}
+
+export class WorkLogSelector extends Component<WorkLogSelectorProps, WorkLogSelectorState> {
+
+  constructor(props: WorkLogSelectorProps, context: any) {
+    super(props, context);
+    this.state = {
+      hideIneligible: props.hideIneligible
+    }
+  }
+
   render() {
     const {title, onSelectionChange} = this.props;
+    const {hideIneligible} = this.state;
     const labels = this.labels;
     return (
         <div className='work-log-selector'>
@@ -42,12 +45,16 @@ export class WorkLogSelector extends Component<WorkLogSelectorProps, {}> {
             }
           </div>
           <div className='work-log-selector__footer'>
+            <Button data-button-ineligible size='small' onClick={this.onIneligibleButtonClick}>
+              {hideIneligible ? <VisiblityIcon/> : <VisiblityOffIcon/>}
+              {hideIneligible ? 'Show ineligible' : 'Hide ineligible'}
+            </Button>
             <Button data-button-select-none size='small' onClick={() => onSelectionChange([])}>
-              <ClearIcon />
+              <ClearIcon/>
               None
             </Button>
             <Button data-button-select-all size='small' onClick={() => onSelectionChange(labels)}>
-              <AddIcon />
+              <AddIcon/>
               All
             </Button>
           </div>
@@ -60,13 +67,11 @@ export class WorkLogSelector extends Component<WorkLogSelectorProps, {}> {
     const isSelected = selected.includes(label);
     const workload = this.workloadForLabel(label);
     return (
-        <Chip key={idx}
-              label={<ChipLabel label={label} workload={workload}/>}
-              color='primary'
-              className='chip'
-              variant={isSelected ? 'default' : 'outlined'}
-              onClick={() => this.onClick(label)}
-              data-chip-selected={isSelected}/>
+        <SelectorChip key={idx}
+                      label={label}
+                      workload={workload}
+                      selected={isSelected}
+                      onClick={() => this.onClick(label)}/>
     );
   };
 
@@ -85,11 +90,17 @@ export class WorkLogSelector extends Component<WorkLogSelectorProps, {}> {
   }
 
   private get labels(): string[] {
-    const {workLogs, chipLabel} = this.props;
+    const {workLogs, chipLabel, workLogFilter = () => true} = this.props;
+    const {hideIneligible} = this.state;
     const labels = workLogs
+        .filter(w => !hideIneligible || workLogFilter(w))
         .map(chipLabel)
         .map(v => Array.isArray(v) ? v : [v])
         .reduce(((prev, curr) => [...prev, ...curr]), []);
     return uniq(labels);
   }
+
+  private onIneligibleButtonClick = () => this.setState({
+    hideIneligible: !this.state.hideIneligible
+  });
 }
