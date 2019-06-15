@@ -113,7 +113,7 @@ class OpenTrappAPI {
   }
 
   get authorizedUsers(): Promise<AuthorizedUserDTO[]> {
-    return this.axios.get<AuthorizedUserDTO[]>('/admin/authorized-users')
+    return this.axios.get<AuthorizedUserDTO[]>('/admin/users')
         .then(axiosResp => axiosResp.data);
   }
 

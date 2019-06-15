@@ -63,7 +63,7 @@ class AdminPageComponent extends Component<AdminPageProps, AdminPageState> {
               <div className='admin-page__header'>Users</div>
               <Paper className='admin-page__content'>
                 {
-                  users ? <UsersList users={users}/> : <LoadingPlaceholder data-authorized-users-loading/>
+                  users ? <UsersList users={users}/> : <LoadingPlaceholder data-users-loading/>
                 }
               </Paper>
             </Grid>

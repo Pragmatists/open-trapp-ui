@@ -31,7 +31,7 @@ describe('Admin Page', () => {
         .reply(200, {clientID: 'client-id', secret: 'client-secret'})
         .onDelete('/api/v1/admin/service-accounts/id1')
         .reply(200, {})
-        .onGet('/api/v1/admin/authorized-users')
+        .onGet('/api/v1/admin/users')
         .reply(200, usersResponse);
     store = setupStore({
       authentication: {
@@ -204,7 +204,7 @@ describe('Admin Page', () => {
       await flushAllPromises();
       wrapper.update();
 
-      expect(httpMock.history.get.filter(r => r.url === '/api/v1/admin/authorized-users')).toHaveLength(1);
+      expect(httpMock.history.get.filter(r => r.url === '/api/v1/admin/users')).toHaveLength(1);
       expect(authorizedUsers(wrapper)).toHaveLength(2);
       expect(authorizedUser(wrapper, 0).find('[data-user-name]').hostNodes().text()).toEqual('john.doe');
       expect(authorizedUser(wrapper, 0).find('[data-user-email]').hostNodes().text()).toEqual('john.doe@pragmatists.pl');
@@ -218,9 +218,9 @@ describe('Admin Page', () => {
           </Provider>
       );
 
-      expect(httpMock.history.get.filter(r => r.url === '/api/v1/admin/authorized-users')).toHaveLength(0);
+      expect(httpMock.history.get.filter(r => r.url === '/api/v1/admin/users')).toHaveLength(0);
       expect(authorizedUsers(wrapper)).toHaveLength(0);
-      expect(wrapper.find('[data-authorized-users-loading]').text()).toEqual('Loading...');
+      expect(wrapper.find('[data-users-loading]').text()).toEqual('Loading...');
     });
 
     function authorizedUsers(wrapper) {
