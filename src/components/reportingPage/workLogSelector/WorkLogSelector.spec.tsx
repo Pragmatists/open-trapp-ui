@@ -4,6 +4,7 @@ import { WorkLogSelector } from './WorkLogSelector';
 import { Chip } from '@material-ui/core';
 import { noop, intersection, isEmpty, includes } from 'lodash';
 import { ReportingWorkLog } from '../reporting.model';
+import {ReportingWorkLogDTO} from '../../../api/dtos';
 
 const workLogs: ReportingWorkLog[] = [
   {employee: 'john.doe', projectNames: ['projects', 'nvm'], workload: 480, day: '2019/03/01'},
@@ -28,7 +29,7 @@ describe('WorkLogSelector', () => {
 
   it('displays tags', () => {
     const wrapper = mount(
-        <WorkLogSelector title='Employees'
+        <WorkLogSelector title='Projects'
                          chipLabel={workLog => workLog.projectNames}
                          workLogs={workLogs}
                          onSelectionChange={noop}/>
@@ -36,6 +37,23 @@ describe('WorkLogSelector', () => {
 
     expect(chips(wrapper)).toHaveLength(5);
     expect(chipsLabels(wrapper).sort()).toEqual(['internal', 'jld', 'nvm', 'projects', 'self-dev'])
+  });
+
+  it('sorts tags by value', () => {
+      const workLogs = [
+          workLog({projectNames: ['Ai']}),
+          workLog({projectNames: ['z-day']}),
+          workLog({projectNames: ['a-team']})
+
+      ];
+      const wrapper = mount(
+        <WorkLogSelector title='Projects'
+                         chipLabel={workLog => workLog.projectNames}
+                         workLogs={workLogs}
+                         onSelectionChange={noop}/>
+    );
+
+    expect(chipsLabels(wrapper)).toEqual(['Ai', 'a-team', 'z-day'])
   });
 
   it('displays employees', () => {
@@ -205,5 +223,17 @@ describe('WorkLogSelector', () => {
 
   function ineligibleButton(wrapper) {
     return wrapper.find('[data-button-ineligible]').hostNodes();
+  }
+
+  function workLog(patch: Partial<ReportingWorkLogDTO>): ReportingWorkLog {
+    const fulfilled: ReportingWorkLogDTO = {
+        id: 'wl-0',
+        day: '2019/03/01',
+        employee: 'john.smith',
+        workload: 60,
+        link: '',
+        projectNames: []
+    };
+    return new ReportingWorkLog( {...fulfilled, ...patch})
   }
 });
