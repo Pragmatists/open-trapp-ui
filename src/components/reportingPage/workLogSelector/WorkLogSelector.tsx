@@ -97,7 +97,7 @@ export class WorkLogSelector extends Component<WorkLogSelectorProps, WorkLogSele
         .map(chipLabel)
         .map(v => Array.isArray(v) ? v : [v])
         .reduce(((prev, curr) => [...prev, ...curr]), []);
-    return uniq(labels);
+    return uniq(labels).sort();
   }
 
   private onIneligibleButtonClick = () => this.setState({
