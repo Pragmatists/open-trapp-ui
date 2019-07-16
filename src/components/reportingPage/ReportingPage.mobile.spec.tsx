@@ -1,13 +1,13 @@
+import * as React from 'react';
 import MockAdapter from 'axios-mock-adapter';
+import { Provider } from 'react-redux';
 import { Store } from 'redux';
+import { mount } from 'enzyme';
 import { Month } from '../../utils/Month';
 import { OpenTrappRestAPI } from '../../api/OpenTrappAPI';
 import { flushAllPromises, setupStore } from '../../utils/testUtils';
 import { initialState as registrationInitialState } from '../../redux/registration.reducer';
 import { initialState as reportingInitialState } from '../../redux/reporting.reducer';
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import * as React from 'react';
 import { ReportingPageMobile } from './ReportingPage.mobile';
 import { DayCard } from './dayCard/DayCard';
 
@@ -71,7 +71,7 @@ describe('Reporting page - mobile', () => {
     // TODO
   });
 
-  it('shows list of days sorted descending', async () => {
+  it('shows list of days with work logs sorted descending', async () => {
     const wrapper = mount(
         <Provider store={store}>
           <ReportingPageMobile/>
@@ -80,13 +80,9 @@ describe('Reporting page - mobile', () => {
     await flushAllPromises();
     wrapper.update();
 
-    expect(wrapper.find(DayCard)).toHaveLength(6);
-    expect(cardDay(wrapper, 0)).toContain('2019/02/06');
-    expect(cardDay(wrapper, 1)).toContain('2019/02/05');
-    expect(cardDay(wrapper, 2)).toContain('2019/02/04');
-    expect(cardDay(wrapper, 3)).toContain('2019/02/03');
-    expect(cardDay(wrapper, 4)).toContain('2019/02/02');
-    expect(cardDay(wrapper, 5)).toContain('2019/02/01');
+    expect(wrapper.find(DayCard)).toHaveLength(2);
+    expect(cardDay(wrapper, 0)).toContain('2019/02/04');
+    expect(cardDay(wrapper, 1)).toContain('2019/02/01');
   });
 
   it('moves to registration view on EDIT day click', async () => {
@@ -98,7 +94,7 @@ describe('Reporting page - mobile', () => {
     await flushAllPromises();
     wrapper.update();
 
-    editDayButton(wrapper, '2019/02/06').simulate('click');
+    editDayButton(wrapper, '2019/02/04').simulate('click');
 
     // TODO
   });

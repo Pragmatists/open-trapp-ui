@@ -50,7 +50,8 @@ class ReportingPageMobileComponent extends Component<ReportingPageProps, {}> {
     const groupedWorkLogs = groupBy(workLogs, w => w.day);
     return days
         .sort((d1, d2) => d2.id.localeCompare(d1.id))
-        .map(d => ({day: d.id, weekend: d.weekend, workLogs: groupedWorkLogs[d.id] || []}));
+        .map(d => ({day: d.id, weekend: d.weekend, workLogs: groupedWorkLogs[d.id] || []}))
+        .filter(d => d.workLogs.length > 0);
   }
 }
 
