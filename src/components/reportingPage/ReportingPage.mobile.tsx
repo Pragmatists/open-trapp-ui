@@ -7,10 +7,12 @@ import { DayCard } from './dayCard/DayCard';
 import { DayDTO, ReportingWorkLogDTO } from '../../api/dtos';
 import { List } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
-import { loadMonth } from '../../redux/calendar.actions';
+import { changeMonth, loadMonth } from '../../redux/calendar.actions';
+import { MonthSelector } from './monthSelector/MonthSelector';
+import { Month } from '../../utils/Month';
 
 interface ReportingPageDataProps {
-  selectedMonth: { month: number, year: number };
+  selectedMonth: Month;
   workLogs: ReportingWorkLogDTO[];
   days: DayDTO[];
 }
@@ -18,6 +20,7 @@ interface ReportingPageDataProps {
 interface ReportingPageEventProps {
   init: (year: number, month: number) => void;
   onEditDay: (day: string) => void;
+  onMonthChange: (month: Month) => void;
 }
 
 type ReportingPageProps = ReportingPageDataProps & ReportingPageEventProps;
@@ -30,18 +33,22 @@ class ReportingPageMobileComponent extends Component<ReportingPageProps, {}> {
   }
 
   render() {
-    const {onEditDay} = this.props;
+    const {onEditDay, selectedMonth, onMonthChange} = this.props;
     return (
-        <List>
-          {this.workLogsByDay.map(day =>
-              <ListItem key={day.day}>
-                <DayCard day={day.day}
-                         weekend={day.weekend}
-                         workLogs={day.workLogs}
-                         onEditClick={() => onEditDay(day.day)} data-day-card={day.day}/>
-              </ListItem>
-          )}
-        </List>
+        <div>
+          <MonthSelector selectedMonth={selectedMonth}
+                         onChange={onMonthChange}/>
+          <List>
+            {this.workLogsByDay.map(day =>
+                <ListItem key={day.day}>
+                  <DayCard day={day.day}
+                           weekend={day.weekend}
+                           workLogs={day.workLogs}
+                           onEditClick={() => onEditDay(day.day)} data-day-card={day.day}/>
+                </ListItem>
+            )}
+          </List>
+        </div>
     );
   }
 
@@ -60,7 +67,7 @@ function mapStateToProps(state: OpenTrappState): ReportingPageDataProps {
   const {selectedMonth, days = []} = calendar;
   const workLogs = workLog.workLogs.filter(workLog => workLog.employee === authentication.user.name);
   return {
-    selectedMonth,
+    selectedMonth: new Month(selectedMonth.year, selectedMonth.month),
     workLogs,
     days
   };
@@ -71,6 +78,10 @@ function mapDispatchToProps(dispatch): ReportingPageEventProps {
     init(year: number, month: number) {
       dispatch(loadMonth(year, month));
       dispatch(loadWorkLogs(year, month));
+    },
+    onMonthChange(month: Month) {
+      dispatch(changeMonth(month.year, month.month));
+      dispatch(loadWorkLogs(month.year, month.month));
     },
     onEditDay(day: string) {
       // TODO

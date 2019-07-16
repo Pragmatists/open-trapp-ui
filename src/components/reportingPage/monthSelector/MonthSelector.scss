@@ -1,0 +1,11 @@
+.reporting-month-selector {
+  display: flex;
+  align-items: center;
+  margin: 1em 1em 0 1em;
+
+  &__date {
+    text-align: center;
+    flex-grow: 1;
+    font-size: 2.4rem;
+  }
+}
