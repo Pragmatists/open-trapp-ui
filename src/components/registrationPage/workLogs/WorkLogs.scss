@@ -3,31 +3,4 @@
   &__title {
     position: inherit !important;
   }
-
-  .work-log {
-    flex-grow: 1;
-    height: auto;
-    padding: 0.7rem 0;
-    font-size: 1rem;
-    border-radius: 1.2rem;
-
-    span {
-      flex-grow: 1;
-      justify-content: center;
-    }
-
-    svg {
-      margin-right: 0.5em;
-    }
-
-    .chip-label {
-      margin: 0 0.5em;
-      display: flex;
-
-      &__workload {
-        margin-left: 0.7em;
-        font-weight: bold;
-      }
-    }
-  }
 }

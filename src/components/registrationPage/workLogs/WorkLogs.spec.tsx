@@ -29,7 +29,7 @@ describe('Work logs', () => {
     );
     deleteWorkLogIcon(wrapper, 0).simulate('click');
 
-    expect(onDelete).toHaveBeenCalledWith(workLogs[0]);
+    expect(onDelete).toHaveBeenCalledWith(workLogs[0].id);
   });
 
   function workLog(wrapper, workLogIdx: number) {

@@ -30,7 +30,7 @@ interface RegistrationPageEventProps {
   init: (year: number, month: number) => void;
   onWorkLogChange: (workLog: ParsedWorkLog) => void;
   onSaveWorkLog: (workLog: ParsedWorkLog) => void;
-  onDeleteWorkLog: (workLog: ReportingWorkLogDTO) => void;
+  onDeleteWorkLog: (workLogId: string) => void;
 }
 
 type RegistrationPageProps = RegistrationPageDataProps & RegistrationPageEventProps;
@@ -161,8 +161,8 @@ function mapDispatchToProps(dispatch): RegistrationPageEventProps {
     onSaveWorkLog(workLog: ParsedWorkLog) {
       dispatch(saveWorkLog(workLog));
     },
-    onDeleteWorkLog(workLog: ReportingWorkLogDTO) {
-      dispatch(removeWorkLog(workLog.id));
+    onDeleteWorkLog(workLogId: string) {
+      dispatch(removeWorkLog(workLogId));
     }
   }
 }
