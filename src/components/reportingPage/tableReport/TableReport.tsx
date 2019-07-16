@@ -39,7 +39,7 @@ export class TableReport extends Component<TableReportProps, TableReportState> {
           <EditWorkLogDialog workLog={this.state.editedWorkLog}
                              tags={tags}
                              onClose={this.onEditFinished}
-                             open={this.state.editedWorkLog !== undefined} />
+                             open={this.state.editedWorkLog !== undefined}/>
           <Table className='table-report__table table'>
             <TableHead>
               <TableRow>
@@ -78,22 +78,13 @@ export class TableReport extends Component<TableReportProps, TableReportState> {
   private renderEmployee(day: string, employee: string, workLogs: ReportingWorkLog[], employeeIdx: number, numberOfEntries: number) {
     const {onRemoveWorkLog, username} = this.props;
     return workLogs.map((workLog, idx) => (
-        <TableRow key={`${day}-${employee}-${idx}`}>
-          {employeeIdx + idx === 0 && <TableCell rowSpan={numberOfEntries} data-day-cell>{day}</TableCell>}
-          {idx === 0 && <TableCell rowSpan={size(workLogs)} data-employee-cell>{employee}</TableCell>}
-          <TableCell data-workload-cell>{formatWorkload(workLog.workload)}</TableCell>
-          <TableCell data-tags-cell>{workLog.projectNames.join(', ')}</TableCell>
-          <TableCell padding='checkbox'>
-            {username === workLog.employee && <Button onClick={() => this.onEditWorkLog(workLog)} data-edit-button>
-              <EditIcon/>
-            </Button>}
-          </TableCell>
-          <TableCell padding='checkbox'>
-            {username === workLog.employee && <Button onClick={() => onRemoveWorkLog(workLog.id)} data-remove-button>
-              <DeleteIcon/>
-            </Button>}
-          </TableCell>
-        </TableRow>
+        <TableReportRow key={`${day}-${employee}-${idx}`}
+                        day={employeeIdx + idx === 0 ? {text: day, rowSpan: numberOfEntries} : undefined}
+                        employee={idx === 0 ? {text: employee, rowSpan: size(workLogs)} : undefined}
+                        username={username}
+                        workLog={workLog}
+                        onEdit={() => this.onEditWorkLog(workLog)}
+                        onRemove={() => onRemoveWorkLog(workLog.id)}/>
     ));
   }
 
@@ -113,3 +104,31 @@ export class TableReport extends Component<TableReportProps, TableReportState> {
     }
   }
 }
+
+interface TableReportRowProps {
+  workLog: ReportingWorkLog;
+  username: string;
+  onEdit: VoidFunction;
+  onRemove: VoidFunction;
+  employee?: {text: string, rowSpan: number};
+  day?: {text: string, rowSpan: number};
+}
+
+const TableReportRow = ({day, employee, workLog, username, onEdit, onRemove}: TableReportRowProps) => (
+    <TableRow>
+      {day && <TableCell rowSpan={day.rowSpan} data-day-cell>{day.text}</TableCell>}
+      {employee && <TableCell rowSpan={employee.rowSpan} data-employee-cell>{employee.text}</TableCell>}
+      <TableCell data-workload-cell>{formatWorkload(workLog.workload)}</TableCell>
+      <TableCell data-tags-cell>{workLog.projectNames.join(', ')}</TableCell>
+      <TableCell padding='checkbox'>
+        {username === workLog.employee && <Button onClick={onEdit} data-edit-button>
+          <EditIcon/>
+        </Button>}
+      </TableCell>
+      <TableCell padding='checkbox'>
+        {username === workLog.employee && <Button onClick={onRemove} data-remove-button>
+          <DeleteIcon/>
+        </Button>}
+      </TableCell>
+    </TableRow>
+);

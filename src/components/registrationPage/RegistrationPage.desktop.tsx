@@ -14,9 +14,10 @@ import { RulesDialog } from './rulesDialog/RulesDialog';
 import { RegistrationPageMonth } from '../registrationPageMonth/RegistrationPageMonth';
 import { ParsedWorkLog } from '../../workLogExpressionParser/ParsedWorkLog';
 import { changeWorkLog, saveWorkLog } from '../../redux/registration.actions';
+import { Month } from '../../utils/Month';
 
 interface RegistrationPageDataProps {
-  selectedMonth: { year: number, month: number };
+  selectedMonth: Month;
   days?: DayDTO[];
   workLogs: { [employee: string]: WorkLog[] };
   workLog: ParsedWorkLog;
@@ -25,7 +26,7 @@ interface RegistrationPageDataProps {
 
 interface RegistrationPageEventProps {
   init: (year: number, month: number) => void;
-  onMonthChange: (year: number, month: number) => void;
+  onMonthChange: (month: Month) => void;
   onWorkLogInputChange: (workLog: ParsedWorkLog) => void;
   onSaveWorkLog: (workLog: ParsedWorkLog) => void;
 }
@@ -93,7 +94,7 @@ function mapStateToProps(state: OpenTrappState): RegistrationPageDataProps {
   const workLog = state.registration.workLog;
   const userWorkLogs = workLogsForUser(name, workLogs);
   return {
-    selectedMonth,
+    selectedMonth: new Month(selectedMonth.year, selectedMonth.month),
     days,
     workLogs: userWorkLogs,
     workLog: new ParsedWorkLog(workLog.expression, workLog.days, workLog.tags, workLog.workload),
@@ -108,9 +109,9 @@ function mapDispatchToProps(dispatch): RegistrationPageEventProps {
       dispatch(loadWorkLogs(year, month));
       dispatch(loadTags());
     },
-    onMonthChange(year: number, month: number) {
-      dispatch(changeMonth(year, month));
-      dispatch(loadWorkLogs(year, month));
+    onMonthChange(month: Month) {
+      dispatch(changeMonth(month.year, month.month));
+      dispatch(loadWorkLogs(month.year, month.month));
     },
     onWorkLogInputChange(workLog: ParsedWorkLog) {
       dispatch(changeWorkLog(workLog));
