@@ -19,7 +19,7 @@ export const WorkLogs = ({workLogs, onDelete}: Props) => {
         {workLogs.sort(workloadDesc)
             .map(workLog => (
                 <ListItem key={workLog.id}>
-                  <WorkLogChip onDelete={onDelete} workLog={workLog}/>
+                  <WorkLogChip onDelete={onDelete} workLog={workLog} size='big'/>
                 </ListItem>
             ))
         }

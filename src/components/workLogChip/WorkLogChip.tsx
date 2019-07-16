@@ -4,20 +4,21 @@ import { Chip } from '@material-ui/core';
 import './WorkLogChip.scss';
 
 interface WorkLog {
-  id: string;
+  id?: string;
   workload: number
   projectNames: string[];
 }
 
 interface Props {
-  onDelete: (workLogId: string) => void;
+  onDelete?: (workLogId: string) => void;
   workLog: WorkLog;
+  size?: 'small' | 'big';
 }
 
-export const WorkLogChip = ({onDelete, workLog}: Props) => (
+export const WorkLogChip = ({onDelete, workLog, size}: Props) => (
     <Chip data-work-log
-          className='work-log'
-          onDelete={() => onDelete(workLog.id)}
+          className={size == 'big' ? 'work-log work-log--big' : 'work-log'}
+          onDelete={onDelete ? () => onDelete(workLog.id) : undefined}
           label={<ChipLabel projectNames={workLog.projectNames} workload={workLog.workload} />} />
 );
 

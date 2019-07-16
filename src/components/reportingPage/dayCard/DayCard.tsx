@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Card } from '@material-ui/core';
 import CardContent from '@material-ui/core/CardContent';
-import { formatWorkload } from '../../../utils/workLogUtils';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
@@ -10,6 +9,7 @@ import ListItem from '@material-ui/core/ListItem';
 import moment from 'moment';
 import { isEmpty } from 'lodash';
 import './DayCard.scss'
+import { WorkLogChip } from '../../workLogChip/WorkLogChip';
 
 interface WorkLogDTO {
   workload: number;
@@ -56,7 +56,7 @@ export class DayCard extends Component<DayCardProps, {}> {
         <List data-day-card-list>
           {workLogs.map((w, idx) => (
               <ListItem key={idx}>
-                <WorkLog workLog={w}/>
+                <WorkLogChip workLog={w} data-day-card-work-log/>
               </ListItem>
           ))}
         </List>
@@ -81,10 +81,3 @@ export class DayCard extends Component<DayCardProps, {}> {
     return (this.pastDate && !weekend) || !isEmpty(workLogs);
   }
 }
-
-const WorkLog = ({workLog}: { workLog: WorkLogDTO }) => (
-    <div className='day-card__work-log' data-day-card-work-log>
-      <div data-day-card-project-names>{workLog.projectNames.join(", ")}</div>
-      <div data-day-card-workload>{formatWorkload(workLog.workload)}</div>
-    </div>
-);

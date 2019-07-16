@@ -1,9 +1,13 @@
 div.work-log {
   flex-grow: 1;
   height: auto;
-  padding: 0.7rem 0;
-  font-size: 1rem;
-  border-radius: 1.2rem;
+  padding: 0.3rem 0;
+
+  &--big {
+    padding: 0.7rem 0;
+    font-size: 1rem;
+    border-radius: 1.2rem;
+  }
 
   span {
     flex-grow: 1;

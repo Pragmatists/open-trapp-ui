@@ -36,7 +36,7 @@ describe('Day card', () => {
         <DayCard day='2019/04/18' weekend={false} workLogs={[workLog]} onEditClick={noop}/>
     );
 
-    expect(wrapper.find('[data-day-card-workload]').text()).toEqual('1d');
+    expect(wrapper.find('[data-chip-workload]').text()).toEqual('1d');
   });
 
   it('displays project names', () => {
@@ -44,7 +44,7 @@ describe('Day card', () => {
         <DayCard day='2019/04/18' weekend={false} workLogs={[workLog]} onEditClick={noop}/>
     );
 
-    expect(wrapper.find('[data-day-card-project-names]').text()).toEqual('projects, nvm');
+    expect(wrapper.find('[data-chip-label]').text()).toEqual('projects, nvm');
   });
 
   it('emits EDIT button click', () => {
