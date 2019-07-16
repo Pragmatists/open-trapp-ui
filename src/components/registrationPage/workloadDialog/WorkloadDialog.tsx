@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
-import {Workload} from "../workload/Workload";
+import { Workload } from "../workload/Workload";
 import { formatWorkload } from '../../../utils/workLogUtils';
 
 interface WorkloadDialogProps {
@@ -27,20 +27,23 @@ export class WorkloadDialog extends Component<WorkloadDialogProps, WorkloadDialo
     const {open, onClose} = this.props;
     const {hours, minutes} = this.state;
     return (
-      <Dialog open={open} onClose={() => onClose()} fullWidth={true} className='workload-dialog' data-workload-dialog>
-        <DialogTitle>Workload</DialogTitle>
-        <DialogContent data-workload-dialog-content>
-          <Workload minutes={minutes} hours={hours} onHoursChange={this.handleHoursChange} onMinutesChange={this.handleMinutesChange} />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => onClose()} data-cancel-button>
-            Cancel
-          </Button>
-          <Button onClick={this.onSaveClick} autoFocus color='primary' data-save-button>
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Dialog open={open} onClose={() => onClose()} fullWidth={true} className='workload-dialog' data-workload-dialog>
+          <DialogTitle>Workload</DialogTitle>
+          <DialogContent data-workload-dialog-content>
+            <Workload minutes={minutes}
+                      hours={hours}
+                      onHoursChange={this.handleHoursChange}
+                      onMinutesChange={this.handleMinutesChange}/>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => onClose()} data-cancel-button>
+              Cancel
+            </Button>
+            <Button onClick={this.onSaveClick} autoFocus color='primary' data-save-button>
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
     );
   }
 

@@ -1,17 +1,15 @@
 import React from 'react';
-import {mount} from 'enzyme';
-import {noop} from 'lodash';
-import {WorkloadDialog} from './WorkloadDialog';
+import { mount } from 'enzyme';
+import { noop } from 'lodash';
+import { WorkloadDialog } from './WorkloadDialog';
 import DialogActions from '@material-ui/core/DialogActions';
-import {Button} from '@material-ui/core';
-import {Slider} from '@material-ui/lab';
-
+import { Button } from '@material-ui/core';
 
 describe('Workload dialog', () => {
 
   it('displays number of hours', () => {
     const wrapper = mount(
-        <WorkloadDialog open={true} onClose={noop} />
+        <WorkloadDialog open={true} onClose={noop}/>
     );
 
     expect(wrapper.find('[data-number-of-hours]').text()).toEqual('8 hours');
@@ -19,7 +17,7 @@ describe('Workload dialog', () => {
 
   it('displays number of minutes', () => {
     const wrapper = mount(
-        <WorkloadDialog open={true} onClose={noop} />
+        <WorkloadDialog open={true} onClose={noop}/>
     );
 
     expect(wrapper.find('[data-number-of-minutes]').text()).toEqual('0 minutes');
@@ -28,7 +26,7 @@ describe('Workload dialog', () => {
   it('closes dialog on CANCEL click', () => {
     const onClose = jest.fn();
     const wrapper = mount(
-        <WorkloadDialog open={true} onClose={onClose} />
+        <WorkloadDialog open={true} onClose={onClose}/>
     );
 
     cancelButton(wrapper).simulate('click');
@@ -39,7 +37,7 @@ describe('Workload dialog', () => {
   it('emits default workload on SAVE click', () => {
     const onClose = jest.fn();
     const wrapper = mount(
-        <WorkloadDialog open={true} onClose={onClose} />
+        <WorkloadDialog open={true} onClose={onClose}/>
     );
 
     saveButton(wrapper).simulate('click');
@@ -50,7 +48,7 @@ describe('Workload dialog', () => {
   it('emits selected workload on SAVE click', () => {
     const onClose = jest.fn();
     const wrapper = mount(
-        <WorkloadDialog open={true} onClose={onClose} />
+        <WorkloadDialog open={true} onClose={onClose}/>
     );
 
     hoursSlider(wrapper).simulate('keydown', {key: 'ArrowLeft'});
@@ -69,10 +67,10 @@ describe('Workload dialog', () => {
   }
 
   function hoursSlider(wrapper) {
-    return wrapper.find(Slider).filter('[data-hours-slider]').find('button');
+    return wrapper.find('[data-hours-slider]').find('span').last();
   }
 
   function minutesSlider(wrapper) {
-    return wrapper.find(Slider).filter('[data-minutes-slider]').find('button');
+    return wrapper.find('[data-minutes-slider]').find('span').last();
   }
 });
