@@ -17,7 +17,7 @@ interface Props {
 
 export const WorkLogChip = ({onDelete, workLog, size}: Props) => (
     <Chip data-work-log
-          className={size == 'big' ? 'work-log work-log--big' : 'work-log'}
+          className={size === 'big' ? 'work-log work-log--big' : 'work-log'}
           onDelete={onDelete ? () => onDelete(workLog.id) : undefined}
           label={<ChipLabel projectNames={workLog.projectNames} workload={workLog.workload} />} />
 );
