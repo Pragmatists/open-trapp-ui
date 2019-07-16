@@ -20,26 +20,26 @@ import { toggleMenuVisibility } from '../../redux/leftMenu.actions';
 import { AuthorizedUser } from '../../api/dtos';
 import './LeftMenu.scss';
 
-interface LeftMenuOwnProps {
+interface OwnProps {
   history: History<any>;
   location: Location<any>;
   match: match<any>;
   mobileVersion?: boolean;
 }
 
-interface LeftMenuDataProps {
+interface DataProps {
   open: boolean;
   userLoggedIn: boolean;
   userRoles: string[];
 }
 
-interface LeftMenuEventProps {
+interface EventProps {
   onHideMenu: VoidFunction;
 }
 
-type LeftMenuProps = LeftMenuDataProps & LeftMenuOwnProps & LeftMenuEventProps;
+type Props = DataProps & OwnProps & EventProps;
 
-class LeftMenuComponent extends Component<LeftMenuProps, {}> {
+class LeftMenuComponent extends Component<Props, {}> {
   render() {
     const {open, onHideMenu, location, userLoggedIn} = this.props;
     const path = location.pathname;
@@ -108,7 +108,7 @@ class LeftMenuComponent extends Component<LeftMenuProps, {}> {
   }
 }
 
-function mapStateToProps(state: OpenTrappState, ownProps: LeftMenuOwnProps): LeftMenuDataProps {
+function mapStateToProps(state: OpenTrappState, ownProps: OwnProps): DataProps & OwnProps {
   const {open} = state.leftMenu;
   const {loggedIn, user = {} as AuthorizedUser} = state.authentication;
   return {
@@ -119,7 +119,7 @@ function mapStateToProps(state: OpenTrappState, ownProps: LeftMenuOwnProps): Lef
   };
 }
 
-function mapDispatchToProps(dispatch): LeftMenuEventProps {
+function mapDispatchToProps(dispatch): EventProps {
   return {
     onHideMenu() {
       dispatch(toggleMenuVisibility());

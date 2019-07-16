@@ -10,13 +10,14 @@ import { initialState as registrationInitialState } from '../../redux/registrati
 import { initialState as reportingInitialState } from '../../redux/reporting.reducer';
 import { ReportingPageMobile } from './ReportingPage.mobile';
 import { DayCard } from './dayCard/DayCard';
+import { MemoryRouter } from 'react-router';
 
 const workLogResponse1 = [
   {id: 'jd1', employee: 'john.doe', projectNames: ['projects', 'nvm'], workload: 480, day: '2019/02/01'},
   {id: 'jd2', employee: 'john.doe', projectNames: ['projects', 'nvm'], workload: 420, day: '2019/02/04'},
   {id: 'jd3', employee: 'john.doe', projectNames: ['internal'], workload: 30, day: '2019/02/04'},
   {id: 'tk1', employee: 'tom.kowalsky', projectNames: ['projects', 'jld'], workload: 330, day: '2019/02/01'},
-  {id: 'th2', employee: 'tom.kowalsky', projectNames: ['internal', 'self-dev'], workload: 480, day: '2019/02/05'},
+  {id: 'th2', employee: 'tom.kowalsky', projectNames: ['internal', 'self-dev'], workload: 480, day: '2019/02/05'}
 ];
 
 const workLogResponse2 = [
@@ -54,6 +55,10 @@ const monthResponse2 = {
   prev: '/api/v1/2019/02',
   days: days2
 };
+
+const TestComponent = () => (
+  <div>Test component</div>
+);
 
 describe('Reporting page - mobile', () => {
   let httpMock: MockAdapter;
@@ -93,7 +98,9 @@ describe('Reporting page - mobile', () => {
   it('shows month selector', async () => {
     const wrapper = mount(
         <Provider store={store}>
-          <ReportingPageMobile/>
+          <MemoryRouter initialEntries={['/']}>
+            <ReportingPageMobile/>
+          </MemoryRouter>
         </Provider>
     );
     await flushAllPromises();
@@ -106,7 +113,9 @@ describe('Reporting page - mobile', () => {
   it('changes selected month', async () => {
     const wrapper = mount(
         <Provider store={store}>
-          <ReportingPageMobile/>
+          <MemoryRouter initialEntries={['/']}>
+            <ReportingPageMobile/>
+          </MemoryRouter>
         </Provider>
     );
     await flushAllPromises();
@@ -125,7 +134,9 @@ describe('Reporting page - mobile', () => {
   it('shows list of days with work logs sorted descending', async () => {
     const wrapper = mount(
         <Provider store={store}>
-          <ReportingPageMobile/>
+          <MemoryRouter initialEntries={['/']}>
+            <ReportingPageMobile/>
+          </MemoryRouter>
         </Provider>
     );
     await flushAllPromises();
@@ -135,24 +146,6 @@ describe('Reporting page - mobile', () => {
     expect(cardDay(wrapper, 0)).toContain('2019/02/04');
     expect(cardDay(wrapper, 1)).toContain('2019/02/01');
   });
-
-  it('moves to registration view on EDIT day click', async () => {
-    const wrapper = mount(
-        <Provider store={store}>
-          <ReportingPageMobile/>
-        </Provider>
-    );
-    await flushAllPromises();
-    wrapper.update();
-
-    editDayButton(wrapper, '2019/02/04').simulate('click');
-
-    // TODO
-  });
-
-  function editDayButton(wrapper, day: string) {
-    return wrapper.find(`[data-day-card="${day}"]`);
-  }
 
   function cardDay(wrapper, cardIdx: number) {
     return wrapper.find(DayCard).at(cardIdx).find('[data-day-card-day]').hostNodes().text();
