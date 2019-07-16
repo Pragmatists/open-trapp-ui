@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { xor, uniq } from 'lodash';
-import { ReportingWorkLog } from '../reporting.model';
+import { ReportingWorkLog } from '../../reporting.model';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import ClearIcon from '@material-ui/icons/Clear';
-import VisiblityIcon from '@material-ui/icons/Visibility';
-import VisiblityOffIcon from '@material-ui/icons/VisibilityOff';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import { SelectorChip } from './SelectorChip';
 import './WorkLogSelector.scss';
 
@@ -46,7 +46,7 @@ export class WorkLogSelector extends Component<WorkLogSelectorProps, WorkLogSele
           </div>
           <div className='work-log-selector__footer'>
             <Button data-button-ineligible size='small' onClick={this.onIneligibleButtonClick}>
-              {hideIneligible ? <VisiblityIcon/> : <VisiblityOffIcon/>}
+              {hideIneligible ? <VisibilityIcon/> : <VisibilityOffIcon/>}
               {hideIneligible ? 'Show ineligible' : 'Hide ineligible'}
             </Button>
             <Button data-button-select-none size='small' onClick={() => onSelectionChange([])}>

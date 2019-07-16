@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import { noop } from 'lodash';
 import { MonthSelector } from './MonthSelector';
 import { Chip } from '@material-ui/core';
-import { Month } from '../../../utils/Month';
+import { Month } from '../../../../utils/Month';
 
 describe('Month Selector', () => {
 

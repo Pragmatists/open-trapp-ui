@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid } from '@material-ui/core';
-import { MonthSelector } from '../monthSelector/MonthSelector';
-import { WorkLogSelector } from '../workLogSelector/WorkLogSelector';
+import { MonthSelector } from './monthSelector/MonthSelector';
+import { WorkLogSelector } from './workLogSelector/WorkLogSelector';
 import { ReportingWorkLog } from '../reporting.model';
 
 interface Selection {

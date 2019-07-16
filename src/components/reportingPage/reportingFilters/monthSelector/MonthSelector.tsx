@@ -3,7 +3,7 @@ import { Button } from '@material-ui/core';
 import ArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import ArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import './MonthSelector.scss';
-import { Month } from '../../../utils/Month';
+import { Month } from '../../../../utils/Month';
 import Chip from '@material-ui/core/Chip';
 
 interface MonthSelectorProps {

@@ -3,8 +3,8 @@ import { mount, ReactWrapper, shallow } from 'enzyme';
 import { WorkLogSelector } from './WorkLogSelector';
 import { Chip } from '@material-ui/core';
 import { noop, intersection, isEmpty, includes } from 'lodash';
-import { ReportingWorkLog } from '../reporting.model';
-import {ReportingWorkLogDTO} from '../../../api/dtos';
+import { ReportingWorkLog } from '../../reporting.model';
+import {ReportingWorkLogDTO} from '../../../../api/dtos';
 
 const workLogs: ReportingWorkLog[] = [
   {employee: 'john.doe', projectNames: ['projects', 'nvm'], workload: 480, day: '2019/03/01'},

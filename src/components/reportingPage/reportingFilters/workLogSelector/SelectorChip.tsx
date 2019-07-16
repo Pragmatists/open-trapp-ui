@@ -1,6 +1,6 @@
 import React from 'react';
 import { Chip } from '@material-ui/core';
-import { formatWorkload } from '../../../utils/workLogUtils';
+import { formatWorkload } from '../../../../utils/workLogUtils';
 
 interface ChipLabelProps {
   label: string;
