@@ -9,32 +9,40 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 import { ConfirmNewTagsDialog } from '../confirmNewTagsDialog/ConfirmNewTagsDialog';
+import { Preset } from '../registration.model';
 
 const tags = ['projects', 'nvm', 'vacation'];
+
+const presets: Preset[] = [
+  {tags: ['nvm', 'projects']},
+  {tags: ['holiday']}
+];
 
 describe('WorkLogInput', () => {
 
   it('parses new work log expression', () => {
-    let parsedWorkLog: ParsedWorkLog = undefined;
+    const onChange = jest.fn();
     const initialWorkLog = ParsedWorkLog.empty();
     const wrapper = mount(
-        <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={parsed => parsedWorkLog = parsed} onSave={noop}/>
+        <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]} onChange={onChange} onSave={noop}/>
     );
 
     type(wrapper, '1d #projects #nvm @2019/03/01');
 
-    expect(parsedWorkLog.expression).toEqual('1d #projects #nvm @2019/03/01');
-    expect(parsedWorkLog.valid).toBeTruthy();
-    expect(parsedWorkLog.workload).toEqual('1d');
-    expect(parsedWorkLog.tags).toEqual(['projects', 'nvm']);
-    expect(parsedWorkLog.days).toEqual(['2019/03/01']);
+    expect(onChange).toHaveBeenCalledWith({
+      expression: '1d #projects #nvm @2019/03/01',
+      workload: '1d',
+      tags: ['projects', 'nvm'],
+      days: ['2019/03/01']
+    });
   });
 
   it('emits valid work log for today if date not present', () => {
     let parsedWorkLog: ParsedWorkLog = undefined;
     const initialWorkLog = ParsedWorkLog.empty();
     const wrapper = mount(
-        <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={parsed => parsedWorkLog = parsed} onSave={noop}/>
+        <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]}
+                      onChange={parsed => parsedWorkLog = parsed} onSave={noop}/>
     );
 
     type(wrapper, '1d #projects #nvm');
@@ -50,7 +58,8 @@ describe('WorkLogInput', () => {
     let parsedWorkLog: ParsedWorkLog = undefined;
     const initialWorkLog = ParsedWorkLog.empty();
     const wrapper = mount(
-        <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={parsed => parsedWorkLog = parsed} onSave={noop}/>
+        <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]}
+                      onChange={parsed => parsedWorkLog = parsed} onSave={noop}/>
     );
 
     type(wrapper, '1d');
@@ -63,7 +72,8 @@ describe('WorkLogInput', () => {
     let savePayload: ParsedWorkLog = undefined;
     const initialWorkLog = new ParsedWorkLog('1d #projects #nvm @2019/03/01', ['2019/03/01'], ['projects', 'nvm'], '1d');
     const wrapper = mount(
-        <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={payload => savePayload = payload}/>
+        <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]}
+                      onChange={noop} onSave={payload => savePayload = payload}/>
     );
 
     pressEnter(wrapper);
@@ -78,7 +88,7 @@ describe('WorkLogInput', () => {
     const onSave = jest.fn();
     const initialWorkLog = new ParsedWorkLog('1d', [], [], undefined);
     const wrapper = mount(
-        <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={onSave}/>
+        <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]} onChange={noop} onSave={onSave}/>
     );
 
     pressEnter(wrapper);
@@ -87,10 +97,10 @@ describe('WorkLogInput', () => {
   });
 
   describe('suggestions', () => {
-    it('does not show suggestion if word does not starts with #', () => {
+    it('does not show suggestion if word does not starts with # or @', () => {
       const initialWorkLog = ParsedWorkLog.empty();
       const wrapper = mount(
-          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={noop}/>
+          <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]} onChange={noop} onSave={noop}/>
       );
 
       typeAndFocus(wrapper, 'pro');
@@ -98,23 +108,38 @@ describe('WorkLogInput', () => {
       expect(suggestions(wrapper)).toHaveLength(0);
     });
 
+    it('shows presets at the top when user typed #', () => {
+      const initialWorkLog = ParsedWorkLog.empty();
+      const wrapper = mount(
+          <WorkLogInput workLog={initialWorkLog} tags={tags} presets={presets} onChange={noop} onSave={noop}/>
+      );
+
+      typeAndFocus(wrapper, '1d #');
+
+      expect(suggestions(wrapper).at(0).text()).toEqual('nvm, projects');
+      expect(suggestions(wrapper).at(1).text()).toEqual('holiday');
+      expect(suggestions(wrapper).at(2).text()).toEqual('nvm');
+    });
+
     it('shows suggestions when user starts typing tag name', () => {
       const initialWorkLog = ParsedWorkLog.empty();
       const wrapper = mount(
-          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={noop}/>
+          <WorkLogInput workLog={initialWorkLog} tags={tags} presets={presets} onChange={noop} onSave={noop}/>
       );
 
       typeAndFocus(wrapper, '1d #pro');
 
-      expect(suggestions(wrapper)).toHaveLength(1);
-      expect(suggestions(wrapper).at(0).text()).toEqual('projects');
+      expect(suggestions(wrapper)).toHaveLength(2);
+      expect(suggestions(wrapper).at(0).text()).toEqual('nvm, projects');
+      expect(suggestions(wrapper).at(1).text()).toEqual('projects');
     });
 
     it('replaces last word with selected tag suggestion', () => {
       let parsedWorkLog: ParsedWorkLog = undefined;
       const initialWorkLog = ParsedWorkLog.empty();
       const wrapper = mount(
-          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={workLog => parsedWorkLog = workLog} onSave={noop}/>
+          <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]}
+                        onChange={workLog => parsedWorkLog = workLog} onSave={noop}/>
       );
 
       typeAndFocus(wrapper, '1d #pro');
@@ -123,10 +148,24 @@ describe('WorkLogInput', () => {
       expect(parsedWorkLog.expression).toEqual('1d #projects ');
     });
 
+    it('replaces last word with selected preset', () => {
+      let parsedWorkLog: ParsedWorkLog = undefined;
+      const initialWorkLog = ParsedWorkLog.empty();
+      const wrapper = mount(
+          <WorkLogInput workLog={initialWorkLog} tags={tags} presets={presets}
+                        onChange={workLog => parsedWorkLog = workLog} onSave={noop}/>
+      );
+
+      typeAndFocus(wrapper, '1d #pro');
+      chooseSuggestion(wrapper, 0);
+
+      expect(parsedWorkLog.expression).toEqual('1d #nvm #projects ');
+    });
+
     it('shows suggestions when user starts typing date', () => {
       const initialWorkLog = ParsedWorkLog.empty();
       const wrapper = mount(
-          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={noop}/>
+          <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]} onChange={noop} onSave={noop}/>
       );
 
       typeAndFocus(wrapper, '1d @to');
@@ -140,7 +179,8 @@ describe('WorkLogInput', () => {
       let parsedWorkLog: ParsedWorkLog = undefined;
       const initialWorkLog = ParsedWorkLog.empty();
       const wrapper = mount(
-          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={workLog => parsedWorkLog = workLog} onSave={noop}/>
+          <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]}
+                        onChange={workLog => parsedWorkLog = workLog} onSave={noop}/>
       );
 
       typeAndFocus(wrapper, '1d #projects @to');
@@ -170,7 +210,7 @@ describe('WorkLogInput', () => {
       const onSave = jest.fn();
       const initialWorkLog = new ParsedWorkLog('1h #new-tag @2019/03/01', ['2019/03/01'], ['new-tag'], '1h');
       const wrapper = mount(
-          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={onSave}/>
+          <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]} onChange={noop} onSave={onSave}/>
       );
 
       pressEnter(wrapper);
@@ -184,7 +224,7 @@ describe('WorkLogInput', () => {
       const onSave = jest.fn();
       const initialWorkLog = new ParsedWorkLog('1h #new-tag @2019/03/01', ['2019/03/01'], ['new-tag'], '1h');
       const wrapper = mount(
-          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={onSave}/>
+          <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]} onChange={noop} onSave={onSave}/>
       );
 
       pressEnter(wrapper);
@@ -202,7 +242,7 @@ describe('WorkLogInput', () => {
     it('closes dialog when CANCEL clicked', () => {
       const initialWorkLog = new ParsedWorkLog('1h #new-tag @2019/03/01', ['2019/03/01'], ['new-tag'], '1h');
       const wrapper = mount(
-          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={noop}/>
+          <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]} onChange={noop} onSave={noop}/>
       );
 
       pressEnter(wrapper);
@@ -224,7 +264,7 @@ describe('WorkLogInput', () => {
     it('does not show icon for empty input', () => {
       const initialWorkLog = ParsedWorkLog.empty();
       const wrapper = mount(
-          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={noop}/>
+          <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]} onChange={noop} onSave={noop}/>
       );
 
       expect(wrapper.find('[data-error-indicator]')).toHaveLength(0);
@@ -234,7 +274,7 @@ describe('WorkLogInput', () => {
     it('shows success icon for valid expression', () => {
       const initialWorkLog = new ParsedWorkLog('1h #new-tag @2019/03/01', ['2019/03/01'], ['new-tag'], '1h');
       const wrapper = mount(
-          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={noop}/>
+          <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]} onChange={noop} onSave={noop}/>
       );
 
       expect(wrapper.find('[data-error-indicator]')).toHaveLength(0);
@@ -244,7 +284,7 @@ describe('WorkLogInput', () => {
     it('shows error icon for invalid expression', () => {
       const initialWorkLog = new ParsedWorkLog('1hasd', [], [], '');
       const wrapper = mount(
-          <WorkLogInput workLog={initialWorkLog} tags={tags} onChange={noop} onSave={noop}/>
+          <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]} onChange={noop} onSave={noop}/>
       );
 
       expect(wrapper.find('[data-error-indicator]').length).toBeGreaterThan(0);

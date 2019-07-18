@@ -13,8 +13,9 @@ import { isEmpty } from 'lodash';
 import { RulesDialog } from './rulesDialog/RulesDialog';
 import { RegistrationPageMonth } from '../registrationPageMonth/RegistrationPageMonth';
 import { ParsedWorkLog } from '../../workLogExpressionParser/ParsedWorkLog';
-import { changeWorkLog, saveWorkLog } from '../../redux/registration.actions';
+import { changeWorkLog, loadPresets, saveWorkLog } from '../../redux/registration.actions';
 import { Month } from '../../utils/Month';
+import { Preset } from './registration.model';
 
 interface RegistrationPageDataProps {
   selectedMonth: Month;
@@ -22,6 +23,7 @@ interface RegistrationPageDataProps {
   workLogs: { [employee: string]: WorkLog[] };
   workLog: ParsedWorkLog;
   tags: string[];
+  presets: Preset[];
 }
 
 interface RegistrationPageEventProps {
@@ -41,7 +43,9 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
   }
 
   render() {
-    const {days, workLogs, workLog, selectedMonth, onMonthChange, onWorkLogInputChange, onSaveWorkLog, tags} = this.props;
+    const {
+      days, workLogs, workLog, selectedMonth, onMonthChange, onWorkLogInputChange, onSaveWorkLog, tags, presets
+    } = this.props;
     return (
         <div className='registration-page'>
           <Grid container justify='center' spacing={3}>
@@ -53,7 +57,11 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
               <Divider variant='fullWidth'/>
             </Grid>
             <Grid item lg={10} md={11} xs={11}>
-              <WorkLogInput onChange={onWorkLogInputChange} onSave={onSaveWorkLog} workLog={workLog} tags={tags}/>
+              <WorkLogInput onChange={onWorkLogInputChange}
+                            onSave={onSaveWorkLog}
+                            workLog={workLog}
+                            tags={tags}
+                            presets={presets}/>
             </Grid>
             <Grid item lg={10} md={11} xs={11}>
               {days && !isEmpty(workLogs) ?
@@ -91,14 +99,15 @@ function mapStateToProps(state: OpenTrappState): RegistrationPageDataProps {
   const {selectedMonth, days} = state.calendar;
   const {name} = state.authentication.user || {} as AuthorizedUser;
   const {workLogs, tags} = state.workLog;
-  const workLog = state.registration.workLog;
+  const {workLog, presets} = state.registration;
   const userWorkLogs = workLogsForUser(name, workLogs);
   return {
     selectedMonth: new Month(selectedMonth.year, selectedMonth.month),
     days,
     workLogs: userWorkLogs,
     workLog: new ParsedWorkLog(workLog.expression, workLog.days, workLog.tags, workLog.workload),
-    tags
+    tags,
+    presets
   };
 }
 
@@ -108,6 +117,7 @@ function mapDispatchToProps(dispatch): RegistrationPageEventProps {
       dispatch(loadMonth(year, month));
       dispatch(loadWorkLogs(year, month));
       dispatch(loadTags());
+      dispatch(loadPresets());
     },
     onMonthChange(month: Month) {
       dispatch(changeMonth(month.year, month.month));

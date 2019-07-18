@@ -14,10 +14,12 @@ import { DatesSuggestionFactory } from './DatesSuggestionFactory';
 import { ConfirmNewTagsDialog } from '../confirmNewTagsDialog/ConfirmNewTagsDialog';
 import { ParsedWorkLog } from '../../../workLogExpressionParser/ParsedWorkLog';
 import { ValidationStatus } from './ValidationStatus';
+import { Preset } from '../registration.model';
 
 interface WorkLogInputProps {
   workLog: ParsedWorkLog;
   tags: string[];
+  presets: Preset[];
   onChange: (workLog: ParsedWorkLog) => void;
   onSave: (workLog: ParsedWorkLog) => void;
 }
@@ -138,12 +140,12 @@ export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState
   };
 
   private getSuggestions = (text: string) => {
-    const {tags} = this.props;
+    const {tags, presets} = this.props;
     const lastWord = WorkLogInput.getLastWord(text);
     if (isEmpty(lastWord)) {
       return [];
     } else if (lastWord.startsWith('#')) {
-      const tagsSuggestionsFactory = new TagsSuggestionFactory(tags);
+      const tagsSuggestionsFactory = new TagsSuggestionFactory(tags, presets);
       return tagsSuggestionsFactory.suggestions(text, lastWord);
     } else if (lastWord.startsWith('@')) {
       const daysSuggestionsFactory = new DatesSuggestionFactory();
