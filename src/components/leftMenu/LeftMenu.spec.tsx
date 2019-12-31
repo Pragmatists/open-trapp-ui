@@ -1,12 +1,22 @@
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import { Store } from 'redux';
-import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router';
+import { connect, Provider } from 'react-redux';
+import { MemoryRouter, withRouter } from 'react-router';
 import { ListItem } from '@material-ui/core';
 import ListItemText from '@material-ui/core/ListItemText';
 import { setupStore } from '../../utils/testUtils';
-import { LeftMenu } from './LeftMenu';
+import { LeftMenu, LeftMenuComponent, mapStateToProps } from './LeftMenu';
+
+const AlwaysOpenLeftMenu = withRouter(
+    connect(
+        mapStateToProps,
+        () => ({
+          onHideMenu: () => {
+          }
+        })
+    )(LeftMenuComponent)
+);
 
 describe('Left menu', () => {
   let store: Store;
@@ -39,50 +49,22 @@ describe('Left menu', () => {
     expect(selectedItemsText(wrapper)).toEqual(['Landing page']);
   });
 
-  it('navigates to REGISTRATION page on menu item click', () => {
-    store = initializeStore(true, true);
-    const wrapper = mount(
-        <Provider store={store}>
-          <MemoryRouter initialEntries={['/']}>
-            <LeftMenu/>
-          </MemoryRouter>
-        </Provider>
-    );
+  ['Registration', 'Reporting', 'Admin'].forEach(page =>
+      it(`navigates to ${page} page on menu item click`, () => {
+        store = initializeStore(true, true, true);
+        const wrapper = mount(
+            <Provider store={store}>
+              <MemoryRouter initialEntries={['/']}>
+                <AlwaysOpenLeftMenu/>
+              </MemoryRouter>
+            </Provider>
+        );
 
-    listItem(wrapper, 'Registration').simulate('click');
+        listItem(wrapper, page).simulate('click');
 
-    expect(selectedItemsText(wrapper)).toEqual(['Registration']);
-  });
-
-  it('navigates to REPORTING page on menu item click', () => {
-    store = initializeStore(true, true);
-    const wrapper = mount(
-        <Provider store={store}>
-          <MemoryRouter initialEntries={['/']}>
-            <LeftMenu/>
-          </MemoryRouter>
-        </Provider>
-    );
-
-    listItem(wrapper, 'Reporting').simulate('click');
-
-    expect(selectedItemsText(wrapper)).toEqual(['Reporting']);
-  });
-
-  it('navigates to ADMIN page on menu item click', () => {
-    store = initializeStore(true, true, true);
-    const wrapper = mount(
-        <Provider store={store}>
-          <MemoryRouter initialEntries={['/']}>
-            <LeftMenu/>
-          </MemoryRouter>
-        </Provider>
-    );
-
-    listItem(wrapper, 'Admin').simulate('click');
-
-    expect(selectedItemsText(wrapper)).toEqual(['Admin']);
-  });
+        expect(selectedItemsText(wrapper)).toEqual([page]);
+      })
+  );
 
   it('only LANDING PAGE entry is enabled if user not logged in', () => {
     store = initializeStore(false, true);
@@ -134,7 +116,7 @@ describe('Left menu', () => {
   function selectedItemsText(wrapper: ReactWrapper): string[] {
     return listItems(wrapper)
         .filterWhere(w => w.prop('selected'))
-        .map(w => w.find(ListItemText).at(0).text());
+        .map(w => w.text());
   }
 
   function listItem(wrapper: ReactWrapper, label: string) {

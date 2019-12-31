@@ -16,6 +16,17 @@ const workLog = new ReportingWorkLog({
 });
 
 describe('Edit work log dialog', () => {
+  it('displays labels', () => {
+    const wrapper = mount(
+        <EditWorkLogDialog workLog={workLog} tags={[]} onClose={noop} open={true} />
+    );
+
+    expect(inputLabel(wrapper, '[data-edit-work-log-workload]')).toEqual('Workload');
+    expect(inputLabel(wrapper, '[data-edit-work-log-employee]')).toEqual('Employee');
+    expect(inputLabel(wrapper, '[data-edit-work-log-date]')).toEqual('Date');
+    expect(inputLabel(wrapper, '[data-edit-work-log-project]')).toEqual('Projects');
+  });
+
   it('displays values', () => {
     const wrapper = mount(
         <EditWorkLogDialog workLog={workLog} tags={[]} onClose={noop} open={true} />
@@ -75,6 +86,10 @@ describe('Edit work log dialog', () => {
 
   function inputValue(wrapper, selector: string) {
     return (dialogInput(wrapper, selector).instance() as any).value;
+  }
+
+  function inputLabel(wrapper, selector: string) {
+    return wrapper.find(selector).find('label').text();
   }
 
   function updateButton(wrapper) {

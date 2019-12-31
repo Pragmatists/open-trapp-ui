@@ -34,7 +34,7 @@ export class TagsAutocompleteInput extends Component<TagsAutocompleteInputProps,
                          value,
                          label,
                          onChange: (event, {newValue}) => onChange(newValue)
-                       }}
+                       } as any}
                        onSuggestionsFetchRequested={this.handleSuggestionFetchRequest}
                        onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
                        renderSuggestion={this.renderSuggestion}
