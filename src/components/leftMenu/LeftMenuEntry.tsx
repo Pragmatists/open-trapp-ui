@@ -1,6 +1,5 @@
 import React from 'react';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
-import BuildIcon from '@material-ui/icons/Build';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
 
@@ -9,16 +8,20 @@ interface Props {
   selected: boolean;
   disabled?: boolean;
   onClick: VoidFunction;
+  icon: React.ComponentType<{color: string}>;
 }
 
-export const LeftMenuEntry = ({label, disabled, selected, onClick}: Props) => (
-    <ListItem button
-              selected={selected}
-              disabled={disabled}
-              onClick={onClick}>
-      <ListItemIcon>
-        <BuildIcon color='primary'/>
-      </ListItemIcon>
-      <ListItemText primary={label}/>
-    </ListItem>
-);
+export const LeftMenuEntry = ({label, disabled, selected, onClick, icon}: Props) => {
+  const Icon = icon;
+  return (
+      <ListItem button
+                selected={selected}
+                disabled={disabled}
+                onClick={onClick}>
+        <ListItemIcon>
+          <Icon color='primary'/>
+        </ListItemIcon>
+        <ListItemText primary={label}/>
+      </ListItem>
+  );
+};

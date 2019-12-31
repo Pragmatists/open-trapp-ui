@@ -7,7 +7,11 @@ import Drawer from '@material-ui/core/Drawer';
 import { IconButton } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
+import CreateIcon from '@material-ui/icons/Create';
 import CloseIcon from '@material-ui/icons/Close';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import ListIcon from '@material-ui/icons/List';
+import BuildIcon from '@material-ui/icons/Build';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { toggleMenuVisibility } from '../../redux/leftMenu.actions';
 import { AuthorizedUser } from '../../api/dtos';
@@ -50,19 +54,23 @@ export class LeftMenuComponent extends Component<Props, {}> {
           <List>
             <LeftMenuEntry label='Landing page'
                            selected={path === '/'}
+                           icon={DashboardIcon}
                            onClick={() => this.handleListItemClick('/')}/>
             <LeftMenuEntry label='Registration'
                            selected={path === '/registration'}
                            disabled={!userLoggedIn}
+                           icon={CreateIcon}
                            onClick={() => this.handleListItemClick('/registration')}/>
             <LeftMenuEntry label='Reporting'
                            selected={path === '/reporting'}
                            disabled={!userLoggedIn}
+                           icon={ListIcon}
                            onClick={() => this.handleListItemClick('/reporting')}/>
             {
               this.showAdminPage &&
               <LeftMenuEntry label='Admin'
                              selected={path === '/admin'}
+                             icon={BuildIcon}
                              onClick={() => this.handleListItemClick('/admin')}/>
             }
           </List>
