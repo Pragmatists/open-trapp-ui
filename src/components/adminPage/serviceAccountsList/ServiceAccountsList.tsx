@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import TableHead from '@material-ui/core/TableHead';
 import Table from '@material-ui/core/Table';
 import { TableRow } from '@material-ui/core';

@@ -1,60 +1,44 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Avatar from '@material-ui/core/Avatar';
 import './UserDetails.scss';
 
-interface UserDetailsProps {
+interface Props {
   username: string;
   profilePicture: string;
   avatarOnly?: boolean;
   onLogout: VoidFunction;
 }
 
-interface UserDetailsState {
-  anchorEl: any;
-}
+export const UserDetails = ({username, profilePicture, avatarOnly, onLogout}: Props) => {
+  const [anchorEl, setAnchorElement] = useState(null);
+  const handleMenu = (event: { currentTarget: any; }) => setAnchorElement(event.currentTarget);
+  const handleClose = () => setAnchorElement(null);
 
-export class UserDetails extends Component<UserDetailsProps, UserDetailsState> {
-  state = {
-    anchorEl: null
-  };
-
-  render() {
-    const {anchorEl} = this.state;
-    const open = Boolean(anchorEl);
-    const {username, profilePicture, avatarOnly, onLogout} = this.props;
-    return (
-        <div className='user-details'>
-          <div onClick={this.handleMenu} className='user-details__user user'>
-            <Avatar alt={username}
-                    src={profilePicture}/>
-            {!avatarOnly && <div className='user__name'>{username}</div>}
-          </div>
-          <Menu id='menu-appbar'
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right'
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right'
-                }}
-                open={open}
-                onClose={this.handleClose}>
-            <MenuItem>Settings</MenuItem>
-            <MenuItem onClick={onLogout}>Logout</MenuItem>
-          </Menu>
+  const open = Boolean(anchorEl);
+  return (
+      <div className='user-details'>
+        <div onClick={handleMenu} className='user-details__user user'>
+          <Avatar alt={username}
+                  src={profilePicture}/>
+          {!avatarOnly && <div className='user__name'>{username}</div>}
         </div>
-    );
-  }
-
-  private handleMenu = (event: { currentTarget: any; }) => {
-    this.setState({anchorEl: event.currentTarget});
-  };
-
-  private handleClose = () => {
-    this.setState({anchorEl: null});
-  };
-}
+        <Menu id='menu-appbar'
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right'
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right'
+              }}
+              open={open}
+              onClose={handleClose}>
+          <MenuItem>Settings</MenuItem>
+          <MenuItem onClick={onLogout}>Logout</MenuItem>
+        </Menu>
+      </div>
+  );
+};
