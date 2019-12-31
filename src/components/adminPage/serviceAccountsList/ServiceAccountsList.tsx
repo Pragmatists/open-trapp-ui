@@ -14,31 +14,26 @@ interface ServiceAccountsListProps {
   onDelete: (id: string) => void;
 }
 
-export class ServiceAccountsList extends Component<ServiceAccountsListProps, {}> {
-  render() {
-    const {accounts, username, onDelete} = this.props;
-    return (
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Account Name</TableCell>
-              <TableCell>Client ID</TableCell>
-              <TableCell>Owner</TableCell>
-              <TableCell/>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {accounts.map(account => (
-                <ServiceAccountRow key={account.clientID}
-                                   account={account}
-                                   username={username}
-                                   onDelete={onDelete}/>
-            ))}
-          </TableBody>
-        </Table>
-    );
-  }
-}
+export const ServiceAccountsList = ({accounts, username, onDelete}: ServiceAccountsListProps) => (
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Account Name</TableCell>
+          <TableCell>Client ID</TableCell>
+          <TableCell>Owner</TableCell>
+          <TableCell/>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {accounts.map(account => (
+            <ServiceAccountRow key={account.clientID}
+                               account={account}
+                               username={username}
+                               onDelete={onDelete}/>
+        ))}
+      </TableBody>
+    </Table>
+);
 
 interface ServiceAccountsRowProps {
   account: ServiceAccountDTO;

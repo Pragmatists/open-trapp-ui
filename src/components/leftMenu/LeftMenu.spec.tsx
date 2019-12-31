@@ -1,22 +1,19 @@
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import { Store } from 'redux';
-import { connect, Provider } from 'react-redux';
-import { MemoryRouter, withRouter } from 'react-router';
-import { ListItem } from '@material-ui/core';
-import ListItemText from '@material-ui/core/ListItemText';
+import { Provider, useDispatch } from 'react-redux';
+import { MemoryRouter } from 'react-router';
+import { LeftMenu } from './LeftMenu';
+import { ListItem, ListItemText } from '@material-ui/core';
 import { setupStore } from '../../utils/testUtils';
-import { LeftMenu, LeftMenuComponent, mapStateToProps } from './LeftMenu';
+import { toggleMenuVisibility } from '../../redux/leftMenu.actions';
 
-const AlwaysOpenLeftMenu = withRouter(
-    connect(
-        mapStateToProps,
-        () => ({
-          onHideMenu: () => {
-          }
-        })
-    )(LeftMenuComponent)
-);
+const OpenMenuComponent = () => {
+  const dispatch = useDispatch();
+  return (
+      <button data-open-menu-button onClick={() => dispatch(toggleMenuVisibility())}/>
+  );
+};
 
 describe('Left menu', () => {
   let store: Store;
@@ -55,12 +52,14 @@ describe('Left menu', () => {
         const wrapper = mount(
             <Provider store={store}>
               <MemoryRouter initialEntries={['/']}>
-                <AlwaysOpenLeftMenu/>
+                <LeftMenu />
+                <OpenMenuComponent />
               </MemoryRouter>
             </Provider>
         );
 
         listItem(wrapper, page).simulate('click');
+        openLeftMenu(wrapper);
 
         expect(selectedItemsText(wrapper)).toEqual([page]);
       })
@@ -104,6 +103,10 @@ describe('Left menu', () => {
 
     expect(itemsText(wrapper)).not.toContain('Admin');
   });
+
+  function openLeftMenu<C>(wrapper: ReactWrapper) {
+    wrapper.find('[data-open-menu-button]').simulate('click');
+  }
 
   function closeButton(wrapper: ReactWrapper): ReactWrapper {
     return wrapper.find('[data-close-menu-button]').at(0);
