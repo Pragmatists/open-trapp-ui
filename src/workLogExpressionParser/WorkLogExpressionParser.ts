@@ -25,7 +25,7 @@ export class WorkLogExpressionParser {
   }
 
   isValid(expression: string): boolean {
-    return this.parse(expression).valid;
+    return this.parse(expression).validate().valid;
   }
 
   private parseExpression(expression: string): ParsedWorkLog {

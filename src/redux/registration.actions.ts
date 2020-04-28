@@ -44,7 +44,7 @@ const workLogChangedAction = (workLog: ParsedWorkLog) => ({
     tags: workLog.tags,
     workload: workLog.workload,
     expression: workLog.expression,
-    valid: workLog.valid
+    valid: workLog.validate().valid
   }
 });
 

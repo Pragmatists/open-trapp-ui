@@ -48,7 +48,7 @@ describe('WorkLogInput', () => {
     type(wrapper, '1d #projects #nvm');
 
     expect(parsedWorkLog.expression).toEqual('1d #projects #nvm');
-    expect(parsedWorkLog.valid).toBeTruthy();
+    expect(parsedWorkLog.validate().valid).toBeTruthy();
     expect(parsedWorkLog.workload).toEqual('1d');
     expect(parsedWorkLog.tags).toEqual(['projects', 'nvm']);
     expect(parsedWorkLog.days).toEqual([moment().format('YYYY/MM/DD')]);
@@ -65,7 +65,7 @@ describe('WorkLogInput', () => {
     type(wrapper, '1d');
 
     expect(parsedWorkLog.expression).toEqual('1d');
-    expect(parsedWorkLog.valid).toBeFalsy();
+    expect(parsedWorkLog.validate().valid).toBeFalsy();
   });
 
   it('emits save on enter click if valid work log', () => {
@@ -78,7 +78,7 @@ describe('WorkLogInput', () => {
 
     pressEnter(wrapper);
 
-    expect(savePayload.valid).toBeTruthy();
+    expect(savePayload.validate().valid).toBeTruthy();
     expect(savePayload.workload).toEqual('1d');
     expect(savePayload.days).toEqual(['2019/03/01']);
     expect(savePayload.tags).toEqual(['projects', 'nvm']);
@@ -208,7 +208,7 @@ describe('WorkLogInput', () => {
   describe('new tags', () => {
     it('shows confirmation dialog if work log contains new tags', () => {
       const onSave = jest.fn();
-      const initialWorkLog = new ParsedWorkLog('1h #new-tag @2019/03/01', ['2019/03/01'], ['new-tag'], '1h');
+      const initialWorkLog = new ParsedWorkLog('1h #projects #new-tag @2019/03/01', ['2019/03/01'], ['projects', 'new-tag'], '1h');
       const wrapper = mount(
           <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]} onChange={noop} onSave={onSave}/>
       );
@@ -222,7 +222,8 @@ describe('WorkLogInput', () => {
 
     it('emits save if user confirmed new tags', () => {
       const onSave = jest.fn();
-      const initialWorkLog = new ParsedWorkLog('1h #new-tag @2019/03/01', ['2019/03/01'], ['new-tag'], '1h');
+      const expression = '1h #projects #new-tag @2019/03/01';
+      const initialWorkLog = new ParsedWorkLog(expression, ['2019/03/01'], ['projects', 'new-tag'], '1h');
       const wrapper = mount(
           <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]} onChange={noop} onSave={onSave}/>
       );
@@ -232,15 +233,15 @@ describe('WorkLogInput', () => {
 
       expect(onSave).toHaveBeenCalledWith({
         days: ['2019/03/01'],
-        expression: '1h #new-tag @2019/03/01',
-        tags: ['new-tag'],
+        expression: expression,
+        tags: ['projects', 'new-tag'],
         workload: '1h'
       });
       expect(wrapper.find(ConfirmNewTagsDialog).props().open).toBeFalsy();
     });
 
     it('closes dialog when CANCEL clicked', () => {
-      const initialWorkLog = new ParsedWorkLog('1h #new-tag @2019/03/01', ['2019/03/01'], ['new-tag'], '1h');
+      const initialWorkLog = new ParsedWorkLog('1h #projects #new-tag @2019/03/01', ['2019/03/01'], ['projects', 'new-tag'], '1h');
       const wrapper = mount(
           <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]} onChange={noop} onSave={noop}/>
       );
@@ -272,7 +273,7 @@ describe('WorkLogInput', () => {
     });
 
     it('shows success icon for valid expression', () => {
-      const initialWorkLog = new ParsedWorkLog('1h #new-tag @2019/03/01', ['2019/03/01'], ['new-tag'], '1h');
+      const initialWorkLog = new ParsedWorkLog('1h #projects #new-tag @2019/03/01', ['2019/03/01'], ['projects', 'new-tag'], '1h');
       const wrapper = mount(
           <WorkLogInput workLog={initialWorkLog} tags={tags} presets={[]} onChange={noop} onSave={noop}/>
       );

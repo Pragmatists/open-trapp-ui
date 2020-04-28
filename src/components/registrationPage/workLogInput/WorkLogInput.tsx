@@ -103,7 +103,7 @@ export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState
   private handleSubmit = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
       const {onSave, workLog, tags} = this.props;
-      if (workLog.valid) {
+      if (workLog.validate().valid) {
         const newTags = difference(workLog.tags, tags);
         if (isEmpty(newTags)) {
           onSave(workLog);

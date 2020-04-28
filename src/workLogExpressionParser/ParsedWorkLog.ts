@@ -3,6 +3,7 @@ import { isEmpty, size } from 'lodash';
 export class ParsedWorkLog {
   static readonly DATE_RANGE_PATTERN = /@[A-Z0-9/a-z-+]+~@[A-Z0-9/a-z-+]+/g;
   static readonly DATE_PATTERN = /@[A-Z0-9/a-z-+]+/g;
+  static readonly PROJECTS_TAG = "projects";
 
   constructor(
       readonly expression: string,
@@ -12,8 +13,19 @@ export class ParsedWorkLog {
   ) {
   }
 
-  get valid(): boolean {
-    return !isEmpty(this.tags) && !isEmpty(this.workload);
+  public validate(): ValidationResult {
+    const errors = [];
+    if (!this.tags.includes("internal") && !this.tags.includes(ParsedWorkLog.PROJECTS_TAG)) {
+      errors.push('tags must include either #internal or #projects');
+    }
+    if (this.tags.includes("internal") && this.tags.includes(ParsedWorkLog.PROJECTS_TAG)) {
+      errors.push('#internal and #projects tags cannot be used together');
+    }
+    if (isEmpty(this.workload)) {
+      errors.push('workload was not provided');
+    }
+
+    return {valid: errors.length === 0, errors}
   }
 
   static empty(): ParsedWorkLog {
@@ -52,4 +64,9 @@ export class ParsedWorkLog {
     }
     return newDaysExpression;
   }
+}
+
+export interface ValidationResult {
+  valid: boolean;
+  errors: string[];
 }
