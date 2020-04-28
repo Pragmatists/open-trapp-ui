@@ -4,6 +4,7 @@ export class ParsedWorkLog {
   static readonly DATE_RANGE_PATTERN = /@[A-Z0-9/a-z-+]+~@[A-Z0-9/a-z-+]+/g;
   static readonly DATE_PATTERN = /@[A-Z0-9/a-z-+]+/g;
   static readonly PROJECTS_TAG = "projects";
+  static readonly INTERNAL_TAG = "internal";
 
   constructor(
       readonly expression: string,
@@ -15,12 +16,16 @@ export class ParsedWorkLog {
 
   public validate(): ValidationResult {
     const errors = [];
-    if (!this.tags.includes("internal") && !this.tags.includes(ParsedWorkLog.PROJECTS_TAG)) {
+    if (!this.tags.includes(ParsedWorkLog.INTERNAL_TAG) && !this.tags.includes(ParsedWorkLog.PROJECTS_TAG)) {
       errors.push('tags must include either #internal or #projects');
     }
-    if (this.tags.includes("internal") && this.tags.includes(ParsedWorkLog.PROJECTS_TAG)) {
+    if (this.tags.includes(ParsedWorkLog.INTERNAL_TAG) && this.tags.includes(ParsedWorkLog.PROJECTS_TAG)) {
       errors.push('#internal and #projects tags cannot be used together');
     }
+    if (this.tags.includes(ParsedWorkLog.PROJECTS_TAG) && this.tags.length < 2) {
+      errors.push('missing specific project tag: #projects #your-project-name');
+    }
+
     if (isEmpty(this.workload)) {
       errors.push('workload was not provided');
     }

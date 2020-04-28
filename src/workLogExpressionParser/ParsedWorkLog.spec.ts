@@ -50,26 +50,46 @@ describe('ParsedWorkLog', () => {
   describe('validation', () => {
 
     it('should be invalid when neither #project or #internal tag present', function () {
-      const workLog = new ParsedWorkLog('@2019/03/01~@2019/03/02', ['2019/03/01', '2019/03/02'], ['sealights'], undefined);
+      const workLog = new ParsedWorkLog('@2019/03/01~@2019/03/02', ['2019/03/01', '2019/03/02'], ['sealights'], '1d');
 
       expect(workLog.validate().valid).toBeFalsy();
-      expect(workLog.validate().errors).toContain('tags must include either #internal or #projects');
+      expect(workLog.validate().errors).toEqual(['tags must include either #internal or #projects']);
     });
 
     it('should be invalid when both #project and #internal tag present', function () {
-      const workLog = new ParsedWorkLog('@2019/03/01~@2019/03/02', ['2019/03/01', '2019/03/02'], ['projects', 'internal'], undefined);
+      const workLog = new ParsedWorkLog('@2019/03/01~@2019/03/02', ['2019/03/01', '2019/03/02'], ['projects', 'internal'], '1d');
 
       expect(workLog.validate().valid).toBeFalsy();
-      expect(workLog.validate().errors).toContain('#internal and #projects tags cannot be used together');
+      expect(workLog.validate().errors).toEqual(['#internal and #projects tags cannot be used together']);
     });
 
     it('should be invalid when no workload', function () {
       const workLog = new ParsedWorkLog('@2019/03/01~@2019/03/02', ['2019/03/01', '2019/03/02'], ['projects', 'sealights'], undefined);
 
       expect(workLog.validate().valid).toBeFalsy();
-      expect(workLog.validate().errors).toContain('workload was not provided');
+      expect(workLog.validate().errors).toEqual(['workload was not provided']);
     });
 
+    it('should be invalid if #projects is the only tag', function () {
+      const workLog = new ParsedWorkLog('@2019/03/01~@2019/03/02', ['2019/03/01', '2019/03/02'], ['projects'], '1d');
+
+      expect(workLog.validate().valid).toBeFalsy();
+      expect(workLog.validate().errors).toEqual(['missing specific project tag: #projects #your-project-name']);
+    });
+
+    it('should be valid if #project and another tag present', function () {
+      const workLog = new ParsedWorkLog('@2019/03/01~@2019/03/02', ['2019/03/01', '2019/03/02'], ['projects', 'best-project-ever'], '1d');
+
+      expect(workLog.validate().valid).toBeTruthy();
+      expect(workLog.validate().errors).toEqual([]);
+    });
+
+    it('should be valid if #internal is the only tag', function () {
+      const workLog = new ParsedWorkLog('@2019/03/01~@2019/03/02', ['2019/03/01', '2019/03/02'], ['internal'], '1d');
+
+      expect(workLog.validate().valid).toBeTruthy();
+      expect(workLog.validate().errors).toEqual([]);
+    });
   });
 
 });
