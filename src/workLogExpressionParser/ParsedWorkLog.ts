@@ -1,10 +1,10 @@
-import { isEmpty, size } from 'lodash';
+import { isEmpty, size, union } from 'lodash';
+import * as tagsConfig from '../tagsConfig.json';
 
 export class ParsedWorkLog {
   static readonly DATE_RANGE_PATTERN = /@[A-Z0-9/a-z-+]+~@[A-Z0-9/a-z-+]+/g;
   static readonly DATE_PATTERN = /@[A-Z0-9/a-z-+]+/g;
-  static readonly PROJECTS_TAG = "projects";
-  static readonly INTERNAL_TAG = "internal";
+  static readonly EXACTLY_ONE_TOP_LEVEL_TAG_ALLOWED_MSG = `exactly one of the following tags required: ${tagsConfig.topLevel.map(s => '#' + s).join(", ")}`;
 
   constructor(
       readonly expression: string,
@@ -16,13 +16,11 @@ export class ParsedWorkLog {
 
   public validate(): ValidationResult {
     const errors = [];
-    if (!this.tags.includes(ParsedWorkLog.INTERNAL_TAG) && !this.tags.includes(ParsedWorkLog.PROJECTS_TAG)) {
-      errors.push('tags must include either #internal or #projects');
+
+    if (this.tags.filter(e => tagsConfig.topLevel.includes(e)).length !== 1) {
+      errors.push(ParsedWorkLog.EXACTLY_ONE_TOP_LEVEL_TAG_ALLOWED_MSG)
     }
-    if (this.tags.includes(ParsedWorkLog.INTERNAL_TAG) && this.tags.includes(ParsedWorkLog.PROJECTS_TAG)) {
-      errors.push('#internal and #projects tags cannot be used together');
-    }
-    if (this.tags.includes(ParsedWorkLog.PROJECTS_TAG) && this.tags.length < 2) {
+    if (this.tags.filter(e => tagsConfig.requireAdditionalTag.includes(e)).length != 0 && this.tags.length < 2) {
       errors.push('missing specific project tag: #projects #your-project-name');
     }
 
@@ -31,6 +29,10 @@ export class ParsedWorkLog {
     }
 
     return {valid: errors.length === 0, errors}
+  }
+
+  public withAddedTags(addedTags: string[]) {
+    return new ParsedWorkLog(this.expression, this.days, union(this.tags, addedTags), this.workload);
   }
 
   static empty(): ParsedWorkLog {

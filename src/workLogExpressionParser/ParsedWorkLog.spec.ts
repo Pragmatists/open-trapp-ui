@@ -1,4 +1,5 @@
 import { ParsedWorkLog } from './ParsedWorkLog';
+import * as tagsConfig from "../tagsConfig.json";
 
 describe('ParsedWorkLog', () => {
 
@@ -49,18 +50,18 @@ describe('ParsedWorkLog', () => {
 
   describe('validation', () => {
 
-    it('should be invalid when neither #project or #internal tag present', function () {
-      const workLog = new ParsedWorkLog('@2019/03/01~@2019/03/02', ['2019/03/01', '2019/03/02'], ['sealights'], '1d');
+    it('should be invalid when no top level tag present', function () {
+      const workLog = new ParsedWorkLog('@2019/03/01~@2019/03/02', ['2019/03/01', '2019/03/02'], ['not-top-level-tag'], '1d');
 
       expect(workLog.validate().valid).toBeFalsy();
-      expect(workLog.validate().errors).toEqual(['tags must include either #internal or #projects']);
+      expect(workLog.validate().errors).toEqual([ParsedWorkLog.EXACTLY_ONE_TOP_LEVEL_TAG_ALLOWED_MSG]);
     });
 
-    it('should be invalid when both #project and #internal tag present', function () {
-      const workLog = new ParsedWorkLog('@2019/03/01~@2019/03/02', ['2019/03/01', '2019/03/02'], ['projects', 'internal'], '1d');
+    it('should be invalid when two top level tags present', function () {
+      const workLog = new ParsedWorkLog('@2019/03/01~@2019/03/02', ['2019/03/01', '2019/03/02'], [tagsConfig.topLevel[0], tagsConfig.topLevel[1]], '1d');
 
       expect(workLog.validate().valid).toBeFalsy();
-      expect(workLog.validate().errors).toEqual(['#internal and #projects tags cannot be used together']);
+      expect(workLog.validate().errors).toEqual([ParsedWorkLog.EXACTLY_ONE_TOP_LEVEL_TAG_ALLOWED_MSG]);
     });
 
     it('should be invalid when no workload', function () {
