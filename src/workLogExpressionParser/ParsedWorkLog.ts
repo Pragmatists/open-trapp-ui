@@ -20,7 +20,7 @@ export class ParsedWorkLog {
     if (this.tags.filter(e => tagsConfig.topLevel.includes(e)).length !== 1) {
       errors.push(ParsedWorkLog.EXACTLY_ONE_TOP_LEVEL_TAG_ALLOWED_MSG)
     }
-    if (this.tags.filter(e => tagsConfig.requireAdditionalTag.includes(e)).length != 0 && this.tags.length < 2) {
+    if (this.tags.filter(e => tagsConfig.requireAdditionalTag.includes(e)).length > 0 && this.tags.length < 2) {
       errors.push('missing specific project tag: #projects #your-project-name');
     }
 
