@@ -16,6 +16,7 @@ import { ParsedWorkLog } from '../../workLogExpressionParser/ParsedWorkLog';
 import { changeWorkLog, loadPresets, saveWorkLog } from '../../redux/registration.actions';
 import { Month } from '../../utils/Month';
 import { Preset } from './registration.model';
+import { extractAutoAddedTagsMapping } from '../../utils/tagUtils'
 
 interface RegistrationPageDataProps {
   selectedMonth: Month;
@@ -36,6 +37,7 @@ interface RegistrationPageEventProps {
 type RegistrationPageProps = RegistrationPageDataProps & RegistrationPageEventProps;
 
 class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, {}> {
+  static readonly AUTO_ADDED_TAGS_MAPPING = extractAutoAddedTagsMapping();
 
   componentDidMount(): void {
     const {init, selectedMonth} = this.props;
@@ -61,7 +63,8 @@ class RegistrationPageDesktopComponent extends Component<RegistrationPageProps, 
                             onSave={onSaveWorkLog}
                             workLog={workLog}
                             tags={tags}
-                            presets={presets}/>
+                            presets={presets}
+                            autoAddedTagsMapping={RegistrationPageDesktopComponent.AUTO_ADDED_TAGS_MAPPING}/>
             </Grid>
             <Grid item lg={10} md={11} xs={11}>
               {days && !isEmpty(workLogs) ?

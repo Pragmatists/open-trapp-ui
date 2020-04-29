@@ -1,27 +1,28 @@
-import React, { Component } from 'react';
-import { Paper } from '@material-ui/core';
+import React, {Component} from 'react';
+import {Paper} from '@material-ui/core';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
 import HelpIcon from '@material-ui/icons/Help';
 import './WorkLogInput.scss'
-import { WorkLogHelpDialog } from "../workLogHelpDialog/WorkLogHelpDialog";
-import { WorkLogExpressionParser } from '../../../workLogExpressionParser/WorkLogExpressionParser';
+import {WorkLogHelpDialog} from "../workLogHelpDialog/WorkLogHelpDialog";
+import {WorkLogExpressionParser} from '../../../workLogExpressionParser/WorkLogExpressionParser';
 import Autosuggest from 'react-autosuggest';
-import { Suggestion, SuggestionItem } from '../../Suggestion';
-import { isEmpty, noop, difference } from 'lodash';
-import { TagsSuggestionFactory } from './TagsSuggestionFactory';
-import { DatesSuggestionFactory } from './DatesSuggestionFactory';
-import { ConfirmNewTagsDialog } from '../confirmNewTagsDialog/ConfirmNewTagsDialog';
-import { ParsedWorkLog } from '../../../workLogExpressionParser/ParsedWorkLog';
-import { ValidationStatus } from './ValidationStatus';
-import { Preset } from '../registration.model';
+import {Suggestion, SuggestionItem} from '../../Suggestion';
+import {difference, flatMap, isEmpty, noop} from 'lodash';
+import {TagsSuggestionFactory} from './TagsSuggestionFactory';
+import {DatesSuggestionFactory} from './DatesSuggestionFactory';
+import {ConfirmNewTagsDialog} from '../confirmNewTagsDialog/ConfirmNewTagsDialog';
+import {ParsedWorkLog} from '../../../workLogExpressionParser/ParsedWorkLog';
+import {ValidationStatus} from './ValidationStatus';
+import {Preset} from '../registration.model';
 
-interface WorkLogInputProps {
+export interface WorkLogInputProps {
   workLog: ParsedWorkLog;
   tags: string[];
   presets: Preset[];
   onChange: (workLog: ParsedWorkLog) => void;
   onSave: (workLog: ParsedWorkLog) => void;
+  autoAddedTagsMapping: Map<string, string[]>;
 }
 
 interface WorkLogInputState {
@@ -95,15 +96,19 @@ export class WorkLogInput extends Component<WorkLogInputProps, WorkLogInputState
   );
 
   private handleInputChange = (event, {newValue}) => {
-    const {onChange} = this.props;
+    const {onChange, autoAddedTagsMapping} = this.props;
     const workLog = this.workLogExpressionParser.parse(newValue);
-    onChange(workLog)
+
+    const tagsWithAutoAddMapping = workLog.tags.filter(tag => autoAddedTagsMapping.has(tag));
+    const autoAddedTags = flatMap(tagsWithAutoAddMapping, tag => autoAddedTagsMapping.get(tag));
+
+    onChange(workLog.withAddedTags(autoAddedTags));
   };
 
   private handleSubmit = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
       const {onSave, workLog, tags} = this.props;
-      if (workLog.valid) {
+      if (workLog.validate().valid) {
         const newTags = difference(workLog.tags, tags);
         if (isEmpty(newTags)) {
           onSave(workLog);

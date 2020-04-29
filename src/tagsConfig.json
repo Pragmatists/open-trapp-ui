@@ -1,0 +1,35 @@
+{
+  "topLevel": [
+    "projects",
+    "internal",
+    "sick",
+    "vacation",
+    "vacation-special",
+    "holiday"
+  ],
+  "autoSubTags": {
+    "internal": [
+      "brown-bag",
+      "blog",
+      "recruitment",
+      "standup",
+      "rada",
+      "self-dev",
+      "sales",
+      "onboarding",
+      "project-estimation",
+      "meetings",
+      "gdansk",
+      "conference",
+      "preparation",
+      "workshop",
+      "office",
+      "www",
+      "ux-process",
+      "cx"
+    ]
+  },
+  "requireAdditionalTag": [
+    "projects"
+  ]
+}

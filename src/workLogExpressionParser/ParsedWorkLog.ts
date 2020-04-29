@@ -1,8 +1,10 @@
-import { isEmpty, size } from 'lodash';
+import { isEmpty, size, union } from 'lodash';
+import * as tagsConfig from '../tagsConfig.json';
 
 export class ParsedWorkLog {
   static readonly DATE_RANGE_PATTERN = /@[A-Z0-9/a-z-+]+~@[A-Z0-9/a-z-+]+/g;
   static readonly DATE_PATTERN = /@[A-Z0-9/a-z-+]+/g;
+  static readonly EXACTLY_ONE_TOP_LEVEL_TAG_ALLOWED_MSG = `exactly one of the following tags required: ${tagsConfig.topLevel.map(s => '#' + s).join(", ")}`;
 
   constructor(
       readonly expression: string,
@@ -12,8 +14,25 @@ export class ParsedWorkLog {
   ) {
   }
 
-  get valid(): boolean {
-    return !isEmpty(this.tags) && !isEmpty(this.workload);
+  public validate(): ValidationResult {
+    const errors = [];
+
+    if (this.tags.filter(e => tagsConfig.topLevel.includes(e)).length !== 1) {
+      errors.push(ParsedWorkLog.EXACTLY_ONE_TOP_LEVEL_TAG_ALLOWED_MSG)
+    }
+    if (this.tags.filter(e => tagsConfig.requireAdditionalTag.includes(e)).length != 0 && this.tags.length < 2) {
+      errors.push('missing specific project tag: #projects #your-project-name');
+    }
+
+    if (isEmpty(this.workload)) {
+      errors.push('workload was not provided');
+    }
+
+    return {valid: errors.length === 0, errors}
+  }
+
+  public withAddedTags(addedTags: string[]) {
+    return new ParsedWorkLog(this.expression, this.days, union(this.tags, addedTags), this.workload);
   }
 
   static empty(): ParsedWorkLog {
@@ -52,4 +71,9 @@ export class ParsedWorkLog {
     }
     return newDaysExpression;
   }
+}
+
+export interface ValidationResult {
+  valid: boolean;
+  errors: string[];
 }

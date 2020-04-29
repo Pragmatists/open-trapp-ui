@@ -1,6 +1,7 @@
 import { TimeProvider } from '../utils/dateTimeUtils';
 import { WorkLogExpressionParser } from './WorkLogExpressionParser';
 
+
 describe('WorkLogExpressionParser', () => {
   const CURRENT_DATE = "2014/01/02";
   const CURRENT_WEEKDAY = 'thursday';
@@ -13,6 +14,7 @@ describe('WorkLogExpressionParser', () => {
   const WEEK_AFTER_TODAY = '2014/01/09';
   const SOME_WORKLOAD = '1d 1h 1m';
   const SOME_PROJECT = 'ProjectManhattan';
+  const PROJECTS_TAG = 'projects';
   const SOME_DATE = '2013/02/01';
   let workLogExpressionParser: WorkLogExpressionParser;
   let timeProvider;
@@ -24,131 +26,131 @@ describe('WorkLogExpressionParser', () => {
   });
 
   it('parses full worklog', () => {
-    const workLogExpression = '2h #ProjectManhattan @2014/01/03';
+    const workLogExpression = '2h #projects #ProjectManhattan @2014/01/03';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression)).toEqual({
-      expression: '2h #ProjectManhattan @2014/01/03',
-      tags: ['ProjectManhattan'],
+      expression: '2h #projects #ProjectManhattan @2014/01/03',
+      tags: [PROJECTS_TAG, 'ProjectManhattan'],
       workload: '2h',
       days: ['2014/01/03']
     });
   });
 
   it('parses work log for current day', () => {
-    const workLogExpression = '2h #ProjectManhattan';
+    const workLogExpression = '2h #projects #ProjectManhattan';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([CURRENT_DATE]);
   });
 
   it('parses work log for monday', () => {
-    const workLogExpression = '2h #ProjectManhattan @monday';
+    const workLogExpression = '2h #projects #ProjectManhattan @monday';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([MONDAY_BEFORE_TODAY]);
   });
 
   it('parses work log for weekday with upper letter', () => {
-    const workLogExpression = '2h #ProjectManhattan @Monday';
+    const workLogExpression = '2h #projects #ProjectManhattan @Monday';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([MONDAY_BEFORE_TODAY]);
   });
 
   it('parses work log for friday', () => {
-    const workLogExpression = '2h #ProjectManhattan @friday';
+    const workLogExpression = '2h #projects #ProjectManhattan @friday';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([FRIDAY_BEFORE_TODAY]);
   });
 
   it('parses work log for last monday', () => {
-    const workLogExpression = '2h #ProjectManhattan @last-monday';
+    const workLogExpression = '2h #projects #ProjectManhattan @last-monday';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([MONDAY_BEFORE_TODAY]);
   });
 
   it('parses work log for next monday', () => {
-    const workLogExpression = '2h #ProjectManhattan @next-monday';
+    const workLogExpression = '2h #projects #ProjectManhattan @next-monday';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([MONDAY_AFTER_TODAY]);
   });
 
   it('parses work log for weekday exactly week before today', () => {
-    const workLogExpression = '2h #ProjectManhattan @last-thursday';
+    const workLogExpression = '2h #projects #ProjectManhattan @last-thursday';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([WEEK_BEFORE_TODAY]);
   });
 
   it('parses work log for weekday exactly week after today', () => {
-    const workLogExpression = '2h #ProjectManhattan @next-thursday';
+    const workLogExpression = '2h #projects #ProjectManhattan @next-thursday';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([WEEK_AFTER_TODAY]);
   });
 
   it('parses work log for yesterday', () => {
-    const workLogExpression = '2h #ProjectManhattan @yesterday';
+    const workLogExpression = '2h #projects #ProjectManhattan @yesterday';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([YESTERDAY]);
   });
 
   it('parses work log for today', () => {
-    const workLogExpression = '2h #ProjectManhattan @today';
+    const workLogExpression = '2h #projects #ProjectManhattan @today';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([CURRENT_DATE]);
   });
 
   it('parses work log for today if given weekday', () => {
-    const workLogExpression = '2h #ProjectManhattan @' + CURRENT_WEEKDAY;
+    const workLogExpression = '2h #projects #ProjectManhattan @' + CURRENT_WEEKDAY;
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([CURRENT_DATE]);
   });
 
   it('parses work log for tomorrow', () => {
-    const workLogExpression = '2h #ProjectManhattan @tomorrow';
+    const workLogExpression = '2h #projects #ProjectManhattan @tomorrow';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([TOMORROW]);
   });
 
   it('parses work log for yesterday by t-1', () => {
-    const workLogExpression = '2h #ProjectManhattan @t-1';
+    const workLogExpression = '2h #projects #ProjectManhattan @t-1';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([YESTERDAY]);
   });
 
   it('parses work log for tomorrow by t+1', () => {
-    const workLogExpression = '2h #ProjectManhattan @t+1';
+    const workLogExpression = '2h #projects #ProjectManhattan @t+1';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([TOMORROW]);
   });
 
   it('parses work log with days and hours', () => {
-    const workLogExpression = '1d 3h #ProjectManhattan';
+    const workLogExpression = '1d 3h #projects #ProjectManhattan';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).workload).toEqual("1d 3h");
   });
 
   it('parses work log with days and hours', () => {
-    const workLogExpression = '1d 5h 15m #ProjectManhattan';
+    const workLogExpression = '1d 5h 15m #projects #ProjectManhattan';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).workload).toEqual("1d 5h 15m");
   });
 
   it('parses work log for 1d by default', () => {
-    const workLogExpression = '#ProjectManhattan';
+    const workLogExpression = '#projects #ProjectManhattan';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).workload).toEqual("1d");
@@ -179,68 +181,68 @@ describe('WorkLogExpressionParser', () => {
   });
 
   it('does not parse workload at the end of project name', () => {
-    const workLogExpression = '#project2d';
+    const workLogExpression = '#projects #project2d';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).workload).toEqual("1d");
-    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual(["project2d"]);
+    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([PROJECTS_TAG,"project2d"]);
   });
 
   it('parses work log with hyphen in project for today', () => {
-    const workLogExpression = '2h #Project-Manhattan';
+    const workLogExpression = '2h #projects #Project-Manhattan';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
-    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual(["Project-Manhattan"]);
+    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([PROJECTS_TAG, "Project-Manhattan"]);
   });
 
   it('does not parse work log with double day info', () => {
-    const workLogExpression = '#Project-Manhattan @monday @tuesday';
+    const workLogExpression = '#Project-Manhattan #projects @monday @tuesday';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeFalsy();
     const parsed = workLogExpressionParser.parse(workLogExpression);
-    expect(parsed.valid).toBeFalsy();
+    expect(parsed.validate().valid).toBeFalsy();
   });
 
   it('does not parse work log with double workload hours info', () => {
-    const workLogExpression = '2h 3h #Project-Manhattan';
+    const workLogExpression = '2h 3h #projects #Project-Manhattan';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeFalsy();
     const parsed = workLogExpressionParser.parse(workLogExpression);
-    expect(parsed.valid).toBeFalsy();
+    expect(parsed.validate().valid).toBeFalsy();
   });
 
   it('does not parse work log with double workload days info', () => {
-    const workLogExpression = '1d 1d #Project-Manhattan';
+    const workLogExpression = '1d 1d #projects #Project-Manhattan';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeFalsy();
     const parsed = workLogExpressionParser.parse(workLogExpression);
-    expect(parsed.valid).toBeFalsy();
+    expect(parsed.validate().valid).toBeFalsy();
   });
 
   it('does not parse work log with double workload minutes info', () => {
-    const workLogExpression = '30m 45m #Project-Manhattan';
+    const workLogExpression = '30m 45m #projects #Project-Manhattan';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeFalsy();
     const parsed = workLogExpressionParser.parse(workLogExpression);
-    expect(parsed.valid).toBeFalsy();
+    expect(parsed.validate().valid).toBeFalsy();
   });
 
   it('does not parse entry with invalid number', () => {
-    const workLogExpression = '1h #Project-Manhattan 2h 3h @t-123456789';
+    const workLogExpression = '1h #projects #Project-Manhattan 2h 3h @t-123456789';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeFalsy();
     const parsed = workLogExpressionParser.parse(workLogExpression);
-    expect(parsed.valid).toBeFalsy();
+    expect(parsed.validate().valid).toBeFalsy();
   });
 
   it('does not parse entry with negative workload', () => {
-    const workLogExpression = '-10h #Project-Manhattan';
+    const workLogExpression = '-10h #projects #Project-Manhattan';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeFalsy();
     const parsed = workLogExpressionParser.parse(workLogExpression);
-    expect(parsed.valid).toBeFalsy();
+    expect(parsed.validate().valid).toBeFalsy();
     expect(parsed).toEqual({
-      expression: '-10h #Project-Manhattan',
+      expression: workLogExpression,
       days: [],
       tags: [],
       workload: undefined
@@ -248,33 +250,33 @@ describe('WorkLogExpressionParser', () => {
   });
 
   it('parses entry for date without trailing zeros', () => {
-    const workLogExpression = '4h 30m #Project-Manhattan @2014/1/1';
+    const workLogExpression = '4h 30m #projects #Project-Manhattan @2014/1/1';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([YESTERDAY]);
   });
 
   it('parses work log padded with spaces', () => {
-    const workLogExpression = '  2h #ProjectManhattan @2014/01/03   ';
+    const workLogExpression = '  2h #ProjectManhattan #projects @2014/01/03   ';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
 
     const parsed = workLogExpressionParser.parse(workLogExpression);
-    expect(parsed.valid).toBeTruthy();
+    expect(parsed.validate().valid).toBeTruthy();
     expect(parsed).toEqual({
-      expression: '  2h #ProjectManhattan @2014/01/03   ',
-      tags: ['ProjectManhattan'],
+      expression: workLogExpression,
+      tags: ['ProjectManhattan', PROJECTS_TAG],
       workload: '2h',
       days: ['2014/01/03']
     });
   });
 
   it('parses multiple projects', () => {
-    const workLogExpression = '4h #ProjectManhattan #Apollo @today';
+    const workLogExpression = '4h #ProjectManhattan #Apollo #projects @today';
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
     expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([
-      'ProjectManhattan', 'Apollo'
+      'ProjectManhattan', 'Apollo', PROJECTS_TAG
     ]);
   });
 
@@ -283,10 +285,11 @@ describe('WorkLogExpressionParser', () => {
         .withWorkload(SOME_WORKLOAD)
         .withDate(SOME_DATE)
         .withProject(SOME_PROJECT)
+        .withProject(PROJECTS_TAG)
         .build();
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
-    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([SOME_PROJECT]);
+    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([SOME_PROJECT, PROJECTS_TAG]);
     expect(workLogExpressionParser.parse(workLogExpression).workload).toEqual(SOME_WORKLOAD);
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([SOME_DATE]);
   });
@@ -296,10 +299,11 @@ describe('WorkLogExpressionParser', () => {
         .withDate(SOME_DATE)
         .withWorkload(SOME_WORKLOAD)
         .withProject(SOME_PROJECT)
+        .withProject(PROJECTS_TAG)
         .build();
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
-    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([SOME_PROJECT]);
+    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([SOME_PROJECT, PROJECTS_TAG]);
     expect(workLogExpressionParser.parse(workLogExpression).workload).toEqual(SOME_WORKLOAD);
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([SOME_DATE]);
   });
@@ -308,11 +312,12 @@ describe('WorkLogExpressionParser', () => {
     const workLogExpression = new Expression()
         .withDate(SOME_DATE)
         .withProject(SOME_PROJECT)
+        .withProject(PROJECTS_TAG)
         .withWorkload(SOME_WORKLOAD)
         .build();
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
-    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([SOME_PROJECT]);
+    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([SOME_PROJECT, PROJECTS_TAG]);
     expect(workLogExpressionParser.parse(workLogExpression).workload).toEqual(SOME_WORKLOAD);
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([SOME_DATE]);
   });
@@ -320,12 +325,13 @@ describe('WorkLogExpressionParser', () => {
   it('parses work log in order: project, workload, date', () => {
     const workLogExpression = new Expression()
         .withProject(SOME_PROJECT)
+        .withProject(PROJECTS_TAG)
         .withWorkload(SOME_WORKLOAD)
         .withDate(SOME_DATE)
         .build();
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
-    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([SOME_PROJECT]);
+    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([SOME_PROJECT, PROJECTS_TAG]);
     expect(workLogExpressionParser.parse(workLogExpression).workload).toEqual(SOME_WORKLOAD);
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([SOME_DATE]);
   });
@@ -333,12 +339,13 @@ describe('WorkLogExpressionParser', () => {
   it('parses work log in order: project, date, workload', () => {
     const workLogExpression = new Expression()
         .withProject(SOME_PROJECT)
+        .withProject(PROJECTS_TAG)
         .withDate(SOME_DATE)
         .withWorkload(SOME_WORKLOAD)
         .build();
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
-    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([SOME_PROJECT]);
+    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([SOME_PROJECT, PROJECTS_TAG]);
     expect(workLogExpressionParser.parse(workLogExpression).workload).toEqual(SOME_WORKLOAD);
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([SOME_DATE]);
   });
@@ -347,27 +354,30 @@ describe('WorkLogExpressionParser', () => {
     const workLogExpression = new Expression()
         .withDate(SOME_DATE)
         .withProject(SOME_PROJECT)
+        .withProject(PROJECTS_TAG)
         .build();
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
-    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([SOME_PROJECT]);
+    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([SOME_PROJECT, PROJECTS_TAG]);
     expect(workLogExpressionParser.parse(workLogExpression).days).toEqual([SOME_DATE]);
   });
 
   it('parses work log in order: project, workload', () => {
     const workLogExpression = new Expression()
         .withProject(SOME_PROJECT)
+        .withProject(PROJECTS_TAG)
         .withWorkload(SOME_WORKLOAD)
         .build();
 
     expect(workLogExpressionParser.isValid(workLogExpression)).toBeTruthy();
-    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([SOME_PROJECT]);
+    expect(workLogExpressionParser.parse(workLogExpression).tags).toEqual([SOME_PROJECT, PROJECTS_TAG]);
     expect(workLogExpressionParser.parse(workLogExpression).workload).toEqual(SOME_WORKLOAD);
   });
 
   it('parses work log with dates range', () => {
     const workLogExpression = new Expression()
         .withProject(SOME_PROJECT)
+        .withProject(PROJECTS_TAG)
         .withWorkload(SOME_WORKLOAD)
         .withDateRange('2019/03/01', '2019/03/03')
         .build();
@@ -379,6 +389,7 @@ describe('WorkLogExpressionParser', () => {
   it('parses work log with named dates range', () => {
     const workLogExpression = new Expression()
         .withProject(SOME_PROJECT)
+        .withProject(PROJECTS_TAG)
         .withWorkload(SOME_WORKLOAD)
         .withDateRange('today', 't+1')
         .build();
@@ -390,6 +401,7 @@ describe('WorkLogExpressionParser', () => {
   it('parses work log with inverted range', () => {
     const workLogExpression = new Expression()
         .withProject(SOME_PROJECT)
+        .withProject(PROJECTS_TAG)
         .withWorkload(SOME_WORKLOAD)
         .withDateRange('tomorrow', 'today')
         .build();
@@ -401,6 +413,7 @@ describe('WorkLogExpressionParser', () => {
   it('parses work log with range of single day', () => {
     const workLogExpression = new Expression()
         .withProject(SOME_PROJECT)
+        .withProject(PROJECTS_TAG)
         .withWorkload(SOME_WORKLOAD)
         .withDateRange('today', 'today')
         .build();
