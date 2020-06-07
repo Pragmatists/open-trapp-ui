@@ -5,7 +5,7 @@ import { Grid } from '@material-ui/core';
 import './AdminPage.scss';
 import Paper from '@material-ui/core/Paper';
 import { ServiceAccountsList } from './serviceAccountsList/ServiceAccountsList';
-import { deleteServiceAccount, loadAuthorizedUsers, loadServiceAccounts } from '../../redux/admin.actions';
+import { deleteServiceAccount, loadAuthorizedUsers, loadServiceAccounts, updateAuthorizedUser } from '../../redux/admin.actions';
 import { AuthorizedUser, AuthorizedUserDTO, ServiceAccountDTO } from '../../api/dtos';
 import { UsersList } from './usersList/UsersList';
 import Button from '@material-ui/core/Button';
@@ -21,6 +21,7 @@ interface AdminPageEventProps {
   init: VoidFunction;
   onServiceAccountCreated: VoidFunction;
   onDeleteServiceAccount: (id: string) => void;
+  onUpdateAuthorizedUser: (user: AuthorizedUserDTO) => void;
 }
 
 type AdminPageProps = AdminPageDataProps & AdminPageEventProps;
@@ -39,7 +40,7 @@ class AdminPageComponent extends Component<AdminPageProps, AdminPageState> {
   }
 
   render() {
-    const {serviceAccounts, users, username, onDeleteServiceAccount} = this.props;
+    const {serviceAccounts, users, username, onDeleteServiceAccount, onUpdateAuthorizedUser} = this.props;
     const {serviceAccountDialogOpen} = this.state;
     return (
         <div className='admin-page'>
@@ -60,10 +61,13 @@ class AdminPageComponent extends Component<AdminPageProps, AdminPageState> {
               </Paper>
             </Grid>
             <Grid item lg={10} md={11} xs={11}>
-              <div className='admin-page__header'>Users</div>
+              <div className='admin-page__header'>
+                <div>Users</div>
+                <CreateButton onClick={this.onOpenAuthorizedUserDialog} data-add-user-dialog-button/>
+              </div>
               <Paper className='admin-page__content'>
                 {
-                  users ? <UsersList users={users}/> : <LoadingPlaceholder data-users-loading/>
+                  users ? <UsersList users={users} onUpdate={onUpdateAuthorizedUser}/> : <LoadingPlaceholder data-users-loading/>
                 }
               </Paper>
             </Grid>
@@ -85,6 +89,10 @@ class AdminPageComponent extends Component<AdminPageProps, AdminPageState> {
       onServiceAccountCreated();
     }
   };
+
+  private onOpenAuthorizedUserDialog = (user?: AuthorizedUserDTO) => this.setState({
+
+  });
 }
 
 const LoadingPlaceholder = () => (
@@ -116,6 +124,9 @@ function mapDispatchToProps(dispatch): AdminPageEventProps {
     },
     onDeleteServiceAccount(id: string) {
       dispatch(deleteServiceAccount(id));
+    },
+    onUpdateAuthorizedUser(user: AuthorizedUserDTO) {
+      dispatch(updateAuthorizedUser(user));
     }
   };
 }

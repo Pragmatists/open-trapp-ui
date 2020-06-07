@@ -27,9 +27,17 @@ export function loadAuthorizedUsers() {
   };
 }
 
-const serviceAccountsLoadedAction = (serviceAccounts: ServiceAccountDTO[]) => ({
+export function updateAuthorizedUser(user: AuthorizedUserDTO) {
+  return (dispatch: Dispatch) => {
+    OpenTrappRestAPI.updateAuthorizedUser(user.name, user.roles)
+        .then(() => dispatch(authorizedUserUpdatedAction(user)))
+        .catch(err => console.error(err))
+  }
+}
+
+const serviceAccountsLoadedAction = (accounts: ServiceAccountDTO[]) => ({
   type: ADMIN_CONSTANTS.SERVICE_ACCOUNTS_LOADED,
-  payload: serviceAccounts
+  payload: accounts
 });
 
 const serviceAccountDeletedAction = (id: string) => ({
@@ -37,7 +45,12 @@ const serviceAccountDeletedAction = (id: string) => ({
   payload: id
 });
 
-const authorizedUsersLoadedAction = (authorizedUsers: AuthorizedUserDTO[]) => ({
+const authorizedUsersLoadedAction = (users: AuthorizedUserDTO[]) => ({
   type: ADMIN_CONSTANTS.AUTHORIZED_USERS_LOADED,
-  payload: authorizedUsers
+  payload: users
+});
+
+const authorizedUserUpdatedAction = (user: AuthorizedUserDTO) => ({
+  type: ADMIN_CONSTANTS.AUTHORIZED_USER_UPDATED,
+  payload: user
 });

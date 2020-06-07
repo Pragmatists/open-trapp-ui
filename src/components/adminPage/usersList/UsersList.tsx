@@ -8,6 +8,7 @@ import TableBody from '@material-ui/core/TableBody';
 
 interface UsersListProps {
   users: AuthorizedUserDTO[];
+  onUpdate: (user: AuthorizedUserDTO) => void;
 }
 
 export class UsersList extends Component<UsersListProps, {}> {

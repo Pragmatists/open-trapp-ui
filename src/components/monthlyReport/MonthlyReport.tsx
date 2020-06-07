@@ -127,3 +127,35 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
     }
   }
 }
+
+interface FooterProps {
+  days: MonthlyReportDay[];
+  workLogs: { [employee: string]: WorkLog[]};
+}
+
+const Footer = ({days, workLogs}: FooterProps) => {
+  const allWorkLogs = values(workLogs);
+  const workloadForDay = chain(allWorkLogs)
+      .flatten()
+      .groupBy(w => w.day)
+      .mapValues(value => reduce(value, (sum, w) => sum + w.workload, 0))
+      .mapValues(value => value / 60)
+      .value();
+  const total = chain(workloadForDay)
+      .values()
+      .sum()
+      .value();
+  return (
+      <TableFooter>
+        <TableRow className='report-table__row' data-table-footer-row>
+          <TableCell className='report-table__cell report-table__cell--bold'>Total</TableCell>
+          {days.map((day, idx) => (
+              <TableCell key={idx} className={this.cellClass(day)} onClick={e => this.onCellClick(e, day.id)} data-month-day-value>
+                {workloadForDay[day.id]}
+              </TableCell>
+          ))}
+          <TableCell className='report-table__cell report-table__cell--bold' data-total-value>{total}</TableCell>
+        </TableRow>
+      </TableFooter>
+  );
+};

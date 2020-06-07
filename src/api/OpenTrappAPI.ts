@@ -117,6 +117,10 @@ class OpenTrappAPI {
         .then(axiosResp => axiosResp.data);
   }
 
+  updateAuthorizedUser(username: string, roles: string[]): Promise<{}> {
+    return this.axios.put<{}>(`/admin/users/${username}`, {roles});
+  }
+
   get axios() {
     return this.axiosInstance;
   }

@@ -223,12 +223,48 @@ describe('Admin Page', () => {
       expect(wrapper.find('[data-users-loading]').text()).toEqual('Loading...');
     });
 
+    it('creates authorized user', async () => {
+      const wrapper = mount(
+          <Provider store={store}>
+            <AdminPage/>
+          </Provider>
+      );
+      await flushAllPromises();
+
+      addAuthorizedUserButton(wrapper).simulate('click');
+      type(wrapper, 'john.doe');
+      dialogSaveButton(wrapper).simulate('click');
+      await flushAllPromises();
+      wrapper.update();
+
+      expect(httpMock.history.put.filter(r => r.url === '/api/v1/admin/users')).toHaveLength(1);
+      expect(httpMock.history.get.filter(r => r.url === '/api/v1/admin/service-accounts')).toHaveLength(1);
+    });
+
     function authorizedUsers(wrapper) {
       return wrapper.find('[data-authorized-user-row]').hostNodes();
     }
 
     function authorizedUser(wrapper, idx: number) {
       return wrapper.find('[data-authorized-user-row]').hostNodes().at(idx);
+    }
+
+    function addAuthorizedUserButton(wrapper) {
+      return wrapper.find('[data-add-user-dialog-button]');
+    }
+
+    function usernameInput(wrapper): ReactWrapper {
+      return wrapper.find(TextField).at(0).find('input');
+    }
+
+    function type(wrapper, expression: string) {
+      const input = usernameInput(wrapper);
+      input.simulate('change', {target: {value: expression}});
+      input.simulate('focus');
+    }
+
+    function dialogSaveButton(wrapper) {
+      return wrapper.find(ServiceAccountDialog).find('[data-save-button]').hostNodes();
     }
   });
 });
