@@ -57,13 +57,13 @@ describe('Reporting Page - desktop', () => {
     jest.spyOn(Month, 'current', 'get').mockReturnValue(new Month(2019, 3));
     httpMock = new MockAdapter(OpenTrappRestAPI.axios);
     httpMock
-        .onGet(/\/api\/v1\/calendar\/2019\/\d$/)
+        .onGet(/\/calendar\/2019\/\d$/)
         .reply(200, monthResponse)
-        .onGet(/\/api\/v1\/calendar\/2019\/\d\/work-log\/entries$/)
+        .onGet(/\/calendar\/2019\/\d\/work-log\/entries$/)
         .reply(200, workLogResponse)
-        .onDelete(/\/api\/v1\/work-log\/entries\/.*$/)
+        .onDelete(/\/work-log\/entries\/.*$/)
         .reply(204)
-        .onPut('/api/v1/work-log/entries/jd2')
+        .onPut('/work-log/entries/jd2')
         .reply(200, updatedResponse);
 
     store = setupStore({
@@ -163,8 +163,8 @@ describe('Reporting Page - desktop', () => {
       monthChip(wrapper, '2019/02').simulate('click');
       await flushAllPromises();
 
-      expect(httpMock.history.get.filter(r => r.url === '/api/v1/calendar/2019/2')).toHaveLength(1);
-      expect(httpMock.history.get.filter(r => r.url === '/api/v1/calendar/2019/2/work-log/entries')).toHaveLength(1);
+      expect(httpMock.history.get.filter(r => r.url === '/calendar/2019/2')).toHaveLength(1);
+      expect(httpMock.history.get.filter(r => r.url === '/calendar/2019/2/work-log/entries')).toHaveLength(1);
       expect(selectedMonth(wrapper)).toEqual('2019/02');
       expect(monthChipsLabels(wrapper))
           .toEqual(['2018/12', '2019/01', '2019/02', '2019/03', '2019/04']);

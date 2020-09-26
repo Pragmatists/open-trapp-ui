@@ -57,13 +57,13 @@ describe('Registration Page - desktop', () => {
   beforeEach(() => {
     httpMock = new MockAdapter(OpenTrappRestAPI.axios);
     httpMock
-        .onGet(/\/api\/v1\/calendar\/2019\/\d$/)
+        .onGet(/\/calendar\/2019\/\d$/)
         .reply(200, monthResponse)
-        .onGet(/\/api\/v1\/calendar\/2019\/\d\/work-log\/entries$/)
+        .onGet(/\/calendar\/2019\/\d\/work-log\/entries$/)
         .reply(200, workLogResponse)
-        .onGet('/api/v1/projects')
+        .onGet('/projects')
         .reply(200, tagsResponse)
-        .onPost('/api/v1/employee/john.doe/work-log/entries')
+        .onPost('/employee/john.doe/work-log/entries')
         .reply(201, {id: '123-456'});
     store = setupStore({
       authentication: {
@@ -106,7 +106,7 @@ describe('Registration Page - desktop', () => {
       await flushAllPromises();
       wrapper.update();
 
-      expect(httpMock.history.get.filter(r => r.url.startsWith('/api/v1/calendar'))).toHaveLength(2);
+      expect(httpMock.history.get.filter(r => r.url.startsWith('/calendar'))).toHaveLength(2);
       expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
       expect(tableHeaderCells(wrapper).not('[data-total-header]')).toHaveLength(days.length);
       expect(tableRowCells(wrapper, 0).not('[data-total-value]')).toHaveLength(days.length);
@@ -130,7 +130,7 @@ describe('Registration Page - desktop', () => {
       await flushAllPromises();
       wrapper.update();
 
-      expect(httpMock.history.get.filter(r => r.url.startsWith('/api/v1/calendar'))).toHaveLength(4);
+      expect(httpMock.history.get.filter(r => r.url.startsWith('/calendar'))).toHaveLength(4);
       expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
       expect(currentMonthHeader(wrapper).text()).toEqual('2019/03 month worklog');
     });
@@ -148,7 +148,7 @@ describe('Registration Page - desktop', () => {
       await flushAllPromises();
       wrapper.update();
 
-      expect(httpMock.history.get.filter(r => r.url.startsWith('/api/v1/calendar'))).toHaveLength(4);
+      expect(httpMock.history.get.filter(r => r.url.startsWith('/calendar'))).toHaveLength(4);
       expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
       expect(currentMonthHeader(wrapper).text()).toEqual('2019/01 month worklog');
     });
@@ -230,7 +230,7 @@ describe('Registration Page - desktop', () => {
       await flushAllPromises();
       wrapper.update();
 
-      expect(httpMock.history.get.filter(r => r.url === '/api/v1/projects')).toHaveLength(1);
+      expect(httpMock.history.get.filter(r => r.url === '/projects')).toHaveLength(1);
       expect(store.getState().workLog.tags).toEqual(tagsResponse);
     });
 
@@ -294,7 +294,7 @@ describe('Registration Page - desktop', () => {
       pressEnter(wrapper);
       await flushAllPromises();
 
-      expect(httpMock.history.get.filter(r => r.url === '/api/v1/calendar/2019/2/work-log/entries')).toHaveLength(2);
+      expect(httpMock.history.get.filter(r => r.url === '/calendar/2019/2/work-log/entries')).toHaveLength(2);
     });
 
     function pressEnter(wrapper) {

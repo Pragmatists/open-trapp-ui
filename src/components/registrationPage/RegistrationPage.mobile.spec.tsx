@@ -44,15 +44,15 @@ describe('Registration Page - mobile', () => {
   beforeEach(() => {
     httpMock = new MockAdapter(OpenTrappRestAPI.axios);
     httpMock
-        .onGet(/\/api\/v1\/calendar\/2019\/\d\/work-log\/entries$/)
+        .onGet(/\/calendar\/2019\/\d\/work-log\/entries$/)
         .reply(200, workLogResponse)
-        .onGet('/api/v1/projects/presets')
+        .onGet('/projects/presets')
         .reply(200, presetsResponse)
-        .onGet(/\/api\/v1\/projects.*/)
+        .onGet(/\/projects.*/)
         .reply(200, tagsResponse)
-        .onPost('/api/v1/employee/john.doe/work-log/entries')
+        .onPost('/employee/john.doe/work-log/entries')
         .reply(201, {id: '123-456'})
-        .onDelete(/\/api\/v1\/work-log\/entries\/.*$/)
+        .onDelete(/\/work-log\/entries\/.*$/)
         .reply(204);
     store = setupStore({
       authentication: {
@@ -143,7 +143,7 @@ describe('Registration Page - mobile', () => {
 
       expect(wrapper.find(WorkLogs).find('[data-work-log]').hostNodes()).toHaveLength(1);
       expect(httpMock.history.delete).toHaveLength(1);
-      expect(httpMock.history.delete[0].url).toEqual('/api/v1/work-log/entries/3');
+      expect(httpMock.history.delete[0].url).toEqual('/work-log/entries/3');
     });
   });
 

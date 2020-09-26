@@ -68,13 +68,13 @@ describe('Reporting page - mobile', () => {
     jest.spyOn(Month, 'current', 'get').mockReturnValue(new Month(2019, 2));
     httpMock = new MockAdapter(OpenTrappRestAPI.axios);
     httpMock
-        .onGet('/api/v1/calendar/2019/2')
+        .onGet('/calendar/2019/2')
         .reply(200, monthResponse1)
-        .onGet('/api/v1/calendar/2019/3')
+        .onGet('/calendar/2019/3')
         .reply(200, monthResponse2)
-        .onGet('/api/v1/calendar/2019/2/work-log/entries')
+        .onGet('/calendar/2019/2/work-log/entries')
         .reply(200, workLogResponse1)
-        .onGet('/api/v1/calendar/2019/3/work-log/entries')
+        .onGet('/calendar/2019/3/work-log/entries')
         .reply(200, workLogResponse2);
 
     store = setupStore({

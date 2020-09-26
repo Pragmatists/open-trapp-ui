@@ -20,11 +20,11 @@ describe('Bulk edit dialog', () => {
   beforeEach(() => {
     httpMock = new MockAdapter(OpenTrappRestAPI.axios);
     httpMock
-        .onGet(/\/api\/v1\/work-log\/bulk-update\/.*$/)
+        .onGet(/\/work-log\/bulk-update\/.*$/)
         .reply(200, {entriesAffected: 1})
-        .onPost('/api/v1/work-log/bulk-update')
+        .onPost('/work-log/bulk-update')
         .reply(200, {entriesAffected: 1})
-        .onGet('/api/v1/calendar/2019/3/work-log/entries')
+        .onGet('/calendar/2019/3/work-log/entries')
         .reply(200, workLogResponse);
     store = setupStore({
       authentication: {
@@ -75,7 +75,7 @@ describe('Bulk edit dialog', () => {
     wrapper.update();
     expect(httpMock.history.get.length).toEqual(2);
     expect(httpMock.history.get[1].url)
-        .toEqual('/api/v1/work-log/bulk-update/!date=2019:03+!project=projects+!project=nvm+!employee=john.doe');
+        .toEqual('/work-log/bulk-update/!date=2019:03+!project=projects+!project=nvm+!employee=john.doe');
   });
 
   it('updates entries on UPDATE button click', async () => {
@@ -93,12 +93,12 @@ describe('Bulk edit dialog', () => {
     wrapper.update();
 
     expect(httpMock.history.post.length).toEqual(1);
-    expect(httpMock.history.post[0].url).toEqual('/api/v1/work-log/bulk-update');
+    expect(httpMock.history.post[0].url).toEqual('/work-log/bulk-update');
     expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
       query: '@2019/03 #projects #nvm *john.doe',
       expression: '-#nvm +#jld'
     });
-    expect(httpMock.history.get[2].url).toEqual('/api/v1/calendar/2019/3/work-log/entries');
+    expect(httpMock.history.get[2].url).toEqual('/calendar/2019/3/work-log/entries');
   });
 
   function queryInput(wrapper) {
