@@ -8,7 +8,7 @@ interface Props {
   selected: boolean;
   disabled?: boolean;
   onClick: VoidFunction;
-  icon: React.ComponentType<{color: string}>;
+  icon: any;
 }
 
 export const LeftMenuEntry = ({label, disabled, selected, onClick, icon}: Props) => {
