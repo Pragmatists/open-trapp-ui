@@ -31,6 +31,7 @@ export class WorkLogExpressionParser {
   private parseExpression(expression: string): ParsedWorkLog {
     try {
       const result = parse(trim(expression), {timeProvider: this.timeProvider});
+      console.log('parseExpression', result.workload);
       return new ParsedWorkLog(expression, [result.day], result.projectNames, result.workload);
     } catch (e) {
       return new ParsedWorkLog(expression, [], [], undefined);

@@ -1,10 +1,11 @@
-import { isEmpty, size, union } from 'lodash';
+import { isEmpty, size, union, toInteger } from 'lodash';
 import * as tagsConfig from '../tagsConfig.json';
 
 export class ParsedWorkLog {
+  static readonly WORKLOAD_PATTERN = /(?:([0-9]+)d)?\s?(?:([0-9]+)h)?\s?(?:([0-9]+)m)?/;
   static readonly DATE_RANGE_PATTERN = /@[A-Z0-9/a-z-+]+~@[A-Z0-9/a-z-+]+/g;
   static readonly DATE_PATTERN = /@[A-Z0-9/a-z-+]+/g;
-  static readonly EXACTLY_ONE_TOP_LEVEL_TAG_ALLOWED_MSG = `exactly one of the following tags required: ${tagsConfig.topLevel.map(s => '#' + s).join(", ")}`;
+  static readonly EXACTLY_ONE_TOP_LEVEL_TAG_ALLOWED_MSG = `Exactly one of the following tags required: ${tagsConfig.topLevel.map(s => '#' + s).join(", ")}`;
 
   constructor(
       readonly expression: string,
@@ -16,18 +17,18 @@ export class ParsedWorkLog {
 
   public validate(): ValidationResult {
     const errors = [];
-
     if (this.tags.filter(e => tagsConfig.topLevel.includes(e)).length !== 1) {
       errors.push(ParsedWorkLog.EXACTLY_ONE_TOP_LEVEL_TAG_ALLOWED_MSG)
     }
     if (this.tags.filter(e => tagsConfig.requireAdditionalTag.includes(e)).length > 0 && this.tags.length < 2) {
-      errors.push('missing specific project tag: #projects #your-project-name');
+      errors.push('Missing specific project tag: #projects #your-project-name');
     }
-
     if (isEmpty(this.workload)) {
-      errors.push('workload was not provided');
+      errors.push('Workload was not provided');
     }
-
+    if (ParsedWorkLog.workloadExceeds24Hours(this.workload)) {
+      errors.push("Workload can't exceed 24 hours");
+    }
     return {valid: errors.length === 0, errors}
   }
 
@@ -59,6 +60,19 @@ export class ParsedWorkLog {
     } else {
       return `@${days[0]}~@${days[days.length - 1]}`;
     }
+  }
+
+  private static workloadExceeds24Hours(expression: string): boolean {
+    const matches = ParsedWorkLog.WORKLOAD_PATTERN.exec(expression);
+    const days = ParsedWorkLog.parseGroup(matches[1]);
+    const hours = ParsedWorkLog.parseGroup(matches[2]);
+    const minutes = ParsedWorkLog.parseGroup(matches[3]);
+    const workload = days * 8 * 60 + hours * 60 + minutes;
+    return workload > 24 * 60;
+  }
+
+  private static parseGroup(group: string): number {
+    return group ? toInteger(group) : 0;
   }
 
   private newExpression(newDaysExpression: string): string {
