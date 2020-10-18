@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { Grid } from '@material-ui/core';
@@ -25,66 +25,46 @@ interface AdminPageEventProps {
 
 type AdminPageProps = AdminPageDataProps & AdminPageEventProps;
 
-interface AdminPageState {
-  serviceAccountDialogOpen: boolean;
-}
+const AdminPageComponent = ({init, onServiceAccountCreated, serviceAccounts, users, username, onDeleteServiceAccount}: AdminPageProps) => {
+  const [serviceAccountDialogOpen, setServiceAccountDialogOpen] = useState(false);
+  useEffect(() => init(), [])
+  const onOpenServiceAccountDialog = () => setServiceAccountDialogOpen(true)
 
-class AdminPageComponent extends Component<AdminPageProps, AdminPageState> {
-  state = {
-    serviceAccountDialogOpen: false
-  };
-
-  componentDidMount(): void {
-    this.props.init();
-  }
-
-  render() {
-    const {serviceAccounts, users, username, onDeleteServiceAccount} = this.props;
-    const {serviceAccountDialogOpen} = this.state;
-    return (
-        <div className='admin-page'>
-          <ServiceAccountDialog open={serviceAccountDialogOpen}
-                                onClose={this.onCloseServiceAccountDialog}/>
-          <Grid container justify='center' spacing={3}>
-            <Grid item lg={10} md={11} xs={11}>
-              <div className='admin-page__header'>
-                <div>Service accounts</div>
-                <CreateButton onClick={this.onOpenServiceAccountDialog} data-create-service-account-button/>
-              </div>
-              <Paper className='admin-page__content'>
-                {
-                  serviceAccounts ?
-                      <ServiceAccountsList accounts={serviceAccounts} username={username} onDelete={onDeleteServiceAccount}/> :
-                      <LoadingPlaceholder data-service-accounts-loading/>
-                }
-              </Paper>
-            </Grid>
-            <Grid item lg={10} md={11} xs={11}>
-              <div className='admin-page__header'>Users</div>
-              <Paper className='admin-page__content'>
-                {
-                  users ? <UsersList users={users}/> : <LoadingPlaceholder data-users-loading/>
-                }
-              </Paper>
-            </Grid>
-          </Grid>
-        </div>
-    );
-  }
-
-  private onOpenServiceAccountDialog = () => this.setState({
-    serviceAccountDialogOpen: true
-  });
-
-  private onCloseServiceAccountDialog = (name?: string) => {
-    const {onServiceAccountCreated} = this.props;
-    this.setState({
-      serviceAccountDialogOpen: false
-    });
+  const onCloseServiceAccountDialog = (name?: string) => {
+    setServiceAccountDialogOpen(false);
     if (name) {
       onServiceAccountCreated();
     }
   };
+
+  return (
+      <div className='admin-page'>
+        <ServiceAccountDialog open={serviceAccountDialogOpen} onClose={onCloseServiceAccountDialog}/>
+        <Grid container justify='center' spacing={3}>
+          <Grid item lg={10} md={11} xs={11}>
+            <div className='admin-page__header'>
+              <div>Service accounts</div>
+              <CreateButton onClick={onOpenServiceAccountDialog} data-create-service-account-button/>
+            </div>
+            <Paper className='admin-page__content'>
+              {
+                serviceAccounts ?
+                    <ServiceAccountsList accounts={serviceAccounts} username={username} onDelete={onDeleteServiceAccount}/> :
+                    <LoadingPlaceholder data-service-accounts-loading/>
+              }
+            </Paper>
+          </Grid>
+          <Grid item lg={10} md={11} xs={11}>
+            <div className='admin-page__header'>Users</div>
+            <Paper className='admin-page__content'>
+              {
+                users ? <UsersList users={users}/> : <LoadingPlaceholder data-users-loading/>
+              }
+            </Paper>
+          </Grid>
+        </Grid>
+      </div>
+  );
 }
 
 const LoadingPlaceholder = () => (

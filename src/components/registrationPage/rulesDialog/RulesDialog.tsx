@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -8,22 +8,14 @@ import './RulesDialog.scss'
 import HelpIcon from '@material-ui/icons/Help';
 import IconButton from '@material-ui/core/IconButton';
 
-interface RulesDialogState {
-  open: boolean;
-}
-
-export class RulesDialog extends Component<{}, RulesDialogState> {
-  state = {
-    open: false
-  };
-
-  render() {
-    return (
-        <span>
-          <IconButton className='work-log-input__help' aria-label='Help' onClick={this.onOpen}>
+export const RulesDialog = () => {
+  const [open, setOpen] = useState(false);
+  return (
+      <span>
+          <IconButton className='work-log-input__help' aria-label='Help' onClick={() => setOpen(true)}>
             <HelpIcon color='primary'/>
           </IconButton>
-          <Dialog open={this.state.open} className='rules-dialog'>
+          <Dialog open={open} className='rules-dialog'>
             <DialogTitle>Zasady</DialogTitle>
             <DialogContent>
               <div>
@@ -68,16 +60,11 @@ export class RulesDialog extends Component<{}, RulesDialogState> {
               </div>
             </DialogContent>
             <DialogActions>
-              <Button onClick={this.onClose} color='primary'>
+              <Button onClick={() => setOpen(false)} color='primary'>
                 Close
               </Button>
             </DialogActions>
           </Dialog>
         </span>
-    );
-  }
-
-  private onClose = () => this.setState({open: false});
-
-  private onOpen = () => this.setState({open: true});
+  );
 }
