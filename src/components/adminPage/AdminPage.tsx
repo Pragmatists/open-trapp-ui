@@ -1,39 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { Grid } from '@material-ui/core';
 import './AdminPage.scss';
 import Paper from '@material-ui/core/Paper';
 import { ServiceAccountsList } from './serviceAccountsList/ServiceAccountsList';
 import { deleteServiceAccount, loadAuthorizedUsers, loadServiceAccounts } from '../../redux/admin.actions';
-import { AuthorizedUser, AuthorizedUserDTO, ServiceAccountDTO } from '../../api/dtos';
 import { UsersList } from './usersList/UsersList';
 import Button from '@material-ui/core/Button';
 import { ServiceAccountDialog } from './serviceAccountDialog/ServiceAccountDialog';
 
-interface AdminPageDataProps {
-  serviceAccounts: ServiceAccountDTO[];
-  users: AuthorizedUserDTO[];
-  username: string;
-}
-
-interface AdminPageEventProps {
-  init: VoidFunction;
-  onServiceAccountCreated: VoidFunction;
-  onDeleteServiceAccount: (id: string) => void;
-}
-
-type AdminPageProps = AdminPageDataProps & AdminPageEventProps;
-
-const AdminPageComponent = ({init, onServiceAccountCreated, serviceAccounts, users, username, onDeleteServiceAccount}: AdminPageProps) => {
+export const AdminPage = () => {
   const [serviceAccountDialogOpen, setServiceAccountDialogOpen] = useState(false);
-  useEffect(() => init(), [])
+  const serviceAccounts = useSelector((state: OpenTrappState) => state.admin?.serviceAccounts);
+  const users = useSelector((state: OpenTrappState) => state.admin?.authorizedUsers);
+  const username = useSelector((state: OpenTrappState) => state.authentication?.user?.name);
+  const dispatch = useDispatch()
+  const stableDispatch = useCallback(dispatch, [])
+  useEffect(() => {
+    stableDispatch(loadServiceAccounts());
+    stableDispatch(loadAuthorizedUsers());
+  }, [stableDispatch])
   const onOpenServiceAccountDialog = () => setServiceAccountDialogOpen(true)
 
   const onCloseServiceAccountDialog = (name?: string) => {
     setServiceAccountDialogOpen(false);
     if (name) {
-      onServiceAccountCreated();
+      dispatch(loadServiceAccounts());
     }
   };
 
@@ -49,7 +42,7 @@ const AdminPageComponent = ({init, onServiceAccountCreated, serviceAccounts, use
             <Paper className='admin-page__content'>
               {
                 serviceAccounts ?
-                    <ServiceAccountsList accounts={serviceAccounts} username={username} onDelete={onDeleteServiceAccount}/> :
+                    <ServiceAccountsList accounts={serviceAccounts} username={username} onDelete={id => dispatch(deleteServiceAccount(id))}/> :
                     <LoadingPlaceholder data-service-accounts-loading/>
               }
             </Paper>
@@ -74,33 +67,3 @@ const LoadingPlaceholder = () => (
 const CreateButton = ({onClick}: { onClick: VoidFunction }) => (
     <Button variant='contained' color='primary' size='small' onClick={onClick}>Create</Button>
 );
-
-function mapStateToProps(state: OpenTrappState): AdminPageDataProps {
-  const {serviceAccounts, authorizedUsers} = state.admin;
-  const {user = {} as AuthorizedUser} = state.authentication;
-  return {
-    serviceAccounts,
-    users: authorizedUsers,
-    username: user.name
-  };
-}
-
-function mapDispatchToProps(dispatch): AdminPageEventProps {
-  return {
-    init() {
-      dispatch(loadServiceAccounts());
-      dispatch(loadAuthorizedUsers());
-    },
-    onServiceAccountCreated() {
-      dispatch(loadServiceAccounts());
-    },
-    onDeleteServiceAccount(id: string) {
-      dispatch(deleteServiceAccount(id));
-    }
-  };
-}
-
-export const AdminPage = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(AdminPageComponent);
