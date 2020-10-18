@@ -4,12 +4,20 @@ import { WORK_LOG_CONSTANTS } from './constants';
 import { BulkEditDTO, ReportingWorkLogDTO } from '../api/dtos';
 import { errorNotificationAction, infoNotificationAction } from './notifications.actions';
 import { OpenTrappState } from './root.reducer';
+import { logout } from './authentication.actions';
 
 export function loadWorkLogs(year: number, month: number) {
   return (dispatch: Dispatch) => {
     OpenTrappRestAPI.workLogEntriesForMonth(year, month)
         .then(entries => dispatch(workLogLoadedAction(entries)))
-        .catch(err => console.error(err));
+        .catch(err => {
+          if (err?.response?.status === 401) {
+            console.error('User unauthorized', err);
+            logout()(dispatch)
+            document.location.reload()
+          }
+          console.error('Request failed', err)
+        });
   };
 }
 
