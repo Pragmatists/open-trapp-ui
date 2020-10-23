@@ -90,7 +90,7 @@ export class HeaderComponent extends Component<HeaderProps, {}> {
   };
 
   private handleErrorLogin = (response: any) => {
-    console.log('handleErrorLogin', response);
+    console.error('handleErrorLogin', response);
   };
 
   private handleHeaderClicked = () => {

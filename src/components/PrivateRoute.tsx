@@ -1,8 +1,8 @@
 import { Redirect, Route } from 'react-router';
-import React, { Component, FC } from 'react';
+import React from 'react';
 import { LocalStorage } from '../utils/LocalStorage';
 
-export const PrivateRoute = ({component, path}: {component: (typeof Component | FC), path: string}) => {
+export const PrivateRoute = ({component, path}: {component: any, path: string}) => {
   const Inner = component;
   return (
       <Route path={path}
