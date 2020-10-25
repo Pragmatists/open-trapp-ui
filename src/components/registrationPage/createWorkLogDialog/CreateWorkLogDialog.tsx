@@ -108,7 +108,7 @@ const TagList = ({tags, selected, onClick}: { tags: string[]; selected: string[]
           <ListItem dense button key={tag}
                     role={undefined}
                     onClick={() => onClick(tag)}
-                    data-tag={tag}>
+                    data-tag={tag} data-testid='tag'>
             <Checkbox checked={includes(selected, tag)}
                       color='primary'
                       tabIndex={-1}

@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autosuggest from 'react-autosuggest';
 import { Suggestion, SuggestionItem } from '../../../Suggestion';
 import { Paper } from '@material-ui/core';
-import { startsWith, last } from 'lodash';
+import { last, startsWith } from 'lodash';
 import './TagsAutocompleteInput.scss';
 
 interface TagsAutocompleteInputProps {
@@ -14,70 +14,29 @@ interface TagsAutocompleteInputProps {
   onChange: (value: string) => void;
 }
 
-interface TagsAutocompleteInputState {
-  suggestions: SuggestionItem[];
-}
+const renderSuggestion = (suggestion: SuggestionItem, {query, isHighlighted}) => (
+    <Suggestion isHighlighted={isHighlighted} query={query} suggestion={suggestion}/>
+);
 
-export class TagsAutocompleteInput extends Component<TagsAutocompleteInputProps, TagsAutocompleteInputState> {
-  state = {
-    suggestions: []
-  };
-
-  render() {
-    const {value, label = 'Projects', className = 'text-field', onChange} = this.props;
-    return (
-        <div className='tags-autocomplete'>
-          <Autosuggest renderInputComponent={this.renderInputComponent}
-                       getSuggestionValue={v => v.value}
-                       inputProps={{
-                         className,
-                         value,
-                         label,
-                         onChange: (event, {newValue}) => onChange(newValue)
-                       } as any}
-                       onSuggestionsFetchRequested={this.handleSuggestionFetchRequest}
-                       onSuggestionsClearRequested={this.handleSuggestionsClearRequested}
-                       renderSuggestion={this.renderSuggestion}
-                       renderSuggestionsContainer={options => (
-                           <Paper {...options.containerProps}>
-                             {options.children}
-                           </Paper>
-                       )}
-                       suggestions={this.state.suggestions} />
-        </div>
-
-    );
-  }
-
-  private renderInputComponent = (inputProps) => {
-    const { classes, inputRef = () => {}, ref, ...other } = inputProps;
-    return (
-        <TextField fullWidth
-                   InputProps={{
-                     inputRef: node => {
-                       ref(node);
-                       inputRef(node);
-                     },
-                   }}
-                   {...other}
-                   data-edit-work-log-project/>
-    );
-  };
-
-  private renderSuggestion = (suggestion: SuggestionItem, { query, isHighlighted }) => (
-      <Suggestion isHighlighted={isHighlighted} query={query} suggestion={suggestion}/>
+const renderInputComponent = (inputProps) => {
+  const {classes, inputRef = () => {}, ref, ...other} = inputProps;
+  return (
+      <TextField fullWidth
+                 InputProps={{
+                   inputRef: node => {
+                     ref(node);
+                     inputRef(node);
+                   }
+                 }}
+                 {...other}
+                 data-testid='edit-project'/>
   );
+};
 
-  private handleSuggestionFetchRequest = ({ value }) => this.setState({
-    suggestions: this.getSuggestions(value),
-  });
+export const TagsAutocompleteInput = ({value, tags, label = 'Projects', className = 'text-field', onChange}: TagsAutocompleteInputProps) => {
+  const [suggestions, setSuggestions] = useState([]);
 
-  private handleSuggestionsClearRequested = () => this.setState({
-    suggestions: [],
-  });
-
-  private getSuggestions = (text: string) => {
-    const {tags} = this.props;
+  const getSuggestions = (text: string) => {
     const prefix = last(text.split(',').map(t => t.trim()));
     return tags
         .filter(tag => startsWith(tag.toLowerCase(), prefix))
@@ -89,4 +48,26 @@ export class TagsAutocompleteInput extends Component<TagsAutocompleteInputProps,
           value: text.replace(new RegExp(`${prefix}$`), `${tag}, `)
         }));
   };
+
+  return (
+      <div className='tags-autocomplete'>
+        <Autosuggest renderInputComponent={renderInputComponent}
+                     getSuggestionValue={v => v.value}
+                     inputProps={{
+                       className,
+                       value,
+                       label,
+                       onChange: (event, {newValue}) => onChange(newValue)
+                     } as any}
+                     onSuggestionsFetchRequested={({value}) => setSuggestions(getSuggestions(value))}
+                     onSuggestionsClearRequested={() => setSuggestions([])}
+                     renderSuggestion={renderSuggestion}
+                     renderSuggestionsContainer={options => (
+                         <Paper {...options.containerProps}>
+                           {options.children}
+                         </Paper>
+                     )}
+                     suggestions={suggestions}/>
+      </div>
+  );
 }

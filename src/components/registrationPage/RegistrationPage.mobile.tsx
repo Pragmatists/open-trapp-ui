@@ -68,7 +68,7 @@ class RegistrationPageMobileComponent extends Component<RegistrationPageProps, R
                           onClick={() => this.handlePresetClicked(preset)}
                           className='presets-selector__chip chip'
                           color={'primary'}
-                          data-preset />
+                          data-testid='preset' />
                 ))
               }
             </List>
@@ -78,7 +78,7 @@ class RegistrationPageMobileComponent extends Component<RegistrationPageProps, R
           <Fab onClick={this.handleCustomWorkLogClicked}
                color='primary'
                className='registration-page__add-button add-button'
-               data-custom-work-log-button>
+               data-testid='custom-work-log-button'>
             <AddIcon />
           </Fab>
         </div>

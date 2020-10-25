@@ -1,52 +1,50 @@
 import * as React from 'react';
-import { mount, shallow } from 'enzyme';
-import GoogleLogin from 'react-google-login';
 import { noop } from 'lodash';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { setupStore } from '../../utils/testUtils';
 import { HeaderMobile, HeaderComponent } from './Header.mobile';
-import { UserDetails } from '../userDetails/UserDetails';
+import { render, fireEvent } from '@testing-library/react'
 
 describe('Header - mobile', () => {
   let store: Store;
 
   it('renders Google login if user is not logged in', () => {
-    const wrapper = shallow(
+    const container = render(
         <HeaderComponent isLoggedIn={false} onLogout={noop} onGoogleToken={noop} onMenuButtonClick={noop}/>
     );
 
-    expect(wrapper.find(GoogleLogin).exists()).toBeTruthy();
+    expect(container.getByText('Sign in')).toBeInTheDocument();
   });
 
   it('does not render UserDetails if user is not logged in', () => {
-    const wrapper = shallow(
+    const container = render(
         <HeaderComponent isLoggedIn={false} onLogout={noop} onGoogleToken={noop} onMenuButtonClick={noop}/>
     );
 
-    expect(wrapper.find(UserDetails).exists()).toBeFalsy();
+    expect(container.queryByTestId('user-details')).not.toBeInTheDocument();
   });
 
   it('renders UserDetails if user is logged in', () => {
-    const wrapper = shallow(
+    const container = render(
         <HeaderComponent isLoggedIn={true} onLogout={noop} onGoogleToken={noop} onMenuButtonClick={noop}/>
     );
 
-    expect(wrapper.find(UserDetails).exists()).toBeTruthy();
+    expect(container.queryByTestId('user-details')).toBeInTheDocument();
   });
 
   it('does not render Google login if user is logged in', () => {
-    const wrapper = shallow(
+    const container = render(
         <HeaderComponent isLoggedIn={true} onLogout={noop} onGoogleToken={noop} onMenuButtonClick={noop}/>
     );
 
-    expect(wrapper.find(GoogleLogin).exists()).toBeFalsy();
+    expect(container.queryByText('Sign in')).not.toBeInTheDocument();
   });
 
   it('changes menu visibility on menu button click', () => {
     store = initializeStore(true, false);
-    const wrapper = mount(
+    const container = render(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/']}>
             <HeaderMobile/>
@@ -54,14 +52,10 @@ describe('Header - mobile', () => {
         </Provider>
     );
 
-    menuButton(wrapper).simulate('click');
+    fireEvent.click(container.getByLabelText('Menu'));
 
     expect(store.getState().leftMenu.open).toBeTruthy();
   });
-
-  function menuButton(wrapper) {
-    return wrapper.find('[data-left-menu-button]').at(0);
-  }
 
   function initializeStore(authorizedUser: boolean, menuVisible: boolean) {
     return setupStore({

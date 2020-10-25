@@ -20,13 +20,13 @@ export class MonthSelector extends Component<MonthSelectorProps, MonthSelectorSt
     shift: 0
   };
 
-  render(): React.ReactNode {
+  render() {
     const months = this.months;
     return (
-        <div className='month-selector'>
+        <div className='month-selector' data-testid='months-selector'>
           <div className='month-selector__header'>Month</div>
           <div className='month-selector__months'>
-            <Button onClick={this.onPreviousClick} data-prev-months-button>
+            <Button onClick={this.onPreviousClick} data-testid='prev-months-button'>
               <ArrowUpIcon/>
             </Button>
             {
@@ -34,7 +34,7 @@ export class MonthSelector extends Component<MonthSelectorProps, MonthSelectorSt
             }
             <Button onClick={this.onNextClick}
                     disabled={this.state.shift === 0 || !this.monthBeforeCurrentSelected}
-                    data-next-months-button>
+                    data-testid='next-months-button'>
               <ArrowDownIcon/>
             </Button>
           </div>
@@ -52,15 +52,14 @@ export class MonthSelector extends Component<MonthSelectorProps, MonthSelectorSt
               variant={isSelected ? 'default' : 'outlined'}
               className='chip'
               onClick={() => onMonthChange(month.year, month.month)}
-              data-chip-month
+              data-testid='month-chip'
               data-chip-selected={isSelected}/>
     );
   };
 
   private get months(): Month[] {
-    const lastButOneMonth = Month.current;
     const shift = this.state.shift;
-    return lastButOneMonth.range(3, 1)
+    return Month.current.range(3, 1)
         .map(m => shift > 0 ? m.plus(shift) : m.minus(-shift));
   }
 

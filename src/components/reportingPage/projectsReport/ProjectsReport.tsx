@@ -22,7 +22,7 @@ interface RowData {
 export class ProjectsReport extends Component<ProjectsReportProps, {}> {
   render() {
     return (
-        <div className='projects-report'>
+        <div className='projects-report' data-testid='projects-report'>
           <Table className='projects-report__table table'>
             <TableHead>
               <TableRow>
@@ -35,9 +35,9 @@ export class ProjectsReport extends Component<ProjectsReportProps, {}> {
               {
                 this.rowsData.map((rowData, idx) => (
                     <TableRow key={idx}>
-                      <TableCell data-project-cell>{rowData.project}</TableCell>
-                      <TableCell data-workload-cell>{formatWorkload(rowData.workload)}</TableCell>
-                      <TableCell data-share-cell>{(rowData.share * 100).toFixed(2)}%</TableCell>
+                      <TableCell data-testid='project-cell'>{rowData.project}</TableCell>
+                      <TableCell data-testid='workload-cell'>{formatWorkload(rowData.workload)}</TableCell>
+                      <TableCell data-testid='share-cell'>{(rowData.share * 100).toFixed(2)}%</TableCell>
                     </TableRow>
                 ))
               }

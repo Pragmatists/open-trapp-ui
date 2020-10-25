@@ -35,7 +35,7 @@ export class TableReport extends Component<TableReportProps, TableReportState> {
     const workLogsByDay = groupBy(workLogs, w => w.day);
     const days = keys(workLogsByDay);
     return (
-        <div className='table-report'>
+        <div className='table-report' data-testid='table-report'>
           <EditWorkLogDialog workLog={this.state.editedWorkLog}
                              tags={tags}
                              onClose={this.onEditFinished}
@@ -115,18 +115,18 @@ interface TableReportRowProps {
 }
 
 const TableReportRow = ({day, employee, workLog, username, onEdit, onRemove}: TableReportRowProps) => (
-    <TableRow>
-      {day && <TableCell rowSpan={day.rowSpan} data-day-cell>{day.text}</TableCell>}
-      {employee && <TableCell rowSpan={employee.rowSpan} data-employee-cell>{employee.text}</TableCell>}
-      <TableCell data-workload-cell>{formatWorkload(workLog.workload)}</TableCell>
-      <TableCell data-tags-cell>{workLog.projectNames.join(', ')}</TableCell>
+    <TableRow data-testid='table-report-row'>
+      {day && <TableCell rowSpan={day.rowSpan} data-testid='day-cell'>{day.text}</TableCell>}
+      {employee && <TableCell rowSpan={employee.rowSpan} data-testid='employee-cell'>{employee.text}</TableCell>}
+      <TableCell data-testid='workload-cell'>{formatWorkload(workLog.workload)}</TableCell>
+      <TableCell data-testid='tags-cell'>{workLog.projectNames.join(', ')}</TableCell>
       <TableCell padding='checkbox'>
-        {username === workLog.employee && <Button onClick={onEdit} data-edit-button>
+        {username === workLog.employee && <Button onClick={onEdit} data-testid='edit-button'>
           <EditIcon/>
         </Button>}
       </TableCell>
       <TableCell padding='checkbox'>
-        {username === workLog.employee && <Button onClick={onRemove} data-remove-button>
+        {username === workLog.employee && <Button onClick={onRemove} data-testid='remove-button'>
           <DeleteIcon/>
         </Button>}
       </TableCell>

@@ -1,15 +1,11 @@
 import React from 'react';
 import moment from 'moment';
-import { mount, ReactWrapper } from 'enzyme';
-import { InputBase } from '@material-ui/core';
+import { fireEvent, render, RenderResult } from '@testing-library/react';
 import { noop } from 'lodash';
-import {WorkLogInput, WorkLogInputProps} from './WorkLogInput';
+import { WorkLogInput, WorkLogInputProps } from './WorkLogInput';
 import { ParsedWorkLog } from '../../../workLogExpressionParser/ParsedWorkLog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button';
-import { ConfirmNewTagsDialog } from '../confirmNewTagsDialog/ConfirmNewTagsDialog';
 import { Preset } from '../registration.model';
+import { ignoreHtmlTags } from '../../../utils/testUtils';
 
 const tags = ['projects', 'nvm', 'vacation'];
 
@@ -23,9 +19,9 @@ describe('WorkLogInput', () => {
   it('parses new work log expression', () => {
     const onChange = jest.fn();
     const initialWorkLog = ParsedWorkLog.empty();
-    const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags, onChange}));
+    const container = render(worLogInput({workLog: initialWorkLog, tags, onChange}));
 
-    type(wrapper, '1d #projects #nvm @2019/03/01');
+    type(container, '1d #projects #nvm @2019/03/01');
 
     expect(onChange).toHaveBeenCalledWith({
       expression: '1d #projects #nvm @2019/03/01',
@@ -38,9 +34,9 @@ describe('WorkLogInput', () => {
   it('emits valid work log for today if date not present', () => {
     let parsedWorkLog: ParsedWorkLog = undefined;
     const initialWorkLog = ParsedWorkLog.empty();
-    const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags, onChange: parsed => parsedWorkLog = parsed}));
+    const container = render(worLogInput({workLog: initialWorkLog, tags, onChange: parsed => parsedWorkLog = parsed}));
 
-    type(wrapper, '1d #projects #nvm');
+    type(container, '1d #projects #nvm');
 
     expect(parsedWorkLog.expression).toEqual('1d #projects #nvm');
     expect(parsedWorkLog.validate().valid).toBeTruthy();
@@ -52,9 +48,9 @@ describe('WorkLogInput', () => {
   it('emits invalid work log if tags not present', () => {
     let parsedWorkLog: ParsedWorkLog = undefined;
     const initialWorkLog = ParsedWorkLog.empty();
-    const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags, onChange: parsed => parsedWorkLog = parsed}));
+    const container = render(worLogInput({workLog: initialWorkLog, tags, onChange: parsed => parsedWorkLog = parsed}));
 
-    type(wrapper, '1d');
+    type(container, '1d');
 
     expect(parsedWorkLog.expression).toEqual('1d');
     expect(parsedWorkLog.validate().valid).toBeFalsy();
@@ -63,9 +59,9 @@ describe('WorkLogInput', () => {
   it('emits save on enter click if valid work log', () => {
     let savePayload: ParsedWorkLog = undefined;
     const initialWorkLog = new ParsedWorkLog('1d #projects #nvm @2019/03/01', ['2019/03/01'], ['projects', 'nvm'], '1d');
-    const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags, onSave: payload => savePayload = payload}));
+    const container = render(worLogInput({workLog: initialWorkLog, tags, onSave: payload => savePayload = payload}));
 
-    pressEnter(wrapper);
+    pressEnter(container);
 
     expect(savePayload.validate().valid).toBeTruthy();
     expect(savePayload.workload).toEqual('1d');
@@ -76,101 +72,91 @@ describe('WorkLogInput', () => {
   it('does not emit save on enter if invalid work log', () => {
     const onSave = jest.fn();
     const initialWorkLog = new ParsedWorkLog('1d', [], [], undefined);
-    const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags, onSave}));
-    pressEnter(wrapper);
+    const container = render(worLogInput({workLog: initialWorkLog, tags, onSave}));
+
+    pressEnter(container);
 
     expect(onSave).not.toHaveBeenCalled();
   });
 
   describe('suggestions', () => {
     it('does not show suggestion if word does not starts with # or @', () => {
-      const initialWorkLog = ParsedWorkLog.empty();
-      const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags}));
+      const initialWorkLog = new ParsedWorkLog('pro', [], [], '1d');
+      const container = render(worLogInput({workLog: initialWorkLog, tags}));
 
-      typeAndFocus(wrapper, 'pro');
+      fireEvent.focus(workLogInput(container));
 
-      expect(suggestions(wrapper)).toHaveLength(0);
+      expect(suggestions(container)).toHaveLength(0);
     });
 
     it('shows presets at the top when user typed #', () => {
-      const initialWorkLog = ParsedWorkLog.empty();
-      const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags, presets}));
+      const initialWorkLog = new ParsedWorkLog('#', [], [], '1d');
+      const container = render(worLogInput({workLog: initialWorkLog, tags, presets}));
 
-      typeAndFocus(wrapper, '1d #');
+      fireEvent.focus(workLogInput(container));
 
-      expect(suggestions(wrapper).at(0).text()).toEqual('nvm, projects');
-      expect(suggestions(wrapper).at(1).text()).toEqual('holiday');
-      expect(suggestions(wrapper).at(2).text()).toEqual('nvm');
+      expect((suggestions(container))[0]).toHaveTextContent('nvm, projects');
+      expect((suggestions(container))[1]).toHaveTextContent('holiday');
+      expect((suggestions(container))[2]).toHaveTextContent('nvm');
     });
 
     it('shows suggestions when user starts typing tag name', () => {
-      const initialWorkLog = ParsedWorkLog.empty();
-      const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags, presets}));
+      const initialWorkLog = new ParsedWorkLog('#p', [], [], '1d');
+      const container = render(worLogInput({workLog: initialWorkLog, tags, presets}));
 
-      typeAndFocus(wrapper, '1d #pro');
+      fireEvent.focus(workLogInput(container));
 
-      expect(suggestions(wrapper)).toHaveLength(2);
-      expect(suggestions(wrapper).at(0).text()).toEqual('nvm, projects');
-      expect(suggestions(wrapper).at(1).text()).toEqual('projects');
+      expect(suggestions(container)).toHaveLength(2);
+      expect(suggestions(container)[0]).toHaveTextContent('nvm, projects');
+      expect(suggestions(container)[1]).toHaveTextContent('projects');
     });
 
     it('replaces last word with selected tag suggestion', () => {
       let parsedWorkLog: ParsedWorkLog = undefined;
-      const initialWorkLog = ParsedWorkLog.empty();
-      const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags, onChange: workLog => parsedWorkLog = workLog}));
+      const initialWorkLog = new ParsedWorkLog('1d #pro', [], ['pro'], '1d');
+      const container = render(worLogInput({workLog: initialWorkLog, tags, onChange: workLog => parsedWorkLog = workLog}));
 
-      typeAndFocus(wrapper, '1d #pro');
-      chooseSuggestion(wrapper, 0);
+      fireEvent.focus(workLogInput(container));
+      fireEvent.click(container.getByText(ignoreHtmlTags('projects')));
 
       expect(parsedWorkLog.expression).toEqual('1d #projects ');
     });
 
     it('replaces last word with selected preset', () => {
       let parsedWorkLog: ParsedWorkLog = undefined;
-      const initialWorkLog = ParsedWorkLog.empty();
-      const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags, presets, onChange: workLog => parsedWorkLog = workLog}));
+      const initialWorkLog = new ParsedWorkLog('1d #pro', [], ['pro'], '1d');
+      const container = render(worLogInput({workLog: initialWorkLog, tags, presets, onChange: workLog => parsedWorkLog = workLog}));
 
-      typeAndFocus(wrapper, '1d #pro');
-      chooseSuggestion(wrapper, 0);
+      fireEvent.focus(workLogInput(container));
+      fireEvent.click(container.getByText(ignoreHtmlTags('nvm, projects')));
 
       expect(parsedWorkLog.expression).toEqual('1d #nvm #projects ');
     });
 
     it('shows suggestions when user starts typing date', () => {
-      const initialWorkLog = ParsedWorkLog.empty();
-      const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags}));
+      const initialWorkLog = new ParsedWorkLog('1d @to', [], [], '1d');
+      const container = render(worLogInput({workLog: initialWorkLog, tags}));
 
-      typeAndFocus(wrapper, '1d @to');
+      fireEvent.focus(workLogInput(container));
 
-      expect(suggestions(wrapper)).toHaveLength(2);
-      expect(suggestions(wrapper).at(0).text()).toEqual('today');
-      expect(suggestions(wrapper).at(1).text()).toEqual('tomorrow');
+      expect(suggestions(container)).toHaveLength(2);
+      expect(suggestions(container)[0]).toHaveTextContent('today');
+      expect(suggestions(container)[1]).toHaveTextContent('tomorrow');
     });
 
     it('replaces last word with selected day suggestion', () => {
       let parsedWorkLog: ParsedWorkLog = undefined;
-      const initialWorkLog = ParsedWorkLog.empty();
-      const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags, onChange: workLog => parsedWorkLog = workLog}));
+      const initialWorkLog = new ParsedWorkLog('1d #projects @to', [], ['projects'], '1d');
+      const container = render(worLogInput({workLog: initialWorkLog, tags, onChange: workLog => parsedWorkLog = workLog}));
 
-      typeAndFocus(wrapper, '1d #projects @to');
-      chooseSuggestion(wrapper, 1);
+      fireEvent.focus(workLogInput(container));
+      fireEvent.click(container.getByText(ignoreHtmlTags('tomorrow')));
 
       expect(parsedWorkLog.expression).toEqual('1d #projects @tomorrow ');
     });
 
-    function typeAndFocus(wrapper, expression: string) {
-      const inputField = workLogInput(wrapper);
-      inputField.simulate('change', {target: {value: expression}});
-      wrapper.setProps({workLog: new ParsedWorkLog(expression, [], [], undefined)});
-      inputField.simulate('focus');
-    }
-
-    function chooseSuggestion(wrapper, suggestionIdx: number) {
-      suggestions(wrapper).at(suggestionIdx).simulate('click');
-    }
-
-    function suggestions(wrapper): ReactWrapper {
-      return wrapper.find('li.react-autosuggest__suggestion');
+    function suggestions(container: RenderResult) {
+      return container.queryAllByRole('menuitem');
     }
   });
 
@@ -178,23 +164,24 @@ describe('WorkLogInput', () => {
     it('shows confirmation dialog if work log contains new tags', () => {
       const onSave = jest.fn();
       const initialWorkLog = new ParsedWorkLog('1h #projects #new-tag @2019/03/01', ['2019/03/01'], ['projects', 'new-tag'], '1h');
-      const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags}));
+      const container = render(worLogInput({workLog: initialWorkLog, tags}));
 
-      pressEnter(wrapper);
+      pressEnter(container);
 
       expect(onSave).not.toHaveBeenCalled();
-      expect(wrapper.find(DialogContent)).toHaveLength(1);
-      expect(wrapper.find(DialogContent).text()).toEqual('This action will add new tag: new-tag.Make sure you really want to do this!');
+      expect(container.getByTestId('confirm-new-tags')).toBeVisible();
+      expect(container.getByText(ignoreHtmlTags('This action will add new tag: new-tag.Make sure you really want to do this!')))
+          .toBeInTheDocument();
     });
 
     it('emits save if user confirmed new tags', () => {
       const onSave = jest.fn();
       const expression = '1h #projects #new-tag @2019/03/01';
       const initialWorkLog = new ParsedWorkLog(expression, ['2019/03/01'], ['projects', 'new-tag'], '1h');
-      const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags, onSave}));
+      const container = render(worLogInput({workLog: initialWorkLog, tags, onSave}));
 
-      pressEnter(wrapper);
-      confirmButton(wrapper).simulate('click');
+      pressEnter(container);
+      fireEvent.click(container.getByText('Confirm'));
 
       expect(onSave).toHaveBeenCalledWith({
         days: ['2019/03/01'],
@@ -202,51 +189,43 @@ describe('WorkLogInput', () => {
         tags: ['projects', 'new-tag'],
         workload: '1h'
       });
-      expect(wrapper.find(ConfirmNewTagsDialog).props().open).toBeFalsy();
+      expect(container.queryByTestId('confirm-new-tags')).not.toBeVisible();
     });
 
     it('closes dialog when CANCEL clicked', () => {
       const initialWorkLog = new ParsedWorkLog('1h #projects #new-tag @2019/03/01', ['2019/03/01'], ['projects', 'new-tag'], '1h');
-      const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags}));
+      const container = render(worLogInput({workLog: initialWorkLog, tags}));
 
-      pressEnter(wrapper);
-      cancelButton(wrapper).simulate('click');
+      pressEnter(container);
+      fireEvent.click(container.getByTestId('cancel-new-tags-button'));
 
-      expect(wrapper.find(ConfirmNewTagsDialog).props().open).toBeFalsy();
+      expect(container.queryByTestId('confirm-new-tags')).not.toBeVisible();
     });
-
-    function confirmButton(wrapper) {
-      return wrapper.find(DialogActions).at(0).find(Button).filter('[data-confirm-button]').at(0);
-    }
-
-    function cancelButton(wrapper) {
-      return wrapper.find(DialogActions).at(0).find(Button).filter('[data-cancel-button]').at(0);
-    }
   });
 
   describe('validation', () => {
     it('does not show icon for empty input', () => {
       const initialWorkLog = ParsedWorkLog.empty();
-      const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags}));
+      const {queryByTestId} = render(worLogInput({workLog: initialWorkLog, tags}));
 
-      expect(wrapper.find('[data-error-indicator]')).toHaveLength(0);
-      expect(wrapper.find('[data-ok-indicator]')).toHaveLength(0);
+      expect(queryByTestId('error-indicator')).not.toBeInTheDocument();
+      expect(queryByTestId('ok-indicator')).not.toBeInTheDocument();
     });
 
     it('shows success icon for valid expression', () => {
       const initialWorkLog = new ParsedWorkLog('1h #projects #new-tag @2019/03/01', ['2019/03/01'], ['projects', 'new-tag'], '1h');
-      const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags}));
+      const {getByTestId, queryByTestId} = render(worLogInput({workLog: initialWorkLog, tags}));
 
-      expect(wrapper.find('[data-error-indicator]')).toHaveLength(0);
-      expect(wrapper.find('[data-ok-indicator]').length).toBeGreaterThan(0);
+      expect(queryByTestId('error-indicator')).not.toBeInTheDocument();
+      expect(getByTestId('ok-indicator')).toBeInTheDocument();
     });
 
     it('shows error icon for invalid expression', () => {
       const initialWorkLog = new ParsedWorkLog('1hasd', [], [], '');
-      const wrapper = mount(prepareWorLogInput({workLog: initialWorkLog, tags}));
+      const {getByTestId, queryByTestId} = render(worLogInput({workLog: initialWorkLog, tags}));
 
-      expect(wrapper.find('[data-error-indicator]').length).toBeGreaterThan(0);
-      expect(wrapper.find('[data-ok-indicator]')).toHaveLength(0);
+      expect(getByTestId('error-indicator')).toBeInTheDocument();
+      expect(queryByTestId('ok-indicator')).not.toBeInTheDocument();
     });
   });
   
@@ -254,9 +233,9 @@ describe('WorkLogInput', () => {
     it('adds tags as per config', () => {
       let parsedWorkLog: ParsedWorkLog;
       const autoAddedTagsMapping = new Map().set('tag-with-auto-added', ['added-tag']);
-      const wrapper = mount(prepareWorLogInput({tags: [], onChange: e => parsedWorkLog = e, autoAddedTagsMapping}));
+      const container = render(worLogInput({tags: [], onChange: e => parsedWorkLog = e, autoAddedTagsMapping}));
 
-      type(wrapper, "#tag-with-auto-added");
+      type(container, "#tag-with-auto-added");
 
       expect(parsedWorkLog.tags).toContain('added-tag');
       expect(parsedWorkLog.tags).toContain('tag-with-auto-added');
@@ -264,7 +243,7 @@ describe('WorkLogInput', () => {
     })
   });
 
-  function prepareWorLogInput(overrides: Partial<WorkLogInputProps>) {
+  function worLogInput(overrides: Partial<WorkLogInputProps>) {
     const props: WorkLogInputProps = {
       workLog: overrides.workLog || ParsedWorkLog.empty(),
       tags: overrides.tags || [],
@@ -277,18 +256,17 @@ describe('WorkLogInput', () => {
     return <WorkLogInput {...props} />;
   }
   
-  function type(wrapper, expression: string) {
-    const input = workLogInput(wrapper);
-    input.simulate('change', {target: {value: expression}});
-    input.simulate('focus');
+  function type(container: RenderResult, expression: string) {
+    const input = workLogInput(container);
+    fireEvent.change(input, {target: {value: expression}});
+    fireEvent.focus(input);
   }
 
-  function pressEnter(wrapper) {
-    const input = workLogInput(wrapper);
-    input.simulate('keypress', {key: 'Enter'});
+  function pressEnter(container: RenderResult) {
+    fireEvent.keyPress(workLogInput(container), {key: 'Enter', keyCode: 13});
   }
 
-  function workLogInput(wrapper): ReactWrapper {
-    return wrapper.find(InputBase).at(0).find('input');
+  function workLogInput(container: RenderResult) {
+    return container.getByRole('combobox').firstChild.firstChild;
   }
 });

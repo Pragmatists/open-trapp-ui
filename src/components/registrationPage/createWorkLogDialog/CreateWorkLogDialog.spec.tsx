@@ -1,115 +1,94 @@
 import React from 'react';
-import { mount, ReactWrapper } from 'enzyme';
 import { noop } from 'lodash';
 import { CreateWorkLogDialog } from './CreateWorkLogDialog';
-import { ListItem } from '@material-ui/core';
-import { Workload } from '../workload/Workload';
+import { fireEvent, render, RenderResult } from '@testing-library/react';
 
 const tagList = ['projects', 'nvm', 'internal', 'standup'];
 
 describe('Create Work Log Dialog', () => {
   it('displays sorted list of tags', () => {
-    const wrapper = mount(
+    const container = render(
         <CreateWorkLogDialog onClose={noop} open={true} tags={tagList}/>
     );
 
-    expect(tagsText(wrapper)).toEqual(['internal', 'nvm', 'projects', 'standup']);
+    expect(tagsText(container)).toEqual(['internal', 'nvm', 'projects', 'standup']);
   });
 
   it('closes dialog on CANCEL click', () => {
     const onClose = jest.fn();
-    const wrapper = mount(
+    const { getByText } = render(
         <CreateWorkLogDialog onClose={onClose} open={true} tags={tagList}/>
     );
 
-    cancelButton(wrapper).simulate('click');
+    fireEvent.click(getByText('Cancel'));
 
     expect(onClose).toHaveBeenCalledWith();
   });
 
   it('closes dialog on CANCEL click when tags are selected', () => {
     const onClose = jest.fn();
-    const wrapper = mount(
+    const { getByText } = render(
         <CreateWorkLogDialog onClose={onClose} open={true} tags={tagList}/>
     );
+    fireEvent.click(getByText('projects'));
+    fireEvent.click(getByText('nvm'));
 
-    tag(wrapper, 'projects').simulate('click');
-    tag(wrapper, 'nvm').simulate('click');
-    cancelButton(wrapper).simulate('click');
+    fireEvent.click(getByText('Cancel'));
 
     expect(onClose).toHaveBeenCalledWith();
   });
 
   it('displays workload selector on NEXT click', () => {
     const onClose = jest.fn();
-    const wrapper = mount(
+    const { getByText, getByTestId } = render(
         <CreateWorkLogDialog onClose={onClose} open={true} tags={tagList}/>
     );
 
-    tag(wrapper, 'projects').simulate('click');
-    nextButton(wrapper).simulate('click');
+    fireEvent.click(getByText('projects'));
+    fireEvent.click(getByText('Next'));
 
-    expect(wrapper.find(Workload)).toHaveLength(1);
+    expect(getByTestId('workload-selector')).toBeInTheDocument();
   });
 
   it('do nothing on NEXT click if no tags selected', () => {
     const onClose = jest.fn();
-    const wrapper = mount(
+    const container = render(
         <CreateWorkLogDialog onClose={onClose} open={true} tags={tagList}/>
     );
 
-    nextButton(wrapper).simulate('click');
+    fireEvent.click(container.getByText('Next'));
 
-    expect(tagsText(wrapper)).toEqual(['internal', 'nvm', 'projects', 'standup']);
+    expect(tagsText(container)).toEqual(['internal', 'nvm', 'projects', 'standup']);
+    expect(container.queryByTestId('workload-selector')).not.toBeInTheDocument();
   });
 
   it('emits selected tags and workload on SAVE click', () => {
     const onClose = jest.fn();
-    const wrapper = mount(
+    const container = render(
         <CreateWorkLogDialog onClose={onClose} open={true} tags={tagList}/>
     );
 
-    tag(wrapper, 'projects').simulate('click');
-    tag(wrapper, 'nvm').simulate('click');
-    nextButton(wrapper).simulate('click');
-    hoursSlider(wrapper).simulate('keydown', {key: 'ArrowLeft'});
-    minutesSlider(wrapper).simulate('keydown', {key: 'ArrowRight'});
-    saveButton(wrapper).simulate('click');
+    fireEvent.click(container.getByText('projects'));
+    fireEvent.click(container.getByText('nvm'));
+    fireEvent.click(container.getByText('Next'));
+    fireEvent.keyDown(hoursSlider(container), {key: 'ArrowLeft'});
+    fireEvent.keyDown(minutesSlider(container), {key: 'ArrowRight'});
+    fireEvent.click(container.getByText('Save'));
 
     expect(onClose).toHaveBeenCalledTimes(1);
     expect(onClose.mock.calls[0][0]).toEqual(['projects', 'nvm']);
     expect(onClose.mock.calls[0][1]).toEqual('7h 15m');
   });
 
-  function tags(wrapper) {
-    return wrapper.find(ListItem);
+  function tagsText(container: RenderResult) {
+    return container.queryAllByTestId('tag').map(w => w.textContent);
   }
 
-  function tagsText(wrapper) {
-    return tags(wrapper).map(w => w.text());
+  function hoursSlider(container: RenderResult) {
+    return container.getByTestId('hours-slider').lastChild
   }
 
-  function tag(wrapper, label: string) {
-    return tags(wrapper).filter(`[data-tag="${label}"]`)
-  }
-
-  function hoursSlider(wrapper: ReactWrapper) {
-    return wrapper.find('[data-hours-slider]').find('span').last();
-  }
-
-  function minutesSlider(wrapper) {
-    return wrapper.find('[data-minutes-slider]').find('span').last();
-  }
-
-  function cancelButton(wrapper) {
-    return wrapper.find('[data-cancel-button]').hostNodes();
-  }
-
-  function nextButton(wrapper) {
-    return wrapper.find('[data-next-button]').hostNodes();
-  }
-
-  function saveButton(wrapper) {
-    return wrapper.find('[data-save-button]').hostNodes();
+  function minutesSlider(container: RenderResult) {
+    return container.getByTestId('minutes-slider').lastChild;
   }
 });

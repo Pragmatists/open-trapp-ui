@@ -13,11 +13,20 @@ interface Props {
 
 export const LeftMenuEntry = ({label, disabled, selected, onClick, icon}: Props) => {
   const Icon = icon;
+  const getTestId = () => {
+    if (disabled) {
+      return 'left-menu-entry-disabled';
+    } else if (selected) {
+      return 'left-menu-entry-selected'
+    }
+    return 'left-menu-entry';
+  }
   return (
       <ListItem button
                 selected={selected}
                 disabled={disabled}
-                onClick={onClick}>
+                onClick={onClick}
+                data-testid={getTestId()}>
         <ListItemIcon>
           <Icon color='primary'/>
         </ListItemIcon>

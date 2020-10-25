@@ -1,20 +1,14 @@
-import {mount, ReactWrapper} from 'enzyme';
-import {Provider} from 'react-redux';
+import { fireEvent, render, RenderResult, waitFor } from '@testing-library/react';
+import { Provider } from 'react-redux';
 import * as React from 'react';
-import {Store} from 'redux';
+import { Store } from 'redux';
 import MockAdapter from 'axios-mock-adapter';
-import {chain} from 'lodash';
-import {RegistrationPageMobile} from './RegistrationPage.mobile';
-import {flushAllPromises, setupStore} from '../../utils/testUtils';
-import {initialState as registrationInitialState} from '../../redux/registration.reducer';
-import {OpenTrappRestAPI} from '../../api/OpenTrappAPI';
-import DialogActions from '@material-ui/core/DialogActions';
-import Button from '@material-ui/core/Button';
-import Chip from '@material-ui/core/Chip';
-import {WorkLogs} from './workLogs/WorkLogs';
-import {ReportingWorkLogDTO} from '../../api/dtos';
-import { ListItem } from '@material-ui/core';
-import { CreateWorkLogDialog } from './createWorkLogDialog/CreateWorkLogDialog';
+import { chain } from 'lodash';
+import { RegistrationPageMobile } from './RegistrationPage.mobile';
+import { setupStore } from '../../utils/testUtils';
+import { initialState as registrationInitialState } from '../../redux/registration.reducer';
+import { OpenTrappRestAPI } from '../../api/OpenTrappAPI';
+import { ReportingWorkLogDTO } from '../../api/dtos';
 
 const workLogResponse: ReportingWorkLogDTO[] = [
   {id: '1', link: 'link', employee: 'john.doe', day: '2019/02/01', workload: 480, projectNames: ['projects', 'nvm']},
@@ -74,109 +68,97 @@ describe('Registration Page - mobile', () => {
   describe('day selector', () => {
     it('current day is selected by default', async () => {
       const today = '04.02.2019';
-      const wrapper = mount(
+      const {getByText} = render(
           <Provider store={store}>
             <RegistrationPageMobile/>
           </Provider>
       );
-      await flushAllPromises();
 
-      expect(date(wrapper)).toEqual(today);
+      expect(getByText(today)).toBeInTheDocument();
     });
 
     it('changes date on right arrow click', async () => {
       const tomorrow = '05.02.2019';
-      const wrapper = mount(
+      const {getByText, getByTestId} = render(
           <Provider store={store}>
             <RegistrationPageMobile/>
           </Provider>
       );
-      await flushAllPromises();
 
-      nextDayButton(wrapper).simulate('click');
-      await flushAllPromises();
+      fireEvent.click(getByTestId('day-selector-next'));
 
-      expect(date(wrapper)).toEqual(tomorrow);
+      expect(getByText(tomorrow)).toBeInTheDocument();
     });
 
     it('changes date on left arrow click', async () => {
       const yesterday = '03.02.2019';
-      const wrapper = mount(
+      const {getByText, getByTestId} = render(
           <Provider store={store}>
             <RegistrationPageMobile/>
           </Provider>
       );
-      await flushAllPromises();
 
-      previousDayButton(wrapper).simulate('click');
-      await flushAllPromises();
+      fireEvent.click(getByTestId('day-selector-previous'));
 
-      expect(date(wrapper)).toEqual(yesterday);
+      expect(getByText(yesterday)).toBeInTheDocument();
     });
   });
 
   describe('reported work logs', () => {
     it('displays reported work logs', async () => {
-      const wrapper = mount(
+      const container = render(
           <Provider store={store}>
             <RegistrationPageMobile/>
           </Provider>
       );
-      await flushAllPromises();
-      wrapper.update();
+      await waitFor(() => {});
 
-      expect(wrapper.find(WorkLogs).find('[data-work-log]').hostNodes()).toHaveLength(2);
+      expect(container.queryAllByTestId('work-log')).toHaveLength(2);
     });
 
     it('deletes work log', async () => {
-      const wrapper = mount(
+      const container = render(
           <Provider store={store}>
             <RegistrationPageMobile/>
           </Provider>
       );
-      await flushAllPromises();
-      wrapper.update();
+      await waitFor(() => {});
 
-      wrapper.find('[data-work-log]').at(0).find('svg').simulate('click');
-      await flushAllPromises();
-      wrapper.update();
+      fireEvent.click(container.queryAllByTestId('work-log')[0].lastChild);
 
-      expect(wrapper.find(WorkLogs).find('[data-work-log]').hostNodes()).toHaveLength(1);
-      expect(httpMock.history.delete).toHaveLength(1);
+      await waitFor(() => expect(httpMock.history.delete).toHaveLength(1));
       expect(httpMock.history.delete[0].url).toEqual('/work-log/entries/3');
+      expect(container.queryAllByTestId('work-log')).toHaveLength(1);
     });
   });
 
   describe('presets selector', () => {
     it('displays list of presets', async () => {
-      const wrapper = mount(
+      const container = render(
           <Provider store={store}>
             <RegistrationPageMobile/>
           </Provider>
       );
-      await flushAllPromises();
-      wrapper.update();
+      await waitFor(() => {});
 
-      expect(presets(wrapper)).toHaveLength(2);
-      expect(presets(wrapper).at(0).text()).toEqual('vacation');
-      expect(presets(wrapper).at(1).text()).toEqual('projects, nvm');
+      expect(presets(container)).toHaveLength(2);
+      expect(presets(container)[0]).toHaveTextContent('vacation');
+      expect(presets(container)[1]).toHaveTextContent('projects, nvm');
     });
   });
 
   it('registers work log for existing preset', async () => {
-    const wrapper = mount(
+    const container = render(
         <Provider store={store}>
           <RegistrationPageMobile/>
         </Provider>
     );
-    await flushAllPromises();
-    wrapper.update();
+    await waitFor(() => {});
 
-    preset(wrapper, 0).simulate('click');
-    saveWorkLogButton(wrapper).simulate('click');
-    await flushAllPromises();
+    fireEvent.click(presets(container)[0]);
+    fireEvent.click(container.getByText('Save'));
 
-    expect(httpMock.history.post.length).toEqual(1);
+    await waitFor(() => expect(httpMock.history.post.length).toEqual(1));
     expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
       projectNames: ['vacation'],
       workload: '1d',
@@ -185,21 +167,19 @@ describe('Registration Page - mobile', () => {
   });
 
   it('registers work log for custom tags', async () => {
-    const wrapper = mount(
+    const container = render(
         <Provider store={store}>
           <RegistrationPageMobile/>
         </Provider>
     );
-    await flushAllPromises();
-    wrapper.update();
+    await waitFor(() => {});
 
-    customWorkLogButton(wrapper).simulate('click');
-    tag(wrapper, 'nvm').simulate('click');
-    nextButton(wrapper).simulate('click');
-    saveButton(wrapper).simulate('click');
-    await flushAllPromises();
+    fireEvent.click(container.getByTestId('custom-work-log-button'));
+    fireEvent.click(container.getByText('nvm'));
+    fireEvent.click(container.getByText('Next'));
+    fireEvent.click(container.getByText('Save'));
 
-    expect(httpMock.history.post.length).toEqual(1);
+    await waitFor(() => expect(httpMock.history.post.length).toEqual(1));
     expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
       projectNames: ['nvm'],
       workload: '1d',
@@ -207,47 +187,7 @@ describe('Registration Page - mobile', () => {
     });
   });
 
-  function date(wrapper): string {
-    return wrapper.find('[data-selector-date]').text();
-  }
-
-  function nextDayButton(wrapper): ReactWrapper {
-    return wrapper.find('[data-selector-next]').at(0);
-  }
-
-  function previousDayButton(wrapper): ReactWrapper {
-    return wrapper.find('[data-selector-previous]').at(0);
-  }
-
-  function presets(wrapper) {
-    return wrapper.find('[data-presets-selector-list]').find(Chip).filter('[data-preset]')
-  }
-
-  function preset(wrapper, chipIdx: number) {
-    return presets(wrapper).at(chipIdx);
-  }
-
-  function saveWorkLogButton(wrapper) {
-    return wrapper.find('[data-workload-dialog]').find(DialogActions).find(Button).filter('[data-save-button]');
-  }
-
-  function customWorkLogButton(wrapper) {
-    return wrapper.find('[data-custom-work-log-button]').hostNodes();
-  }
-
-  function tags(wrapper) {
-    return wrapper.find(CreateWorkLogDialog).find(ListItem);
-  }
-
-  function tag(wrapper, label: string) {
-    return tags(wrapper).filter(`[data-tag="${label}"]`)
-  }
-
-  function nextButton(wrapper) {
-    return wrapper.find('[data-next-button]').hostNodes();
-  }
-
-  function saveButton(wrapper) {
-    return wrapper.find('[data-save-button]').hostNodes();
+  function presets(container: RenderResult) {
+    return container.queryAllByTestId('preset');
   }
 });

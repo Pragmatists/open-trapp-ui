@@ -25,7 +25,7 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
     const workLogEntries = entries(workLogs);
     const singleEmployee = workLogEntries.length === 1;
     return (
-        <div className='monthly-report'>
+        <div className='monthly-report' data-testid='monthly-report'>
           <Table className='monthly-report__report-table report-table'>
             <TableHead>
               {this.renderHeaderCells(singleEmployee)}
@@ -47,12 +47,12 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
         <TableRow>
           {!singleEmployee && <TableCell className='report-table__cell header-cell report-table__cell--bold'>Employee</TableCell>}
           {days.map((day, idx) => (
-              <TableCell key={idx} className={this.cellClass(day, true)} onClick={e => this.onCellClick(e, day.id)} data-month-day-header>
+              <TableCell key={idx} className={this.cellClass(day, true)} onClick={e => this.onCellClick(e, day.id)} data-testid='month-day-header'>
                 <div>{idx + 1}</div>
                 <div className='day-name'>{moment(day.id, 'YYYY/MM/DD').format('ddd')}</div>
               </TableCell>
           ))}
-          <TableCell className='report-table__cell report-table__cell--bold header-cell' data-total-header>Total</TableCell>
+          <TableCell className='report-table__cell report-table__cell--bold header-cell'>Total</TableCell>
         </TableRow>
     );
   }
@@ -69,14 +69,14 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
         .sum()
         .value();
     return (
-        <TableRow key={employee} className='report-table__row'>
+        <TableRow key={employee} className='report-table__row' data-testid='employee-row'>
           {!singleEmployee && <TableCell className='report-table__cell'>{employee}</TableCell>}
           {days.map((day, idx) => (
-              <TableCell key={idx} className={this.cellClass(day)} onClick={e => this.onCellClick(e, day.id)} data-month-day-value>
+              <TableCell key={idx} className={this.cellClass(day)} onClick={e => this.onCellClick(e, day.id)} data-testid='month-day-value'>
                 {workloadForDay[day.id]}
               </TableCell>
           ))}
-          <TableCell className='report-table__cell report-table__cell--bold' data-total-value>{total}</TableCell>
+          <TableCell className='report-table__cell report-table__cell--bold' data-testid='month-total-value'>{total}</TableCell>
         </TableRow>
     );
   }
@@ -95,7 +95,7 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
         .sum()
         .value();
     return (
-        <TableRow className='report-table__row' data-table-footer-row>
+        <TableRow className='report-table__row' data-testid='table-footer-row'>
           <TableCell className='report-table__cell report-table__cell--bold'>Total</TableCell>
           {days.map((day, idx) => (
               <TableCell key={idx} className={this.cellClass(day)} onClick={e => this.onCellClick(e, day.id)} data-month-day-value>

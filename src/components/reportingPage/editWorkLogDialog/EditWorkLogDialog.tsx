@@ -51,17 +51,17 @@ export class EditWorkLogDialog extends Component<EditWorkLogDialogProps, EditWor
     return (
         <Dialog open={open} onClose={() => onClose()} className='edit-work-log'>
           <DialogTitle>Edit worklog entry</DialogTitle>
-          <DialogContent className='edit-work-log__content content' data-edit-work-log-dialog-content>
+          <DialogContent className='edit-work-log__content content' data-testid='edit-work-log-dialog-content'>
             <TextField className='text-field'
                        label='Workload'
                        value={this.state.workload}
                        onChange={this.onWorkloadChange}
-                       data-edit-work-log-workload/>
+                       data-testid='edit-workload'/>
             <TagsAutocompleteInput value={this.state.projectNames}
                                    tags={tags}
                                    onChange={this.onProjectNamesChange} />
-            <TextField className='text-field' label='Employee' value={employee} disabled data-edit-work-log-employee/>
-            <TextField className='text-field' label='Date' value={day} disabled data-edit-work-log-date/>
+            <TextField className='text-field' label='Employee' value={employee} disabled data-testid='edit-employee'/>
+            <TextField className='text-field' label='Date' value={day} disabled data-testid='edit-date'/>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => onClose()} data-cancel-button>

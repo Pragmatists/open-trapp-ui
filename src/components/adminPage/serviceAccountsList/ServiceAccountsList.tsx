@@ -42,13 +42,13 @@ interface ServiceAccountsRowProps {
 }
 
 const ServiceAccountRow = ({account, username, onDelete}: ServiceAccountsRowProps) => (
-    <TableRow data-service-account-row>
-      <TableCell data-account-name>{account.name}</TableCell>
-      <TableCell data-account-client-id>{account.clientID}</TableCell>
-      <TableCell data-account-owner>{account.owner}</TableCell>
+    <TableRow data-testid='service-account-row'>
+      <TableCell>{account.name}</TableCell>
+      <TableCell>{account.clientID}</TableCell>
+      <TableCell>{account.owner}</TableCell>
       <TableCell>
         {
-          username === account.owner && <Button onClick={() => onDelete(account.clientID)} data-account-delete-button>
+          username === account.owner && <Button onClick={() => onDelete(account.clientID)} data-testid='delete-account-button'>
             <DeleteIcon/>
           </Button>
         }

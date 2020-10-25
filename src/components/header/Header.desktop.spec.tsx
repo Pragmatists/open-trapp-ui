@@ -1,52 +1,50 @@
 import * as React from 'react';
-import { mount, shallow } from 'enzyme';
-import GoogleLogin from 'react-google-login';
 import { noop } from 'lodash';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { setupStore } from '../../utils/testUtils';
 import { HeaderDesktop, HeaderComponent } from './Header.desktop';
-import { UserDetails } from '../userDetails/UserDetails';
+import { render, fireEvent } from '@testing-library/react';
 
 describe('Header - desktop', () => {
   let store: Store;
 
   it('renders Google login if user is not logged in', () => {
-    const wrapper = shallow(
+    const container = render(
         <HeaderComponent isLoggedIn={false} onLogout={noop} onGoogleToken={noop} onMenuButtonClick={noop}/>
     );
 
-    expect(wrapper.find(GoogleLogin).exists()).toBeTruthy();
+    expect(container.getByText('Sign in with Google')).toBeInTheDocument();
   });
 
   it('does not render UserDetails if user is not logged in', () => {
-    const wrapper = shallow(
+    const container = render(
         <HeaderComponent isLoggedIn={false} onLogout={noop} onGoogleToken={noop} onMenuButtonClick={noop}/>
     );
 
-    expect(wrapper.find(UserDetails).exists()).toBeFalsy();
+    expect(container.queryByTestId('user-details')).not.toBeInTheDocument();
   });
 
   it('renders UserDetails if user is logged in', () => {
-    const wrapper = shallow(
-        <HeaderComponent isLoggedIn={true} onLogout={noop} onGoogleToken={noop} onMenuButtonClick={noop}/>
+    const container = render(
+        <HeaderComponent isLoggedIn={true} onLogout={noop} onGoogleToken={noop} onMenuButtonClick={noop} username={'John Doe'}/>
     );
 
-    expect(wrapper.find(UserDetails).exists()).toBeTruthy();
+    expect(container.getByText('John Doe')).toBeInTheDocument();
   });
 
   it('does not render Google login if user is logged in', () => {
-    const wrapper = shallow(
+    const container = render(
         <HeaderComponent isLoggedIn={true} onLogout={noop} onGoogleToken={noop} onMenuButtonClick={noop}/>
     );
 
-    expect(wrapper.find(GoogleLogin).exists()).toBeFalsy();
+    expect(container.queryByText('Sign in with Google')).not.toBeInTheDocument();
   });
 
   it('changes menu visibility on menu button click', () => {
     store = initializeStore(true, false);
-    const wrapper = mount(
+    const container = render(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/']}>
             <HeaderDesktop/>
@@ -54,14 +52,10 @@ describe('Header - desktop', () => {
         </Provider>
     );
 
-    menuButton(wrapper).simulate('click');
+    fireEvent.click(container.getByLabelText('Menu'));
 
     expect(store.getState().leftMenu.open).toBeTruthy();
   });
-
-  function menuButton(wrapper) {
-    return wrapper.find('[data-left-menu-button]').at(0);
-  }
 
   function initializeStore(authorizedUser: boolean, menuVisible: boolean) {
     return setupStore({

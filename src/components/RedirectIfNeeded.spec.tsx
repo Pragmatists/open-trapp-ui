@@ -1,31 +1,36 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 import { RedirectIfNeeded } from './RedirectIfNeeded';
-import { Redirect } from 'react-router';
+import { MemoryRouter, Route } from 'react-router';
+import { render } from '@testing-library/react'
 
 const SomeComponent = () => (
     <div>some component</div>
 );
 
+const ReportingComponent = () => (
+    <div>reporting</div>
+);
 
 describe('Redirect if needed', () => {
   it('does nothing if redirect param not present in URL', () => {
     const RedirectComponent = RedirectIfNeeded(SomeComponent);
-    const wrapper = shallow(
-        <RedirectComponent location={{search: ''}} />
+    const container = render(
+        <RedirectComponent location={{search: ''}}/>
     );
 
-    expect(wrapper.find(SomeComponent)).toHaveLength(1);
+    expect(container.queryByText('some component')).toBeInTheDocument();
   });
 
   it('redirects if param in URL', () => {
     const RedirectComponent = RedirectIfNeeded(SomeComponent);
-    const wrapper = shallow(
-        <RedirectComponent location={{search: '?redirect=/reporting'}} />
+    const container = render(
+        <MemoryRouter initialEntries={['/?redirect=/reporting']}>
+          <Route component={RedirectComponent} path='/' exact/>
+          <Route component={ReportingComponent} path='/reporting'/>
+        </MemoryRouter>
     );
 
-    expect(wrapper.find(SomeComponent)).toHaveLength(0);
-    expect(wrapper.find(Redirect)).toHaveLength(1);
-    expect((wrapper.find(Redirect).props().to as any).pathname).toEqual('/reporting');
+    expect(container.queryByText('some component')).not.toBeInTheDocument();
+    expect(container.queryByText('reporting')).toBeInTheDocument();
   });
 });

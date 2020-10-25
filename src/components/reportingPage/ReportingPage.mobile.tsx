@@ -46,15 +46,14 @@ class ReportingPageMobileComponent extends Component<Props, {}> {
     const {selectedMonth, onMonthChange} = this.props;
     return (
         <div>
-          <MonthSelector selectedMonth={selectedMonth}
-                         onChange={onMonthChange}/>
+          <MonthSelector selectedMonth={selectedMonth} onChange={onMonthChange}/>
           <List>
             {this.workLogsByDay.map(day =>
                 <ListItem key={day.day}>
                   <DayCard day={day.day}
                            weekend={day.weekend}
                            workLogs={day.workLogs}
-                           onEditClick={() => this.onEditDay(day.day)} data-day-card={day.day}/>
+                           onEditClick={() => this.onEditDay(day.day)} />
                 </ListItem>
             )}
           </List>

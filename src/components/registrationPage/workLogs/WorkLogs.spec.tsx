@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { fireEvent, render, RenderResult } from '@testing-library/react';
 import { WorkLogs } from './WorkLogs';
 import { noop } from 'lodash';
 import { ReportingWorkLogDTO } from '../../../api/dtos';
@@ -11,7 +11,7 @@ describe('Work logs', () => {
   ];
 
   it('displays work logs', () => {
-    const wrapper = mount(
+    const wrapper = render(
         <WorkLogs workLogs={workLogs} onDelete={noop}/>
     );
 
@@ -23,24 +23,24 @@ describe('Work logs', () => {
 
   it('calls on delete on chip delete click', () => {
     const onDelete = jest.fn();
-
-    const wrapper = mount(
+    const wrapper = render(
         <WorkLogs workLogs={workLogs} onDelete={onDelete}/>
     );
-    deleteWorkLogIcon(wrapper, 0).simulate('click');
+
+    fireEvent.click(deleteWorkLogIcon(wrapper, 0));
 
     expect(onDelete).toHaveBeenCalledWith(workLogs[0].id);
   });
 
-  function workLog(wrapper, workLogIdx: number) {
-    return wrapper.find('[data-work-log]').hostNodes().at(workLogIdx);
+  function workLog(container: RenderResult, workLogIdx: number) {
+    return container.queryAllByTestId('work-log')[workLogIdx];
   }
 
   function workLogText(wrapper, workLogIdx: number) {
-    return workLog(wrapper, workLogIdx).text();
+    return workLog(wrapper, workLogIdx).textContent;
   }
 
   function deleteWorkLogIcon(wrapper, workLogIdx: number) {
-    return workLog(wrapper, workLogIdx).find('svg');
+    return workLog(wrapper, workLogIdx).lastChild;
   }
 });

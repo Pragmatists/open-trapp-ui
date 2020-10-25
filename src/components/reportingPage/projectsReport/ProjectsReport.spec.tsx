@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { render, RenderResult } from '@testing-library/react';
 import { ProjectsReport } from './ProjectsReport';
 import { ReportingWorkLog } from '../reporting.model';
 
@@ -13,63 +13,63 @@ const workLogs: ReportingWorkLog[] = [
 
 describe('Projects report', () => {
   it('render empty table for empty worklog list', () => {
-    const wrapper = mount(
+    const container = render(
         <ProjectsReport workLogs={[]} />
     );
 
-    expect(projectCells(wrapper)).toHaveLength(0);
+    expect(projectCells(container)).toHaveLength(0);
   });
 
   it('displays row for each project alphabetically', () => {
-    const wrapper = mount(
+    const container = render(
         <ProjectsReport workLogs={workLogs} />
     );
 
-    expect(projectCells(wrapper)).toHaveLength(5);
-    expect(projectCellText(wrapper, 0)).toEqual('internal');
-    expect(projectCellText(wrapper, 1)).toEqual('jld');
-    expect(projectCellText(wrapper, 2)).toEqual('nvm');
-    expect(projectCellText(wrapper, 3)).toEqual('projects');
-    expect(projectCellText(wrapper, 4)).toEqual('self-dev');
+    expect(projectCells(container)).toHaveLength(5);
+    expect(projectCell(container, 0)).toHaveTextContent('internal');
+    expect(projectCell(container, 1)).toHaveTextContent('jld');
+    expect(projectCell(container, 2)).toHaveTextContent('nvm');
+    expect(projectCell(container, 3)).toHaveTextContent('projects');
+    expect(projectCell(container, 4)).toHaveTextContent('self-dev');
   });
 
   it('aggregates workload for each project', () => {
-    const wrapper = mount(
+    const container = render(
         <ProjectsReport workLogs={workLogs} />
     );
 
-    expect(workloadCellText(wrapper, 0)).toEqual('1d 30m');
-    expect(workloadCellText(wrapper, 1)).toEqual('5h 30m');
-    expect(workloadCellText(wrapper, 2)).toEqual('1d 7h');
-    expect(workloadCellText(wrapper, 3)).toEqual('2d 4h 30m');
-    expect(workloadCellText(wrapper, 4)).toEqual('1d 30m');
+    expect(workloadCell(container, 0)).toHaveTextContent('1d 30m');
+    expect(workloadCell(container, 1)).toHaveTextContent('5h 30m');
+    expect(workloadCell(container, 2)).toHaveTextContent('1d 7h');
+    expect(workloadCell(container, 3)).toHaveTextContent('2d 4h 30m');
+    expect(workloadCell(container, 4)).toHaveTextContent('1d 30m');
   });
 
   it('calculates workload share for each project', () => {
-    const wrapper = mount(
+    const container = render(
         <ProjectsReport workLogs={workLogs} />
     );
 
-    expect(shareCellText(wrapper, 0)).toEqual('29.31%');
-    expect(shareCellText(wrapper, 1)).toEqual('18.97%');
-    expect(shareCellText(wrapper, 2)).toEqual('51.72%');
-    expect(shareCellText(wrapper, 3)).toEqual('70.69%');
-    expect(shareCellText(wrapper, 4)).toEqual('29.31%');
+    expect(shareCell(container, 0)).toHaveTextContent('29.31%');
+    expect(shareCell(container, 1)).toHaveTextContent('18.97%');
+    expect(shareCell(container, 2)).toHaveTextContent('51.72%');
+    expect(shareCell(container, 3)).toHaveTextContent('70.69%');
+    expect(shareCell(container, 4)).toHaveTextContent('29.31%');
   });
 
-  function projectCells(wrapper) {
-    return wrapper.find('[data-project-cell]').hostNodes();
+  function projectCells(container: RenderResult) {
+    return container.queryAllByTestId('project-cell');
   }
 
-  function projectCellText(wrapper, idx: number) {
-    return projectCells(wrapper).at(idx).text();
+  function projectCell(wrapper, idx: number) {
+    return projectCells(wrapper)[idx];
   }
 
-  function workloadCellText(wrapper, idx: number) {
-    return wrapper.find('[data-workload-cell]').hostNodes().at(idx).text();
+  function workloadCell(container: RenderResult, idx: number) {
+    return container.queryAllByTestId('workload-cell')[idx];
   }
 
-  function shareCellText(wrapper, idx: number) {
-    return wrapper.find('[data-share-cell]').hostNodes().at(idx).text();
+  function shareCell(container: RenderResult, idx: number) {
+    return container.queryAllByTestId('share-cell')[idx];
   }
 });

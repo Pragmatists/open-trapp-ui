@@ -2,14 +2,13 @@ import * as React from 'react';
 import MockAdapter from 'axios-mock-adapter';
 import { Provider } from 'react-redux';
 import { Store } from 'redux';
-import { mount } from 'enzyme';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import { Month } from '../../utils/Month';
 import { OpenTrappRestAPI } from '../../api/OpenTrappAPI';
-import { flushAllPromises, setupStore } from '../../utils/testUtils';
+import { setupStore } from '../../utils/testUtils';
 import { initialState as registrationInitialState } from '../../redux/registration.reducer';
 import { initialState as reportingInitialState } from '../../redux/reporting.reducer';
 import { ReportingPageMobile } from './ReportingPage.mobile';
-import { DayCard } from './dayCard/DayCard';
 import { MemoryRouter } from 'react-router';
 
 const workLogResponse1 = [
@@ -56,10 +55,6 @@ const monthResponse2 = {
   days: days2
 };
 
-const TestComponent = () => (
-  <div>Test component</div>
-);
-
 describe('Reporting page - mobile', () => {
   let httpMock: MockAdapter;
   let store: Store;
@@ -96,66 +91,51 @@ describe('Reporting page - mobile', () => {
   });
 
   it('shows month selector', async () => {
-    const wrapper = mount(
+    const {getByText, getByTestId} = render(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/']}>
             <ReportingPageMobile/>
           </MemoryRouter>
         </Provider>
     );
-    await flushAllPromises();
-    wrapper.update();
+    await waitFor(() => {});
 
-    expect(monthSelector(wrapper)).toHaveLength(1);
-    expect(monthSelector(wrapper).find('[data-month-selector-month]').text()).toEqual('2019/02');
+    expect(getByTestId('month-selector')).toBeInTheDocument();
+    expect(getByText('2019/02')).toBeInTheDocument();
   });
 
   it('changes selected month', async () => {
-    const wrapper = mount(
+    const {getByTestId, getByText, queryAllByTestId} = render(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/']}>
             <ReportingPageMobile/>
           </MemoryRouter>
         </Provider>
     );
-    await flushAllPromises();
-    wrapper.update();
+    await waitFor(() => {});
 
-    nextMonthButton(wrapper).simulate('click');
-    await flushAllPromises();
-    wrapper.update();
+    fireEvent.click(getByTestId('month-selector-next'));
+    await waitFor(() => {});
 
-    expect(monthSelector(wrapper).find('[data-month-selector-month]').text()).toEqual('2019/03');
-    expect(wrapper.find(DayCard)).toHaveLength(2);
-    expect(cardDay(wrapper, 0)).toContain('2019/03/02');
-    expect(cardDay(wrapper, 1)).toContain('2019/03/01');
+    expect(getByText('2019/03')).toBeInTheDocument();
+    expect(queryAllByTestId('day-card')).toHaveLength(2);
+    expect(queryAllByTestId('day-card-day')[0]).toHaveTextContent('2019/03/02');
+    expect(queryAllByTestId('day-card-day')[1]).toHaveTextContent('2019/03/01');
   });
 
   it('shows list of days with work logs sorted descending', async () => {
-    const wrapper = mount(
+    const { queryAllByTestId } = render(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/']}>
             <ReportingPageMobile/>
           </MemoryRouter>
         </Provider>
     );
-    await flushAllPromises();
-    wrapper.update();
+    await waitFor(() => {
+    });
 
-    expect(wrapper.find(DayCard)).toHaveLength(2);
-    expect(cardDay(wrapper, 0)).toContain('2019/02/04');
-    expect(cardDay(wrapper, 1)).toContain('2019/02/01');
+    expect(queryAllByTestId('day-card')).toHaveLength(2);
+    expect(queryAllByTestId('day-card-day')[0]).toHaveTextContent('2019/02/04');
+    expect(queryAllByTestId('day-card-day')[1]).toHaveTextContent('2019/02/01');
   });
-
-  function cardDay(wrapper, cardIdx: number) {
-    return wrapper.find(DayCard).at(cardIdx).find('[data-day-card-day]').hostNodes().text();
-  }
-
-  function monthSelector(wrapper) {
-    return wrapper.find('[data-month-selector]');
-  }
-
-  function nextMonthButton(wrapper) {
-    return monthSelector(wrapper).find('[data-month-selector-next]').hostNodes();
-  }
 });

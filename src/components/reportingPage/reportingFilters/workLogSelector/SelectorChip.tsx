@@ -9,9 +9,8 @@ interface ChipLabelProps {
 
 const ChipLabel = ({label, workload}: ChipLabelProps) => (
     <div className='chip-content'>
-      <div className='chip-content__label' data-chip-label>{label}</div>
-      {workload > 0 ?
-          <div className='chip-content__workload' data-chip-workload>{formatWorkload(workload)}</div> : undefined}
+      <div className='chip-content__label' data-testid='selector-chip-label'>{label}</div>
+      {workload > 0 && <div className='chip-content__workload' data-chip-workload>{formatWorkload(workload)}</div>}
     </div>
 );
 
@@ -28,5 +27,6 @@ export const SelectorChip = ({label, workload, selected, onClick}: SelectorChipP
           className='chip'
           variant={selected ? 'default' : 'outlined'}
           onClick={onClick}
+          data-testid='selector-chip'
           data-chip-selected={selected}/>
 );

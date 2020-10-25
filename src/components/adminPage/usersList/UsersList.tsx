@@ -33,9 +33,9 @@ export class UsersList extends Component<UsersListProps, {}> {
 }
 
 const AuthorizedUserRow = ({user}: {user: AuthorizedUserDTO}) => (
-    <TableRow data-authorized-user-row>
-      <TableCell data-user-name>{user.name}</TableCell>
-      <TableCell data-user-email>{user.email}</TableCell>
-      <TableCell data-user-roles>{user.roles.join(', ')}</TableCell>
+    <TableRow data-testid='authorized-user-row'>
+      <TableCell>{user.name}</TableCell>
+      <TableCell>{user.email}</TableCell>
+      <TableCell>{user.roles.join(', ')}</TableCell>
     </TableRow>
 );

@@ -11,9 +11,9 @@ interface Props {
 }
 
 export const MonthSelector = ({selectedMonth, onChange}: Props) => (
-    <div className='reporting-month-selector' data-month-selector>
+    <div className='reporting-month-selector' data-testid='month-selector'>
       <Fab aria-label='Previous'
-           data-month-selector-previous
+           data-testid='month-selector-previous'
            onClick={() => onChange(selectedMonth.minus(1))}>
         <ArrowBack/>
       </Fab>
@@ -21,7 +21,7 @@ export const MonthSelector = ({selectedMonth, onChange}: Props) => (
         {selectedMonth.toString()}
       </div>
       <Fab aria-label='Next'
-           data-month-selector-next
+           data-testid='month-selector-next'
            onClick={() => onChange(selectedMonth.plus(1))}>
         <ArrowForward/>
       </Fab>

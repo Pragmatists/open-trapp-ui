@@ -12,4 +12,11 @@ export function setupStore(initialState?: any) {
   );
 }
 
-export const flushAllPromises = () => new Promise(resolve => setImmediate(resolve));
+export function ignoreHtmlTags(text: string) {
+  return (content, node) => {
+    const hasText = node => node.textContent === text;
+    const childrenDontHaveText = Array.from(node.children)
+        .every(child => !hasText(child));
+    return hasText(node) && childrenDontHaveText;
+  }
+}

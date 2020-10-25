@@ -1,17 +1,16 @@
 import * as React from 'react';
-import { mount } from 'enzyme';
 import { PrivateRoute } from './PrivateRoute';
-import { FC } from 'react';
 import { LocalStorage } from '../utils/LocalStorage';
 import { AuthorizedUser } from '../api/dtos';
 import { someJwtToken } from '../utils/jwtUtils';
-import { MemoryRouter, Redirect, Route } from 'react-router';
+import { MemoryRouter, Route } from 'react-router';
+import { render } from '@testing-library/react'
 
-const SomeComponent: FC = () => (
+const SomeComponent = () => (
     <div>some component</div>
 );
 
-const LandingPage: FC = () => (
+const LandingPage = () => (
     <div>landing page</div>
 );
 
@@ -22,28 +21,26 @@ describe('Private route', () => {
 
   it('renders component if user is authorized', () => {
     LocalStorage.authorizedUser = someUserDetails('some-user');
-    const wrapper = mount(
+    const container = render(
         <MemoryRouter initialEntries={['/some-path']}>
           <PrivateRoute component={SomeComponent} path='/some-path'/>
         </MemoryRouter>
     );
 
-    expect(wrapper.find(SomeComponent)).toHaveLength(1);
-    expect(wrapper.find(Redirect)).toHaveLength(0);
+    expect(container.queryByText('some component')).toBeInTheDocument();
   });
 
   it('redirects to landing page if user unauthorized', () => {
     LocalStorage.clearAuthorizedUser();
-    const wrapper = mount(
+    const container = render(
         <MemoryRouter initialEntries={['/some-path']}>
           <PrivateRoute component={SomeComponent} path='/some-path'/>
           <Route component={LandingPage} path='/' exact/>
         </MemoryRouter>
     );
-    wrapper.update();
 
-    expect(wrapper.find(SomeComponent)).toHaveLength(0);
-    expect(wrapper.find(LandingPage)).toHaveLength(1);
+    expect(container.queryByText('some component')).not.toBeInTheDocument();
+    expect(container.queryByText('landing page')).toBeInTheDocument();
   });
 
   function someUserDetails(displayName: string): AuthorizedUser {

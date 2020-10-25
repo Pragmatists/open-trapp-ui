@@ -26,10 +26,10 @@ export const ReportingFilters = ({
                                    onMonthChange, employeesFilter, tagsFilter
                                  }: ReportingFiltersProps) => (
     <Grid item container lg={10} xs={11} spacing={4}>
-      <Grid item lg={2} sm={12} data-months-selector>
+      <Grid item lg={2} sm={12}>
         <MonthSelector selectedMonth={selection.month} onMonthChange={onMonthChange}/>
       </Grid>
-      <Grid item lg={5} sm={12} data-projects-selector>
+      <Grid item lg={5} sm={12} data-testid='projects-selector'>
         <WorkLogSelector title='Projects'
                          chipLabel={workLog => workLog.projectNames}
                          workLogs={workLogs}
@@ -37,7 +37,7 @@ export const ReportingFilters = ({
                          workLogFilter={employeesFilter}
                          onSelectionChange={onTagsChange}/>
       </Grid>
-      <Grid item lg={5} sm={12} data-employees-selector>
+      <Grid item lg={5} sm={12} data-testid='employees-selector'>
         <WorkLogSelector title='Employees'
                          chipLabel={workLog => workLog.employee}
                          workLogs={workLogs}

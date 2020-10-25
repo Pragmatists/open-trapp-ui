@@ -83,10 +83,10 @@ export class ServiceAccountDialog extends Component<ServiceAccountDialogProps, S
   private renderNameActions() {
     return (
         <DialogActions>
-          <Button onClick={this.onCloseDialog} data-cancel-button>
+          <Button onClick={this.onCloseDialog} data-testid='cancel-button'>
             Cancel
           </Button>
-          <Button onClick={this.onCreateClick} color='primary' data-create-button disabled={isEmpty(this.state.name)}>
+          <Button onClick={this.onCreateClick} color='primary' data-testid='create-button' disabled={isEmpty(this.state.name)}>
             Create
           </Button>
         </DialogActions>

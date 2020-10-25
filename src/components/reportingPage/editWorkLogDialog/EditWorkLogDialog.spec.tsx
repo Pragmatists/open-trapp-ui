@@ -1,10 +1,9 @@
-import { mount, ReactWrapper } from 'enzyme';
+import { fireEvent, render, RenderResult, within } from '@testing-library/react';
 import * as React from 'react';
 import { noop } from 'lodash';
 import { EditWorkLogDialog } from './EditWorkLogDialog';
 import { ReportingWorkLog } from '../reporting.model';
-import TextField from '@material-ui/core/TextField';
-import { Button } from '@material-ui/core';
+import { ignoreHtmlTags } from '../../../utils/testUtils';
 
 const workLog = new ReportingWorkLog({
   id: '1',
@@ -17,36 +16,37 @@ const workLog = new ReportingWorkLog({
 
 describe('Edit work log dialog', () => {
   it('displays labels', () => {
-    const wrapper = mount(
+    const {getByTestId} = render(
         <EditWorkLogDialog workLog={workLog} tags={[]} onClose={noop} open={true} />
     );
 
-    expect(inputLabel(wrapper, '[data-edit-work-log-workload]')).toEqual('Workload');
-    expect(inputLabel(wrapper, '[data-edit-work-log-employee]')).toEqual('Employee');
-    expect(inputLabel(wrapper, '[data-edit-work-log-date]')).toEqual('Date');
-    expect(inputLabel(wrapper, '[data-edit-work-log-project]')).toEqual('Projects');
+    expect(within(getByTestId('edit-workload')).getByText('Workload')).toBeInTheDocument();
+    expect(within(getByTestId('edit-employee')).getByText('Employee')).toBeInTheDocument();
+    expect(within(getByTestId('edit-date')).getByText('Date')).toBeInTheDocument();
+    expect(within(getByTestId('edit-project')).getByText('Projects')).toBeInTheDocument();
   });
 
   it('displays values', () => {
-    const wrapper = mount(
+    const {getByTestId} = render(
         <EditWorkLogDialog workLog={workLog} tags={[]} onClose={noop} open={true} />
     );
 
-    expect(inputValue(wrapper, '[data-edit-work-log-workload]')).toEqual('1d');
-    expect(inputValue(wrapper, '[data-edit-work-log-project]')).toEqual('projects, nvm');
-    expect(inputValue(wrapper, '[data-edit-work-log-employee]')).toEqual('john.doe');
-    expect(inputValue(wrapper, '[data-edit-work-log-date]')).toEqual('2019/03/28');
+    expect(within(getByTestId('edit-workload')).getByDisplayValue('1d')).toBeInTheDocument();
+    expect(within(getByTestId('edit-project')).getByDisplayValue('projects, nvm')).toBeInTheDocument();
+    expect(within(getByTestId('edit-employee')).getByDisplayValue('john.doe')).toBeInTheDocument();
+    expect(within(getByTestId('edit-date')).getByDisplayValue('2019/03/28')).toBeInTheDocument();
   });
 
   it('emits updated work log on UPDATE click', () => {
     const onClose = jest.fn();
-    const wrapper = mount(
+    const container = render(
         <EditWorkLogDialog workLog={workLog} tags={[]} onClose={onClose} open={true} />
     );
 
-    typeExpression(wrapper, '[data-edit-work-log-workload]', '7h');
-    typeExpression(wrapper, '[data-edit-work-log-project]', ' projects,jld, ');
-    updateButton(wrapper).simulate('click');
+    typeExpression(container, 'edit-workload', '7h');
+    typeExpression(container, 'edit-project', ' projects,jld, ');
+
+    fireEvent.click(container.getByText('Update'));
 
     expect(onClose).toHaveBeenCalledWith({
       id: '1',
@@ -57,61 +57,38 @@ describe('Edit work log dialog', () => {
 
   it('shows suggestions for projects', () => {
     const tags = ['projects', 'nvm', 'jld', 'internal'];
-    const wrapper = mount(
+    const container = render(
         <EditWorkLogDialog workLog={workLog} tags={tags} onClose={noop} open={true} />
     );
 
-    typeTagsAndFocus(wrapper, 'p');
+    typeTagsAndFocus(container, 'p');
 
-    expect(suggestions(wrapper)).toHaveLength(1);
-    expect(suggestions(wrapper).at(0).text()).toEqual('projects');
+    expect(container.getByText(ignoreHtmlTags('projects'))).toBeInTheDocument();
   });
 
   it('replaces last word with selected tag suggestion', () => {
     const tags = ['projects', 'nvm', 'jld', 'internal'];
-    const wrapper = mount(
+    const container = render(
         <EditWorkLogDialog workLog={workLog} tags={tags} onClose={noop} open={true} />
     );
 
-    typeTagsAndFocus(wrapper, 'pro');
-    chooseSuggestion(wrapper, 0);
+    typeTagsAndFocus(container, 'pro');
+    fireEvent.click(container.getByText(ignoreHtmlTags('projects')));
 
-    expect(inputValue(wrapper, '[data-edit-work-log-project]')).toEqual('projects, ');
+    expect(within(container.getByTestId('edit-project')).getByDisplayValue('projects,')).toBeInTheDocument();
   });
 
-  function dialogInput(wrapper, selector: string) {
-    return wrapper.find(TextField).filter(selector)
-        .find('input');
+  function dialogInput(container: RenderResult, selector: string) {
+    return container.getByTestId(selector).lastChild.lastChild;
   }
 
-  function inputValue(wrapper, selector: string) {
-    return (dialogInput(wrapper, selector).instance() as any).value;
-  }
-
-  function inputLabel(wrapper, selector: string) {
-    return wrapper.find(selector).find('label').text();
-  }
-
-  function updateButton(wrapper) {
-    return wrapper.find(Button).filter('[data-update-button]').at(0);
-  }
-
-  function typeExpression(wrapper, selector: string, expression: string) {
-    const input = dialogInput(wrapper, selector);
-    input.simulate('change', {target: {value: expression}});
+  function typeExpression(container: RenderResult, selector: string, expression: string) {
+    fireEvent.change(dialogInput(container, selector), {target: {value: expression}});
   }
 
   function typeTagsAndFocus(wrapper, expression: string) {
-    const inputField = dialogInput(wrapper, '[data-edit-work-log-project]');
-    inputField.simulate('change', {target: {value: expression}});
-    inputField.simulate('focus');
-  }
-
-  function suggestions(wrapper): ReactWrapper {
-    return wrapper.find('li.react-autosuggest__suggestion');
-  }
-
-  function chooseSuggestion(wrapper, suggestionIdx: number) {
-    suggestions(wrapper).at(suggestionIdx).simulate('click');
+    const input = dialogInput(wrapper, 'edit-project');
+    fireEvent.change(input, {target: {value: expression}});
+    fireEvent.focus(input);
   }
 });

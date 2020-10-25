@@ -16,7 +16,8 @@ export const Notifications = () => {
                       open={true}
                       onClose={() => dissmiss(notification.id)}
                       message={notification.message}
-                      anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}/>
+                      anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}
+                      data-testid='snackbar' />
         )}
       </div>
   );

@@ -1,37 +1,38 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import { BulkEditHint } from './BulkEditHint';
+import { ignoreHtmlTags } from '../../../utils/testUtils';
 
 describe('Bulk edit hint', () => {
   it('displays info when validation in progress', () => {
-    const wrapper = shallow(
-        <BulkEditHint entriesAffected={undefined} />
+    const {getByText} = render(
+        <BulkEditHint entriesAffected={undefined}/>
     );
 
-    expect(wrapper.find('[data-hint-text]').text()).toEqual('Query is being validated...');
+    expect(getByText('Query is being validated...')).toBeInTheDocument();
   });
 
   it('displays hint when no entries affected', () => {
-    const wrapper = shallow(
-        <BulkEditHint entriesAffected={0} />
+    const {getByText} = render(
+        <BulkEditHint entriesAffected={0}/>
     );
 
-    expect(wrapper.find('[data-hint-text]').text()).toEqual('Hint: No worklog entries will be affected by this operation.');
+    expect(getByText(ignoreHtmlTags('Hint: No worklog entries will be affected by this operation.'))).toBeInTheDocument();
   });
 
   it('displays hint when 1 entry affected', () => {
-    const wrapper = shallow(
-        <BulkEditHint entriesAffected={1} />
+    const {getByText} = render(
+        <BulkEditHint entriesAffected={1}/>
     );
 
-    expect(wrapper.find('[data-hint-text]').text()).toEqual('Hint: 1 worklog entry will be affected by this operation.');
+    expect(getByText(ignoreHtmlTags('Hint: 1 worklog entry will be affected by this operation.'))).toBeInTheDocument();
   });
 
   it('displays hint when multiple entries affected', () => {
-    const wrapper = shallow(
-        <BulkEditHint entriesAffected={5} />
+    const {getByText} = render(
+        <BulkEditHint entriesAffected={5}/>
     );
 
-    expect(wrapper.find('[data-hint-text]').text()).toEqual('Hint: 5 worklog entries will be affected by this operation.');
+    expect(getByText(ignoreHtmlTags('Hint: 5 worklog entries will be affected by this operation.'))).toBeInTheDocument();
   });
 });

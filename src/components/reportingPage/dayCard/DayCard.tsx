@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Card } from '@material-ui/core';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -23,61 +23,40 @@ interface DayCardProps {
   onEditClick: VoidFunction;
 }
 
-export class DayCard extends Component<DayCardProps, {}> {
-  render() {
-    const {day, onEditClick} = this.props;
-    return (
-        <Card className='day-card'>
-          <CardHeader title={day} subheader={moment(day, 'YYYY/MM/DD').format('dddd')} data-day-card-day/>
-          {
-            this.showContent && this.renderContent()
-          }
-          <CardActions className='day-card__actions'>
-            <Button size='small' onClick={onEditClick} data-day-card-edit-button>Edit</Button>
-          </CardActions>
-        </Card>
-    );
-  }
+const Reminder = () => (
+    <div className='card-content__reminder'>You should report work time for this day!</div>
+);
 
-  private renderContent() {
-    const {workLogs, weekend} = this.props;
-    return (
-        <CardContent className='day-card__card-content card-content'>
-          {
-            this.pastDate && isEmpty(workLogs) && !weekend ? this.renderReminder() : this.renderWorkLogs()
-          }
-        </CardContent>
-    );
-  }
+const WorkLogs = ({workLogs}) => (
+    <List data-testid='day-card-list'>
+      {workLogs.map((w, idx) => (
+          <ListItem key={idx}>
+            <WorkLogChip workLog={w}/>
+          </ListItem>
+      ))}
+    </List>
+)
 
-  private renderWorkLogs() {
-    const {workLogs} = this.props;
-    return (
-        <List data-day-card-list>
-          {workLogs.map((w, idx) => (
-              <ListItem key={idx}>
-                <WorkLogChip workLog={w} data-day-card-work-log/>
-              </ListItem>
-          ))}
-        </List>
-    );
-  }
+const DayCardContent = ({weekend, workLogs, pastDate}: { weekend: boolean, workLogs: WorkLogDTO[], pastDate: boolean }) => (
+    <CardContent className='day-card__card-content card-content'>
+      {
+        pastDate && isEmpty(workLogs) && !weekend ? <Reminder/> : <WorkLogs workLogs={workLogs}/>
+      }
+    </CardContent>
+);
 
-  private renderReminder() {
-    return (
-       <div className='card-content__reminder' data-day-card-reminder>
-         You should report work time for this day!
-       </div>
-    );
-  }
-
-  private get pastDate() {
-    const {day} = this.props;
-    return moment(day, 'YYYY/MM/DD').isBefore(moment(), 'day');
-  }
-
-  private get showContent() {
-    const {workLogs, weekend} = this.props;
-    return (this.pastDate && !weekend) || !isEmpty(workLogs);
-  }
+export const DayCard = ({day, onEditClick, weekend, workLogs}: DayCardProps) => {
+  const pastDate = moment(day, 'YYYY/MM/DD').isBefore(moment(), 'day');
+  const showContent = (pastDate && !weekend) || !isEmpty(workLogs);
+  return (
+      <Card className='day-card' data-testid='day-card'>
+        <CardHeader title={day} subheader={moment(day, 'YYYY/MM/DD').format('dddd')} data-testid='day-card-day'/>
+        {
+          showContent && <DayCardContent weekend={weekend} workLogs={workLogs} pastDate={pastDate}/>
+        }
+        <CardActions className='day-card__actions'>
+          <Button size='small' onClick={onEditClick}>Edit</Button>
+        </CardActions>
+      </Card>
+  );
 }

@@ -49,7 +49,7 @@ export const LeftMenuComponent = ({location, history, mobileVersion}: Props) => 
               onClose={onHideMenu}
               className='left-menu'>
         <div className='left-menu__close-icon-container'>
-          <IconButton onClick={onHideMenu} color='inherit' data-close-menu-button>
+          <IconButton onClick={onHideMenu} color='inherit' data-testid='close-menu-button'>
             <CloseIcon fontSize='large'/>
           </IconButton>
         </div>

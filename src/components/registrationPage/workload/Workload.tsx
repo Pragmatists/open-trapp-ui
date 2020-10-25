@@ -10,22 +10,22 @@ interface Props {
 }
 
 export const Workload = ({hours, minutes, onHoursChange, onMinutesChange}: Props) => (
-    <div className='workload-selector' data-workload-selector>
-      <div data-number-of-hours>{hours} {hours === 1 ? 'hour' : 'hours'}</div>
+    <div className='workload-selector' data-testid='workload-selector'>
+      <div data-testid='number-of-hours'>{hours} {hours === 1 ? 'hour' : 'hours'}</div>
       <Slider min={0}
               max={16}
               step={1}
               value={hours}
               onChange={(event, value) => onHoursChange(value)}
               className='workload-selector__slider slider'
-              data-hours-slider/>
-      <div data-number-of-minutes>{minutes} minutes</div>
+              data-testid='hours-slider'/>
+      <div data-testid='number-of-minutes'>{minutes} minutes</div>
       <Slider min={0}
               max={60}
               step={15}
               value={minutes}
               onChange={(event, value) => onMinutesChange(value)}
               className='workload-selector__slider slider'
-              data-minutes-slider/>
+              data-testid='minutes-slider'/>
     </div>
 );

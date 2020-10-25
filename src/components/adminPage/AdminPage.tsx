@@ -43,7 +43,7 @@ export const AdminPage = () => {
               {
                 serviceAccounts ?
                     <ServiceAccountsList accounts={serviceAccounts} username={username} onDelete={id => dispatch(deleteServiceAccount(id))}/> :
-                    <LoadingPlaceholder data-service-accounts-loading/>
+                    <LoadingPlaceholder >Loading accounts...</LoadingPlaceholder>
               }
             </Paper>
           </Grid>
@@ -51,7 +51,7 @@ export const AdminPage = () => {
             <div className='admin-page__header'>Users</div>
             <Paper className='admin-page__content'>
               {
-                users ? <UsersList users={users}/> : <LoadingPlaceholder data-users-loading/>
+                users ? <UsersList users={users}/> : <LoadingPlaceholder>Loading users...</LoadingPlaceholder>
               }
             </Paper>
           </Grid>
@@ -60,8 +60,8 @@ export const AdminPage = () => {
   );
 }
 
-const LoadingPlaceholder = () => (
-    <div className='admin-page__placeholder'>Loading...</div>
+const LoadingPlaceholder = ({children}) => (
+    <div className='admin-page__placeholder'>{children}</div>
 );
 
 const CreateButton = ({onClick}: { onClick: VoidFunction }) => (

@@ -88,9 +88,9 @@ class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
                       indicatorColor='primary'
                       textColor='primary'
                       className='report__tabs'>
-                  <Tab icon={<CalendarIcon/>} onClick={() => onReportTypeChange(ReportType.CALENDAR)} data-reporting-calendar-tab/>
-                  <Tab icon={<ListIcon/>} onClick={() => onReportTypeChange(ReportType.TABLE)} data-reporting-table-tab/>
-                  <Tab icon={<ChartIcon/>} onClick={() => onReportTypeChange(ReportType.PROJECTS)} data-reporting-projects-tab/>
+                  <Tab icon={<CalendarIcon/>} onClick={() => onReportTypeChange(ReportType.CALENDAR)} data-testid='calendar-tab'/>
+                  <Tab icon={<ListIcon/>} onClick={() => onReportTypeChange(ReportType.TABLE)} data-testid='table-tab'/>
+                  <Tab icon={<ChartIcon/>} onClick={() => onReportTypeChange(ReportType.PROJECTS)} data-testid='projects-tab'/>
                 </Tabs>
                 {reportType === ReportType.CALENDAR && <MonthlyReport days={days}
                                                                       workLogs={this.workLogsForSelectedUsersAndTags}/>

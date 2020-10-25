@@ -1,76 +1,66 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { fireEvent, render, RenderResult } from '@testing-library/react';
 import { noop } from 'lodash';
 import { WorkloadDialog } from './WorkloadDialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import { Button } from '@material-ui/core';
 
 describe('Workload dialog', () => {
 
   it('displays number of hours', () => {
-    const wrapper = mount(
+    const { getByText } = render(
         <WorkloadDialog open={true} onClose={noop}/>
     );
 
-    expect(wrapper.find('[data-number-of-hours]').text()).toEqual('8 hours');
+    expect(getByText('8 hours')).toBeInTheDocument();
   });
 
   it('displays number of minutes', () => {
-    const wrapper = mount(
+    const { getByText } = render(
         <WorkloadDialog open={true} onClose={noop}/>
     );
 
-    expect(wrapper.find('[data-number-of-minutes]').text()).toEqual('0 minutes');
+    expect(getByText('0 minutes')).toBeInTheDocument();
   });
 
   it('closes dialog on CANCEL click', () => {
     const onClose = jest.fn();
-    const wrapper = mount(
+    const { getByText } = render(
         <WorkloadDialog open={true} onClose={onClose}/>
     );
 
-    cancelButton(wrapper).simulate('click');
+    fireEvent.click(getByText('Cancel'));
 
     expect(onClose).toHaveBeenCalledWith();
   });
 
   it('emits default workload on SAVE click', () => {
     const onClose = jest.fn();
-    const wrapper = mount(
+    const { getByText } = render(
         <WorkloadDialog open={true} onClose={onClose}/>
     );
 
-    saveButton(wrapper).simulate('click');
+    fireEvent.click(getByText('Save'));
 
     expect(onClose).toHaveBeenCalledWith('1d');
   });
 
   it('emits selected workload on SAVE click', () => {
     const onClose = jest.fn();
-    const wrapper = mount(
+    const container = render(
         <WorkloadDialog open={true} onClose={onClose}/>
     );
 
-    hoursSlider(wrapper).simulate('keydown', {key: 'ArrowLeft'});
-    minutesSlider(wrapper).simulate('keydown', {key: 'ArrowRight'});
-    saveButton(wrapper).simulate('click');
+    fireEvent.keyDown(hoursSlider(container), {key: 'ArrowLeft'});
+    fireEvent.keyDown(minutesSlider(container), {key: 'ArrowRight'});
+    fireEvent.click(container.getByText('Save'));
 
     expect(onClose).toHaveBeenCalledWith('7h 15m');
   });
 
-  function cancelButton(wrapper) {
-    return wrapper.find(DialogActions).find(Button).filter('[data-cancel-button]');
+  function hoursSlider(container: RenderResult) {
+    return container.getByTestId('hours-slider').lastChild;
   }
 
-  function saveButton(wrapper) {
-    return wrapper.find(DialogActions).find(Button).filter('[data-save-button]');
-  }
-
-  function hoursSlider(wrapper) {
-    return wrapper.find('[data-hours-slider]').find('span').last();
-  }
-
-  function minutesSlider(wrapper) {
-    return wrapper.find('[data-minutes-slider]').find('span').last();
+  function minutesSlider(container: RenderResult) {
+    return container.getByTestId('minutes-slider').lastChild;
   }
 });

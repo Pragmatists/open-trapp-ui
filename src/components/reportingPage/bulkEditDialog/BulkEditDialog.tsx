@@ -45,7 +45,7 @@ class BulkEditDialogComponent extends Component<BulkEditDialogProps, BulkEditDia
     const {query, affectedEntries} = this.state;
     return (
         <div>
-          <Button onClick={this.handleOpenDialog} data-bulk-edit-open-button>
+          <Button onClick={this.handleOpenDialog}>
             <EditIcon/>
             Bulk edit
           </Button>
@@ -56,18 +56,18 @@ class BulkEditDialogComponent extends Component<BulkEditDialogProps, BulkEditDia
                          label='Query'
                          value={query.query}
                          onChange={this.handleQueryChange}
-                         data-bulk-edit-query/>
+                         data-testid='bulk-edit-query'/>
               <TextField className='text-field'
                          label='Expression'
                          placeholder='-#vacation to remove and +#sick to add tag'
                          value={query.expression}
                          onChange={this.handleExpressionChange}
-                         data-bulk-edit-expression/>
+                         data-testid='bulk-edit-expression'/>
             </DialogContent>
             <BulkEditHint entriesAffected={affectedEntries} className='content__hint'/>
             <DialogActions>
               <Button onClick={this.handleCloseDialog}>Cancel</Button>
-              <Button color='primary' onClick={this.handleUpdate} data-bulk-edit-update-button>Update</Button>
+              <Button color='primary' onClick={this.handleUpdate}>Update</Button>
             </DialogActions>
           </Dialog>
         </div>

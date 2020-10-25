@@ -3,18 +3,10 @@ import MockAdapter from 'axios-mock-adapter';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
 import { chain } from 'lodash';
-import { mount, ReactWrapper } from 'enzyme';
-import { InputBase, TableCell } from '@material-ui/core';
-import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
-import TableBody from '@material-ui/core/TableBody';
-import TableRow from '@material-ui/core/TableRow';
-import Button from '@material-ui/core/Button';
-import { flushAllPromises, setupStore } from '../../utils/testUtils';
+import { fireEvent, render, RenderResult, waitFor, within } from '@testing-library/react';
+import { ignoreHtmlTags, setupStore } from '../../utils/testUtils';
 import { RegistrationPageDesktop } from './RegistrationPage.desktop';
 import { OpenTrappRestAPI } from '../../api/OpenTrappAPI';
-import { MonthlyReport } from '../monthlyReport/MonthlyReport';
-import { RegistrationPageMonth } from '../registrationPageMonth/RegistrationPageMonth';
 import { initialState as registrationInitialState } from '../../redux/registration.reducer';
 
 const days = [
@@ -84,170 +76,129 @@ describe('Registration Page - desktop', () => {
 
   describe('Monthly report', () => {
     it('displays current month', async () => {
-      const wrapper = mount(
+      const {getByText} = render(
           <Provider store={store}>
             <RegistrationPageDesktop/>
           </Provider>
       );
+      await waitFor(() => {});
 
-      await flushAllPromises();
-      wrapper.update();
-
-      expect(currentMonthHeader(wrapper).text()).toEqual('2019/02 month worklog');
+      expect(getByText(ignoreHtmlTags('2019/02 month worklog'))).toBeInTheDocument();
     });
 
     it('fetches and renders days with workload for current month', async () => {
-      const wrapper = mount(
+      const container = render(
           <Provider store={store}>
             <RegistrationPageDesktop/>
           </Provider>
       );
 
-      await flushAllPromises();
-      wrapper.update();
-
-      expect(httpMock.history.get.filter(r => r.url.startsWith('/calendar'))).toHaveLength(2);
-      expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
-      expect(tableHeaderCells(wrapper).not('[data-total-header]')).toHaveLength(days.length);
-      expect(tableRowCells(wrapper, 0).not('[data-total-value]')).toHaveLength(days.length);
-      expect(tableRowCells(wrapper, 0).at(0).text()).toEqual('8');
-      expect(tableRowCells(wrapper, 0).at(1).text()).toEqual('');
-      expect(tableRowCells(wrapper, 0).at(2).text()).toEqual('');
-      expect(tableRowCells(wrapper, 0).at(3).text()).toEqual('8');
-      expect(totalCell(wrapper, 0).text()).toEqual('16');
+      await waitFor(() => expect(httpMock.history.get.filter(r => r.url.startsWith('/calendar'))).toHaveLength(2));
+      expect(container.getByTestId('monthly-report')).toBeInTheDocument() ;
+      expect(container.queryAllByTestId('month-day-header')).toHaveLength(days.length);
+      expect(tableRowCells(container, 0)).toHaveLength(days.length);
+      expect(tableRowCells(container, 0)[0]).toHaveTextContent('8');
+      expect(tableRowCells(container, 0)[1]).toHaveTextContent('');
+      expect(tableRowCells(container, 0)[2]).toHaveTextContent('');
+      expect(tableRowCells(container, 0)[3]).toHaveTextContent('8');
+      expect(totalCell(container, 0)).toHaveTextContent('16');
     });
 
     it('reloads data on NEXT month click', async () => {
-      const wrapper = mount(
+      const container = render(
           <Provider store={store}>
             <RegistrationPageDesktop/>
           </Provider>
       );
-      await flushAllPromises();
-      wrapper.update();
+      await waitFor(() => {});
 
-      nextMonthButton(wrapper).simulate('click');
-      await flushAllPromises();
-      wrapper.update();
+      fireEvent.click(container.getByText('Next'));
 
-      expect(httpMock.history.get.filter(r => r.url.startsWith('/calendar'))).toHaveLength(4);
-      expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
-      expect(currentMonthHeader(wrapper).text()).toEqual('2019/03 month worklog');
+      await waitFor(() => expect(httpMock.history.get.filter(r => r.url.startsWith('/calendar'))).toHaveLength(4));
+      expect(container.getByTestId('monthly-report')).toBeInTheDocument();
+      expect(container.getByText(ignoreHtmlTags('2019/03 month worklog'))).toBeInTheDocument();
     });
 
     it('reloads data on PREVIOUS month click', async () => {
-      const wrapper = mount(
+      const {getByText, getByTestId} = render(
           <Provider store={store}>
             <RegistrationPageDesktop/>
           </Provider>
       );
-      await flushAllPromises();
-      wrapper.update();
+      await waitFor(() => {});
 
-      previousMonthButton(wrapper).simulate('click');
-      await flushAllPromises();
-      wrapper.update();
+      fireEvent.click(getByText('Previous'));
 
-      expect(httpMock.history.get.filter(r => r.url.startsWith('/calendar'))).toHaveLength(4);
-      expect(wrapper.find(MonthlyReport).exists()).toBeTruthy();
-      expect(currentMonthHeader(wrapper).text()).toEqual('2019/01 month worklog');
+      await waitFor(() => expect(httpMock.history.get.filter(r => r.url.startsWith('/calendar'))).toHaveLength(4));
+      expect(getByTestId('monthly-report')).toBeInTheDocument();
+      expect(getByText(ignoreHtmlTags('2019/01 month worklog'))).toBeInTheDocument();
     });
 
     it('adds day to work log expression on day click', async () => {
-      const wrapper = mount(
+      const container = render(
           <Provider store={store}>
             <RegistrationPageDesktop/>
           </Provider>
       );
-      await flushAllPromises();
-      wrapper.update();
+      await waitFor(() => {});
 
-      dayCell(wrapper, 0).simulate('click');
+      fireEvent.click(dayCell(container, 0));
 
-      expect(workLogInputValue(wrapper)).toEqual('@2019/02/01');
+      expect(container.getByDisplayValue('@2019/02/01')).toBeInTheDocument();
     });
 
     it('modifies work log expression on day range click', async () => {
-      const wrapper = mount(
+      const container = render(
           <Provider store={store}>
             <RegistrationPageDesktop/>
           </Provider>
       );
-      await flushAllPromises();
+      await waitFor(() => {});
 
-      typeExpression(wrapper, '1d @2019/02/03 #holiday');
+      typeExpression(container, '1d @2019/02/03 #holiday');
 
-      dayCell(wrapper, 0).simulate('click', {shiftKey: true});
-      wrapper.update();
+      fireEvent.click(dayCell(container, 0), {shiftKey: true});
 
-      expect(workLogInputValue(wrapper)).toEqual('1d @2019/02/01~@2019/02/03 #holiday');
+      expect(container.getByDisplayValue('1d @2019/02/01~@2019/02/03 #holiday')).toBeInTheDocument();
     });
 
-    function tableHeaderCells(wrapper): ReactWrapper {
-      return wrapper.find(Table).find(TableHead).find(TableCell);
+    function tableRowCells(container: RenderResult, rowIdx: number) {
+      return within(container.queryAllByTestId('employee-row')[rowIdx]).queryAllByTestId('month-day-value');
     }
 
-    function tableRowCells(wrapper, rowIdx: number): ReactWrapper {
-      return wrapper.find(Table).find(TableBody).find(TableRow).at(rowIdx).find(TableCell);
+    function dayCell(wrapper, dayIndex: number) {
+      return tableRowCells(wrapper, 0)[dayIndex];
     }
 
-    function dayCell(wrapper, dayIndex: number): ReactWrapper {
-      return tableRowCells(wrapper, 0).at(dayIndex);
-    }
-
-    function totalCell(wrapper, rowIdx: number): ReactWrapper {
-      return tableRowCells(wrapper, rowIdx).at(days.length);
-    }
-
-    function currentMonthHeader(wrapper): ReactWrapper {
-      return wrapper.find('[data-selected-month-header]');
-    }
-
-    function nextMonthButton(wrapper): ReactWrapper {
-      return wrapper.find(RegistrationPageMonth)
-          .find(Button)
-          .filter('[data-next-month-button]');
-    }
-
-    function previousMonthButton(wrapper): ReactWrapper {
-      return wrapper.find(RegistrationPageMonth)
-          .find(Button)
-          .filter('[data-prev-month-button]');
-    }
-
-    function workLogInputValue(wrapper) {
-      return (workLogInput(wrapper).instance() as any).value;
+    function totalCell(container: RenderResult, rowIdx: number) {
+      return within(container.queryAllByTestId('employee-row')[rowIdx]).getByTestId('month-total-value');
     }
   });
 
   describe('Work log input', () => {
     it('fetches tags', async () => {
-      const wrapper = mount(
+      const container = render(
           <Provider store={store}>
             <RegistrationPageDesktop/>
           </Provider>
       );
-      await flushAllPromises();
-      wrapper.update();
 
-      expect(httpMock.history.get.filter(r => r.url === '/projects')).toHaveLength(1);
+      await waitFor(() => expect(httpMock.history.get.filter(r => r.url === '/projects')).toHaveLength(1));
       expect(store.getState().workLog.tags).toEqual(tagsResponse);
     });
 
     it('saves valid work log on enter', async () => {
-      const wrapper = mount(
+      const container = render(
           <Provider store={store}>
             <RegistrationPageDesktop/>
           </Provider>
       );
-      await flushAllPromises();
-      wrapper.update();
+      await waitFor(() => {});
 
-      typeExpression(wrapper, '1d #projects #nvm @2019/02/27');
-      pressEnter(wrapper);
-      await flushAllPromises();
+      typeExpression(container, '1d #projects #nvm @2019/02/27');
+      pressEnter(container);
 
-      expect(httpMock.history.post.length).toEqual(1);
+      await waitFor(() => expect(httpMock.history.post.length).toEqual(1));
       expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
         projectNames: ['projects', 'nvm'],
         workload: '1d',
@@ -256,19 +207,17 @@ describe('Registration Page - desktop', () => {
     });
 
     it('saves work log with dates range on enter', async () => {
-      const wrapper = mount(
+      const container = render(
           <Provider store={store}>
             <RegistrationPageDesktop/>
           </Provider>
       );
-      await flushAllPromises();
-      wrapper.update();
+      await waitFor(() => {});
 
-      typeExpression(wrapper, '1d #projects #nvm @2019/02/27~@2019/02/28');
-      pressEnter(wrapper);
-      await flushAllPromises();
+      typeExpression(container, '1d #projects #nvm @2019/02/27~@2019/02/28');
+      pressEnter(container);
 
-      expect(httpMock.history.post.length).toEqual(2);
+      await waitFor(() => expect(httpMock.history.post.length).toEqual(2));
       expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
         projectNames: ['projects', 'nvm'],
         workload: '1d',
@@ -282,33 +231,31 @@ describe('Registration Page - desktop', () => {
     });
 
     it('reloads work logs after save', async () => {
-      const wrapper = mount(
+      const container = render(
           <Provider store={store}>
             <RegistrationPageDesktop/>
           </Provider>
       );
-      await flushAllPromises();
-      wrapper.update();
+      await waitFor(() => {});
 
-      typeExpression(wrapper, '1d #projects #nvm @2019/02/27');
-      pressEnter(wrapper);
-      await flushAllPromises();
+      typeExpression(container, '1d #projects #nvm @2019/02/27');
+      pressEnter(container);
 
-      expect(httpMock.history.get.filter(r => r.url === '/calendar/2019/2/work-log/entries')).toHaveLength(2);
+      await waitFor(() =>
+          expect(httpMock.history.get.filter(r => r.url === '/calendar/2019/2/work-log/entries')).toHaveLength(2)
+      );
     });
 
     function pressEnter(wrapper) {
-      const input = workLogInput(wrapper);
-      input.simulate('keypress', {key: 'Enter'});
+      fireEvent.keyPress(workLogInput(wrapper), {key: 'Enter', keyCode: 13});
     }
   });
 
-  function workLogInput(wrapper): ReactWrapper {
-    return wrapper.find(InputBase).at(0).find('input');
+  function workLogInput(container: RenderResult) {
+    return container.getByRole('combobox').firstChild.firstChild;
   }
 
-  function typeExpression(wrapper, expression: string) {
-    const input = workLogInput(wrapper);
-    input.simulate('change', {target: {value: expression}})
+  function typeExpression(container: RenderResult, expression: string) {
+    fireEvent.change(workLogInput(container), {target: {value: expression}});
   }
 });

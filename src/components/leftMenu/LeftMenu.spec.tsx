@@ -1,17 +1,16 @@
 import * as React from 'react';
-import { mount, ReactWrapper } from 'enzyme';
 import { Store } from 'redux';
 import { Provider, useDispatch } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { LeftMenu } from './LeftMenu';
-import { ListItem, ListItemText } from '@material-ui/core';
 import { setupStore } from '../../utils/testUtils';
 import { toggleMenuVisibility } from '../../redux/leftMenu.actions';
+import { render, fireEvent, RenderResult } from '@testing-library/react'
 
 const OpenMenuComponent = () => {
   const dispatch = useDispatch();
   return (
-      <button data-open-menu-button onClick={() => dispatch(toggleMenuVisibility())}/>
+      <button data-testid='open-menu-button' onClick={() => dispatch(toggleMenuVisibility())}/>
   );
 };
 
@@ -20,7 +19,7 @@ describe('Left menu', () => {
 
   it('closes on button click', () => {
     store = initializeStore(true, true);
-    const wrapper = mount(
+    const container = render(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/']}>
             <LeftMenu/>
@@ -28,14 +27,14 @@ describe('Left menu', () => {
         </Provider>
     );
 
-    closeButton(wrapper).simulate('click');
+    fireEvent.click(container.getByTestId('close-menu-button'));
 
     expect(store.getState().leftMenu.open).toBeFalsy();
   });
 
   it('marks list item that matches current location', () => {
     store = initializeStore(true, true);
-    const wrapper = mount(
+    const container = render(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/']}>
             <LeftMenu/>
@@ -43,13 +42,13 @@ describe('Left menu', () => {
         </Provider>
     );
 
-    expect(selectedItemsText(wrapper)).toEqual(['Landing page']);
+    expect(selectedItemsText(container)).toEqual(['Landing page']);
   });
 
   ['Registration', 'Reporting', 'Admin'].forEach(page =>
       it(`navigates to ${page} page on menu item click`, () => {
         store = initializeStore(true, true, true);
-        const wrapper = mount(
+        const container = render(
             <Provider store={store}>
               <MemoryRouter initialEntries={['/']}>
                 <LeftMenu />
@@ -58,16 +57,16 @@ describe('Left menu', () => {
             </Provider>
         );
 
-        listItem(wrapper, page).simulate('click');
-        openLeftMenu(wrapper);
+        fireEvent.click(container.getByText(page));
+        fireEvent.click(container.getByTestId('open-menu-button'));
 
-        expect(selectedItemsText(wrapper)).toEqual([page]);
+        expect(selectedItemsText(container)).toEqual([page]);
       })
   );
 
   it('only LANDING PAGE entry is enabled if user not logged in', () => {
     store = initializeStore(false, true);
-    const wrapper = mount(
+    const container = render(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/']}>
             <LeftMenu/>
@@ -75,12 +74,13 @@ describe('Left menu', () => {
         </Provider>
     );
 
-    expect(enabledItemsText(wrapper)).toEqual(['Landing page']);
+    expect(disabledItemsText(container)).toEqual(['Registration', 'Reporting']);
+    expect(container.queryByText('Admin')).not.toBeInTheDocument();
   });
 
   it('ADMIN entry is not visible if user does not have ADMIN role', () => {
     store = initializeStore(true, true, false);
-    const wrapper = mount(
+    const { queryByText } = render(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/']}>
             <LeftMenu/>
@@ -88,12 +88,12 @@ describe('Left menu', () => {
         </Provider>
     );
 
-    expect(itemsText(wrapper)).not.toContain('Admin');
+    expect(queryByText('Admin')).not.toBeInTheDocument();
   });
 
   it('ADMIN entry is not visible if mobile version', () => {
     store = initializeStore(true, true, true);
-    const wrapper = mount(
+    const { queryByText } = render(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/']}>
             <LeftMenu mobileVersion={true}/>
@@ -101,42 +101,15 @@ describe('Left menu', () => {
         </Provider>
     );
 
-    expect(itemsText(wrapper)).not.toContain('Admin');
+    expect(queryByText('Admin')).not.toBeInTheDocument();
   });
 
-  function openLeftMenu<C>(wrapper: ReactWrapper) {
-    wrapper.find('[data-open-menu-button]').simulate('click');
+  function selectedItemsText(container: RenderResult): string[] {
+    return container.queryAllByTestId('left-menu-entry-selected').map(i => i.textContent);
   }
 
-  function closeButton(wrapper: ReactWrapper): ReactWrapper {
-    return wrapper.find('[data-close-menu-button]').at(0);
-  }
-
-  function listItems(wrapper: ReactWrapper) {
-    return wrapper.find(ListItem);
-  }
-
-  function selectedItemsText(wrapper: ReactWrapper): string[] {
-    return listItems(wrapper)
-        .filterWhere(w => w.prop('selected'))
-        .map(w => w.text());
-  }
-
-  function listItem(wrapper: ReactWrapper, label: string) {
-    return listItems(wrapper)
-        .filterWhere(w => w.find(ListItemText).at(0).text() === label)
-        .at(0);
-  }
-
-  function enabledItemsText(wrapper: ReactWrapper): string[] {
-    return listItems(wrapper)
-        .filterWhere(w => !w.prop('disabled'))
-        .map(w => w.find(ListItemText).at(0).text());
-  }
-
-  function itemsText(wrapper: ReactWrapper): string[] {
-    return listItems(wrapper)
-        .map(w => w.find(ListItemText).at(0).text());
+  function disabledItemsText(container: RenderResult): string[] {
+    return container.queryAllByTestId('left-menu-entry-disabled').map(i => i.textContent);
   }
 
   function initializeStore(authorizedUser: boolean, menuVisible: boolean, admin = false) {

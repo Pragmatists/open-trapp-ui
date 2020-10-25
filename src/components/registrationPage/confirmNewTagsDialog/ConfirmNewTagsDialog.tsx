@@ -16,19 +16,17 @@ interface ConfirmNewTagsDialogProps {
 export const ConfirmNewTagsDialog = ({open, newTags, onClose, workLog}: ConfirmNewTagsDialogProps) => (
     <Dialog open={open} onClose={() => onClose(workLog, false)}>
       <DialogTitle>New tags will be created</DialogTitle>
-      <DialogContent>
+      <DialogContent data-testid='confirm-new-tags'>
         <p>
           This action will add new {newTags.length > 1 ? ' tags' : 'tag'}: <strong>{newTags.join(', ')}</strong>.
         </p>
-        <p>
-          Make sure you really want to do this!
-        </p>
+        <p>Make sure you really want to do this!</p>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => onClose(workLog, false)} data-cancel-button>
+        <Button onClick={() => onClose(workLog, false)} data-testid='cancel-new-tags-button'>
           Cancel
         </Button>
-        <Button onClick={() => onClose(workLog, true)} color='primary' autoFocus data-confirm-button>
+        <Button onClick={() => onClose(workLog, true)} color='primary' autoFocus>
           Confirm
         </Button>
       </DialogActions>

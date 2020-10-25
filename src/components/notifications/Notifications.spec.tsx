@@ -1,4 +1,4 @@
-import { mount } from 'enzyme';
+import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import * as React from 'react';
 import { Notifications } from './Notifications';
@@ -7,7 +7,6 @@ import { setupStore } from '../../utils/testUtils';
 import { initialState as registrationInitialState } from '../../redux/registration.reducer';
 import { initialState as reportingInitialState } from '../../redux/reporting.reducer';
 import { initialState as notificationsInitialState } from '../../redux/notifications.reducer';
-import { Snackbar } from '@material-ui/core';
 
 describe('Notifications', () => {
   let store: Store;
@@ -34,12 +33,12 @@ describe('Notifications', () => {
 
 
   it('does not display anything if list is empty', () => {
-    const wrapper = mount(
+    const { queryByTestId } = render(
         <Provider store={store}>
           <Notifications />
         </Provider>
     );
 
-    expect(wrapper.find(Snackbar)).toHaveLength(0);
+    expect(queryByTestId('snackbar')).not.toBeInTheDocument();
   });
 });

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { xor, uniq } from 'lodash';
+import { uniq, xor } from 'lodash';
 import { ReportingWorkLog } from '../../reporting.model';
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
@@ -38,22 +38,22 @@ export class WorkLogSelector extends Component<WorkLogSelectorProps, WorkLogSele
     const labels = this.labels;
     return (
         <div className='work-log-selector'>
-          <div className='work-log-selector__header' data-work-log-selector-title>{title}</div>
+          <div className='work-log-selector__header'>{title}</div>
           <div className='work-log-selector__chips'>
             {
               labels.map(this.renderChip)
             }
           </div>
           <div className='work-log-selector__footer'>
-            <Button data-button-ineligible size='small' onClick={this.onIneligibleButtonClick}>
+            <Button size='small' onClick={this.onIneligibleButtonClick}>
               {hideIneligible ? <VisibilityIcon/> : <VisibilityOffIcon/>}
               {hideIneligible ? 'Show ineligible' : 'Hide ineligible'}
             </Button>
-            <Button data-button-select-none size='small' onClick={() => onSelectionChange([])}>
+            <Button size='small' onClick={() => onSelectionChange([])}>
               <ClearIcon/>
               None
             </Button>
-            <Button data-button-select-all size='small' onClick={() => onSelectionChange(labels)}>
+            <Button size='small' onClick={() => onSelectionChange(labels)}>
               <AddIcon/>
               All
             </Button>
@@ -64,13 +64,11 @@ export class WorkLogSelector extends Component<WorkLogSelectorProps, WorkLogSele
 
   private renderChip = (label: string, idx: number) => {
     const {selected = []} = this.props;
-    const isSelected = selected.includes(label);
-    const workload = this.workloadForLabel(label);
     return (
         <SelectorChip key={idx}
                       label={label}
-                      workload={workload}
-                      selected={isSelected}
+                      workload={this.workloadForLabel(label)}
+                      selected={selected.includes(label)}
                       onClick={() => this.onClick(label)}/>
     );
   };

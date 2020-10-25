@@ -18,7 +18,7 @@ export const UserDetails = ({username, profilePicture, avatarOnly, onLogout}: Pr
 
   const open = Boolean(anchorEl);
   return (
-      <div className='user-details'>
+      <div className='user-details' data-testid='user-details'>
         <div onClick={handleMenu} className='user-details__user user'>
           <Avatar alt={username}
                   src={profilePicture}/>

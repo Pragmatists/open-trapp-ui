@@ -16,19 +16,19 @@ export const DaySelector = ({selectedDay, onChange}: DaySelectorProps) => {
   const todayText = today ? ' (today)' : '';
   return (
       <div className='day-selector'>
-        <div className='day-selector__name' data-day-name>{day.format('dddd') + todayText}</div>
+        <div className='day-selector__name'>{day.format('dddd') + todayText}</div>
         <div className='day-selector__selector selector'>
           <Fab aria-label='Previous'
-               data-selector-previous
-               onClick={() => onChange(day.subtract(1, 'days').format('YYYY/MM/DD'))}>
+               onClick={() => onChange(day.subtract(1, 'days').format('YYYY/MM/DD'))}
+               data-testid='day-selector-previous'>
             <ArrowBack />
           </Fab>
-          <div className='selector__date' data-selector-date>
+          <div className='selector__date'>
             {day.format('DD.MM.YYYY')}
           </div>
           <Fab aria-label='Next'
-               data-selector-next
-               onClick={() => onChange(day.add(1, 'days').format('YYYY/MM/DD'))}>
+               onClick={() => onChange(day.add(1, 'days').format('YYYY/MM/DD'))}
+               data-testid='day-selector-next'>
             <ArrowForward />
           </Fab>
         </div>
