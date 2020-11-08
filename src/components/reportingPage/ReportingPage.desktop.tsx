@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { Grid } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
-import { monthChangedAction } from '../../actions/calendar.actions';
+import { loadMonthAction, monthChangedAction } from '../../actions/calendar.actions';
 import { bulkEditAction, loadTagsAction, removeWorkLogAction, updateWorkLogAction } from '../../actions/workLog.actions';
 import './ReportingPage.desktop.scss';
 import { EditedWorkLog, ReportingWorkLog } from './reporting.model';
@@ -92,9 +92,9 @@ export const ReportingPageDesktop = () => {
   const selectedMonth = useSelector(selectedMonthSelector);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(monthChangedAction(selectedMonth.year, selectedMonth.month));
+    dispatch(loadMonthAction());
     dispatch(loadTagsAction());
-  }, []);
+  }, [dispatch]);
 
   const selection = {
     tags: selectedTags ? selectedTags : userTags,

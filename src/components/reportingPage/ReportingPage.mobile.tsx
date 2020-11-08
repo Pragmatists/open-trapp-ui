@@ -5,7 +5,7 @@ import { OpenTrappState } from '../../redux/root.reducer';
 import { DayCard } from './dayCard/DayCard';
 import { List } from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
-import { monthChangedAction } from '../../actions/calendar.actions';
+import { loadMonthAction, monthChangedAction } from '../../actions/calendar.actions';
 import { MonthSelector } from './monthSelector/MonthSelector';
 import { Month } from '../../utils/Month';
 import { History, Location } from 'history';
@@ -26,8 +26,8 @@ const ReportingPageMobileComponent = ({history}: Props) => {
   );
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(monthChangedAction(selectedMonth.year, selectedMonth.month))
-  }, []);
+    dispatch(loadMonthAction());
+  }, [dispatch]);
 
   const groupedWorkLogs = groupBy(workLogs, w => w.day);
   const workLogsByDay = days

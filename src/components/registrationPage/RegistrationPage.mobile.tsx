@@ -22,7 +22,6 @@ import { Chip } from '@material-ui/core';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import './RegistrationPage.mobile.scss';
-import { selectedMonthSelector } from '../../selectors/selectors';
 
 const forSelectedDay = (state: OpenTrappState) => workLog => workLog.day === state.registration.workLog.days[0];
 
@@ -31,7 +30,6 @@ const forCurrentUser = (state: OpenTrappState) => workLog => workLog.employee ==
 export const RegistrationPageMobile = () => {
   const [selectedPreset, setSelectedPreset] = useState(undefined as Preset);
   const [customWorkLogDialogOpen, setCustomWorkLogDialogOpen] = useState(false);
-  const selectedMonth = useSelector(selectedMonthSelector);
   const presets = useSelector((state: OpenTrappState) => state.registration.presets);
   const tags = useSelector((state: OpenTrappState) => state.workLog.tags);
   const workLogs = useSelector((state: OpenTrappState) => state.workLog.workLogs.filter(forSelectedDay(state)).filter(forCurrentUser(state)));
@@ -41,10 +39,10 @@ export const RegistrationPageMobile = () => {
   })
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(loadWorkLogsAction(selectedMonth.year, selectedMonth.month));
+    dispatch(loadWorkLogsAction());
     dispatch(loadTagsAction(6));
     dispatch(loadPresetsAction());
-  }, []);
+  }, [dispatch]);
 
   const selectedDay =  workLog.days[0];
 

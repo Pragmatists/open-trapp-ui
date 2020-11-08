@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { Grid } from '@material-ui/core';
@@ -20,11 +20,10 @@ export const AdminPage = () => {
   const users = useSelector((state: OpenTrappState) => state.admin?.authorizedUsers);
   const username = useSelector((state: OpenTrappState) => state.authentication?.user?.name);
   const dispatch = useDispatch();
-  const stableDispatch = useCallback(dispatch, []);
   useEffect(() => {
-    stableDispatch(loadServiceAccountsAction());
-    stableDispatch(loadAuthorizedUsersAction());
-  }, [stableDispatch]);
+    dispatch(loadServiceAccountsAction());
+    dispatch(loadAuthorizedUsersAction());
+  }, [dispatch]);
   const onOpenServiceAccountDialog = () => setServiceAccountDialogOpen(true);
 
   const onCloseServiceAccountDialog = (name?: string) => {
@@ -41,7 +40,7 @@ export const AdminPage = () => {
           <Grid item lg={10} md={11} xs={11}>
             <div className='admin-page__header'>
               <div>Service accounts</div>
-              <CreateButton onClick={onOpenServiceAccountDialog} data-create-service-account-button/>
+              <Button variant='contained' color='primary' size='small' onClick={onOpenServiceAccountDialog}>Create</Button>
             </div>
             <Paper className='admin-page__content'>
               {
@@ -66,8 +65,4 @@ export const AdminPage = () => {
 
 const LoadingPlaceholder = ({children}) => (
     <div className='admin-page__placeholder'>{children}</div>
-);
-
-const CreateButton = ({onClick}: { onClick: VoidFunction }) => (
-    <Button variant='contained' color='primary' size='small' onClick={onClick}>Create</Button>
 );

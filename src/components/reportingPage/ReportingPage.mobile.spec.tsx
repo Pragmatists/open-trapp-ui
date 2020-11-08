@@ -129,8 +129,7 @@ describe('Reporting page - mobile', () => {
           </MemoryRouter>
         </Provider>
     );
-    await waitFor(() => {
-    });
+    await waitFor(() => {});
 
     expect(queryAllByTestId('day-card')).toHaveLength(2);
     expect(queryAllByTestId('day-card-day')[0]).toHaveTextContent('2019/02/04');

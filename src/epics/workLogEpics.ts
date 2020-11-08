@@ -19,7 +19,7 @@ import { BulkEditDTO } from '../api/dtos';
 
 export const loadWorkLogsEpic = (action$: ActionsObservable<Action>, state$: StateObservable<OpenTrappState>, {openTrappApi}: { openTrappApi: OpenTrappAPI }) =>
     action$.pipe(
-        ofType(CALENDAR_CONSTANTS.MONTH_CHANGED, WORK_LOG_CONSTANTS.LOAD_WORK_LOGS, REGISTRATION_CONSTANTS.WORK_LOG_SAVED, WORK_LOG_CONSTANTS.BULK_EDIT_DONE),
+        ofType(CALENDAR_CONSTANTS.MONTH_CHANGED, WORK_LOG_CONSTANTS.LOAD_WORK_LOGS, CALENDAR_CONSTANTS.LOAD_MONTH, REGISTRATION_CONSTANTS.WORK_LOG_SAVED, WORK_LOG_CONSTANTS.BULK_EDIT_DONE),
         map((a: any) => a.payload as { year: number, month: number }),
         withLatestFrom(state$.pipe(map(s => s.calendar.selectedMonth))),
         map(([actionMonth, stateMonth]) => isNil(actionMonth) ? stateMonth : actionMonth),

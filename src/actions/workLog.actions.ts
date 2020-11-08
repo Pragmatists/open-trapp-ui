@@ -2,9 +2,8 @@ import { REGISTRATION_CONSTANTS, WORK_LOG_CONSTANTS } from './constants';
 import { BulkEditDTO, ReportingWorkLogDTO } from '../api/dtos';
 import { ParsedWorkLog } from '../workLogExpressionParser/ParsedWorkLog';
 
-export const loadWorkLogsAction = (year: number, month: number) => ({
-  type: WORK_LOG_CONSTANTS.LOAD_WORK_LOGS,
-  payload: {year, month}
+export const loadWorkLogsAction = () => ({
+  type: WORK_LOG_CONSTANTS.LOAD_WORK_LOGS
 });
 
 export const workLogLoadedAction = entries => ({

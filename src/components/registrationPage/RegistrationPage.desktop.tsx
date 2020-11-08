@@ -5,7 +5,7 @@ import Divider from "@material-ui/core/Divider";
 import { WorkLogInput } from "./workLogInput/WorkLogInput";
 import { useDispatch, useSelector } from 'react-redux';
 import { OpenTrappState } from '../../redux/root.reducer';
-import { monthChangedAction } from '../../actions/calendar.actions';
+import { loadMonthAction, monthChangedAction } from '../../actions/calendar.actions';
 import { AuthorizedUser } from '../../api/dtos';
 import { loadTagsAction, saveWorkLogAction, workLogChangedAction } from '../../actions/workLog.actions';
 import { isEmpty } from 'lodash';
@@ -43,10 +43,10 @@ export const RegistrationPageDesktop = () => {
   });
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(monthChangedAction(selectedMonth.year, selectedMonth.month));
+    dispatch(loadMonthAction());
     dispatch(loadTagsAction());
     dispatch(loadPresetsAction());
-  }, []);
+  }, [dispatch]);
   const onMonthChange = (month: Month) => dispatch(monthChangedAction(month.year, month.month));
   const onDaysSelected = (days: string[]) => dispatch(workLogChangedAction(workLog.withDays(days)));
   const onWorkLogInputChange = (workLog: ParsedWorkLog) => dispatch(workLogChangedAction(workLog));
