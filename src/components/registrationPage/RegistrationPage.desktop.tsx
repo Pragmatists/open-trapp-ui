@@ -55,14 +55,14 @@ export const RegistrationPageDesktop = () => {
   return (
       <div className='registration-page'>
         <Grid container justify='center' spacing={3}>
-          <Grid item lg={10} md={11} xs={11}>
+          <Grid item lg={10} xs={11}>
             <div className='registration-page__header'>
               <span>Report your time</span> using our expression language, to make it quick!
               <RulesDialog/>
             </div>
             <Divider variant='fullWidth'/>
           </Grid>
-          <Grid item lg={10} md={11} xs={11}>
+          <Grid item lg={10} xs={11}>
             <WorkLogInput onChange={onWorkLogInputChange}
                           onSave={onSaveWorkLog}
                           workLog={workLog}
@@ -70,7 +70,7 @@ export const RegistrationPageDesktop = () => {
                           presets={presets}
                           autoAddedTagsMapping={AUTO_ADDED_TAGS_MAPPING}/>
           </Grid>
-          <Grid item lg={10} md={11} xs={11}>
+          <Grid item lg={10} xs={11}>
             {days && !isEmpty(workLogs) ?
                 <RegistrationPageMonth selectedMonth={new Month(selectedMonth.year, selectedMonth.month)}
                                        selectedDays={workLog.days}

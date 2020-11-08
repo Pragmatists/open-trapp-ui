@@ -30,7 +30,7 @@ interface ReportProps {
   tags: string[];
   username: string;
   workLogs: ReportingWorkLog[];
-  selection: {employees: string[], tags: string[]},
+  selection: { employees: string[], tags: string[] },
   onRemoveWorkLog: (id: string) => void;
   onEditWorkLog: (w: EditedWorkLog) => void;
 }
@@ -41,6 +41,7 @@ const Report = ({days, tags, username, onRemoveWorkLog, onEditWorkLog, workLogs,
     TABLE,
     PROJECTS
   }
+
   const [reportType, setReportType] = useState(ReportType.CALENDAR);
 
   const workLogsForSelectedUsersAndTags: { [username: string]: WorkLog[]; } = chain(workLogs)
@@ -56,28 +57,27 @@ const Report = ({days, tags, username, onRemoveWorkLog, onEditWorkLog, workLogs,
       .filter(tagsFilter(selection.tags));
 
   return (
-      <Grid item container lg={10} xs={11}>
-        <Paper className='reporting-page__report report'>
-          <Tabs value={reportType}
-                onChange={() => {}}
-                variant='fullWidth'
-                indicatorColor='primary'
-                textColor='primary'
-                className='report__tabs'>
-            <Tab icon={<CalendarIcon/>} onClick={() => setReportType(ReportType.CALENDAR)} data-testid='calendar-tab'/>
-            <Tab icon={<ListIcon/>} onClick={() => setReportType(ReportType.TABLE)} data-testid='table-tab'/>
-            <Tab icon={<ChartIcon/>} onClick={() => setReportType(ReportType.PROJECTS)} data-testid='projects-tab'/>
-          </Tabs>
-          {reportType === ReportType.CALENDAR && <MonthlyReport days={days} workLogs={workLogsForSelectedUsersAndTags}/>}
-          {reportType === ReportType.TABLE && <TableReport workLogs={filteredWorkLogs}
-                                                           tags={tags}
-                                                           onRemoveWorkLog={onRemoveWorkLog}
-                                                           onEditWorkLog={onEditWorkLog}
-                                                           username={username}/>
-          }
-          {reportType === ReportType.PROJECTS && <ProjectsReport workLogs={filteredWorkLogs}/>}
-        </Paper>
-      </Grid>
+      <Paper className='reporting-page__report report'>
+        <Tabs value={reportType}
+              onChange={() => {
+              }}
+              variant='fullWidth'
+              indicatorColor='primary'
+              textColor='primary'
+              className='report__tabs'>
+          <Tab icon={<CalendarIcon/>} onClick={() => setReportType(ReportType.CALENDAR)} data-testid='calendar-tab'/>
+          <Tab icon={<ListIcon/>} onClick={() => setReportType(ReportType.TABLE)} data-testid='table-tab'/>
+          <Tab icon={<ChartIcon/>} onClick={() => setReportType(ReportType.PROJECTS)} data-testid='projects-tab'/>
+        </Tabs>
+        {reportType === ReportType.CALENDAR && <MonthlyReport days={days} workLogs={workLogsForSelectedUsersAndTags}/>}
+        {reportType === ReportType.TABLE && <TableReport workLogs={filteredWorkLogs}
+                                                         tags={tags}
+                                                         onRemoveWorkLog={onRemoveWorkLog}
+                                                         onEditWorkLog={onEditWorkLog}
+                                                         username={username}/>
+        }
+        {reportType === ReportType.PROJECTS && <ProjectsReport workLogs={filteredWorkLogs}/>}
+      </Paper>
   );
 }
 
@@ -119,13 +119,15 @@ export const ReportingPageDesktop = () => {
                             selection={selection}
                             employeesFilter={employeesFilter(selection.employees)}
                             tagsFilter={tagsFilter(selection.tags)}/>
-          <Report days={days}
-                  tags={tags}
-                  username={username}
-                  selection={selection}
-                  workLogs={workLogs}
-                  onRemoveWorkLog={id => dispatch(removeWorkLogAction(id))}
-                  onEditWorkLog={w => dispatch(updateWorkLogAction(w.id, w.projectNames, w.workload))} />
+          <Grid item lg={10} xs={11}>
+            <Report days={days}
+                    tags={tags}
+                    username={username}
+                    selection={selection}
+                    workLogs={workLogs}
+                    onRemoveWorkLog={id => dispatch(removeWorkLogAction(id))}
+                    onEditWorkLog={w => dispatch(updateWorkLogAction(w.id, w.projectNames, w.workload))}/>
+          </Grid>
         </Grid>
       </div>
   );
