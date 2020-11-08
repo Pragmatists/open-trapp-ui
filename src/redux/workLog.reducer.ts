@@ -1,5 +1,5 @@
 import { ReportingWorkLogDTO } from '../api/dtos';
-import { WORK_LOG_CONSTANTS } from './constants';
+import { WORK_LOG_CONSTANTS } from '../actions/constants';
 
 export interface WorkLogState {
   workLogs: ReportingWorkLogDTO[];

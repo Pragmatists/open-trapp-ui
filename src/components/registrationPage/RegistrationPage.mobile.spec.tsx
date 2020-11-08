@@ -157,8 +157,9 @@ describe('Registration Page - mobile', () => {
 
     fireEvent.click(presets(container)[0]);
     fireEvent.click(container.getByText('Save'));
+    await waitFor(() => {});
 
-    await waitFor(() => expect(httpMock.history.post.length).toEqual(1));
+    expect(httpMock.history.post.length).toEqual(1);
     expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
       projectNames: ['vacation'],
       workload: '1d',
@@ -178,8 +179,9 @@ describe('Registration Page - mobile', () => {
     fireEvent.click(container.getByText('nvm'));
     fireEvent.click(container.getByText('Next'));
     fireEvent.click(container.getByText('Save'));
+    await waitFor(() => {});
 
-    await waitFor(() => expect(httpMock.history.post.length).toEqual(1));
+    expect(httpMock.history.post.length).toEqual(1);
     expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
       projectNames: ['nvm'],
       workload: '1d',

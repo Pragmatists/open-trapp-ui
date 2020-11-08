@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { CALENDAR_CONSTANTS } from './constants';
+import { CALENDAR_CONSTANTS } from '../actions/constants';
 import { DayDTO } from '../api/dtos';
 
 export interface CalendarState {

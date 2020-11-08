@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { uniq, xor } from 'lodash';
 import { ReportingWorkLog } from '../../reporting.model';
 import Button from '@material-ui/core/Button';
@@ -19,86 +19,55 @@ interface WorkLogSelectorProps {
   hideIneligible?: boolean;
 }
 
-interface WorkLogSelectorState {
-  hideIneligible: boolean;
-}
+export const WorkLogSelector = ({hideIneligible, selected = [], workLogs, chipLabel, workLogFilter = () => true, onSelectionChange, title}: WorkLogSelectorProps) => {
+  const [ineligibleHidden, setIneligibleHidden] = useState(hideIneligible);
 
-export class WorkLogSelector extends Component<WorkLogSelectorProps, WorkLogSelectorState> {
-
-  constructor(props: WorkLogSelectorProps, context: any) {
-    super(props, context);
-    this.state = {
-      hideIneligible: props.hideIneligible
-    }
-  }
-
-  render() {
-    const {title, onSelectionChange} = this.props;
-    const {hideIneligible} = this.state;
-    const labels = this.labels;
-    return (
-        <div className='work-log-selector'>
-          <div className='work-log-selector__header'>{title}</div>
-          <div className='work-log-selector__chips'>
-            {
-              labels.map(this.renderChip)
-            }
-          </div>
-          <div className='work-log-selector__footer'>
-            <Button size='small' onClick={this.onIneligibleButtonClick}>
-              {hideIneligible ? <VisibilityIcon/> : <VisibilityOffIcon/>}
-              {hideIneligible ? 'Show ineligible' : 'Hide ineligible'}
-            </Button>
-            <Button size='small' onClick={() => onSelectionChange([])}>
-              <ClearIcon/>
-              None
-            </Button>
-            <Button size='small' onClick={() => onSelectionChange(labels)}>
-              <AddIcon/>
-              All
-            </Button>
-          </div>
-        </div>
-    );
-  }
-
-  private renderChip = (label: string, idx: number) => {
-    const {selected = []} = this.props;
-    return (
-        <SelectorChip key={idx}
-                      label={label}
-                      workload={this.workloadForLabel(label)}
-                      selected={selected.includes(label)}
-                      onClick={() => this.onClick(label)}/>
-    );
-  };
-
-  private workloadForLabel(label: string): number {
-    const {workLogs, chipLabel, workLogFilter = () => true} = this.props;
-    return workLogs
+  const renderChip = (label: string, idx: number) => {
+    const workload = workLogs
         .filter(w => chipLabel(w) === label || chipLabel(w).includes(label))
         .filter(workLogFilter)
         .map(w => w.workload)
-        .reduce((previousValue, currentValue) => previousValue + currentValue, 0);
-  }
+        .reduce((prev, curr) => prev + curr, 0);
+    return (
+        <SelectorChip key={idx}
+                      label={label}
+                      workload={workload}
+                      selected={selected.includes(label)}
+                      onClick={() => onSelectionChange(xor(selected, [label]))}/>
+    );
+  };
 
-  private onClick(label: string) {
-    const {selected = [], onSelectionChange} = this.props;
-    return onSelectionChange(xor(selected, [label]));
-  }
+  const labels = uniq(
+      workLogs
+          .filter(w => !ineligibleHidden || workLogFilter(w))
+          .map(chipLabel)
+          .map(v => Array.isArray(v) ? v : [v])
+          .reduce(((prev, curr) => [...prev, ...curr]), [])
+  ).sort();
 
-  private get labels(): string[] {
-    const {workLogs, chipLabel, workLogFilter = () => true} = this.props;
-    const {hideIneligible} = this.state;
-    const labels = workLogs
-        .filter(w => !hideIneligible || workLogFilter(w))
-        .map(chipLabel)
-        .map(v => Array.isArray(v) ? v : [v])
-        .reduce(((prev, curr) => [...prev, ...curr]), []);
-    return uniq(labels).sort();
-  }
-
-  private onIneligibleButtonClick = () => this.setState({
-    hideIneligible: !this.state.hideIneligible
-  });
+  const onIneligibleButtonClick = () => setIneligibleHidden(!ineligibleHidden);
+  return (
+      <div className='work-log-selector'>
+        <div className='work-log-selector__header'>{title}</div>
+        <div className='work-log-selector__chips'>
+          {
+            labels.map(renderChip)
+          }
+        </div>
+        <div className='work-log-selector__footer'>
+          <Button size='small' onClick={onIneligibleButtonClick}>
+            {hideIneligible ? <VisibilityIcon/> : <VisibilityOffIcon/>}
+            {hideIneligible ? 'Show ineligible' : 'Hide ineligible'}
+          </Button>
+          <Button size='small' onClick={() => onSelectionChange([])}>
+            <ClearIcon/>
+            None
+          </Button>
+          <Button size='small' onClick={() => onSelectionChange(labels)}>
+            <AddIcon/>
+            All
+          </Button>
+        </div>
+      </div>
+  );
 }

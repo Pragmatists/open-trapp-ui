@@ -1,4 +1,4 @@
-import {REGISTRATION_CONSTANTS} from './constants';
+import {REGISTRATION_CONSTANTS} from '../actions/constants';
 import {Preset} from '../components/registrationPage/registration.model';
 import moment from 'moment';
 

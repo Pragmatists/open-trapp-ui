@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { NOTIFICATIONS_CONSTANTS } from './constants';
+import { NOTIFICATIONS_CONSTANTS } from '../actions/constants';
 
 enum NotificationType {
   INFO = 'INFO',

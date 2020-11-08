@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import Dialog from '@material-ui/core/Dialog';
@@ -12,58 +12,31 @@ interface WorkloadDialogProps {
   onClose: (workload?: string) => void;
 }
 
-interface WorkloadDialogState {
-  hours: number;
-  minutes: number;
-}
+export const WorkloadDialog = ({open, onClose}: WorkloadDialogProps) => {
+  const [hours, setHours] = useState(8);
+  const [minutes, setMinutes] = useState(0);
 
-export class WorkloadDialog extends Component<WorkloadDialogProps, WorkloadDialogState> {
-  state = {
-    hours: 8,
-    minutes: 0
-  };
+  const workload = formatWorkload(hours * 60 + minutes);
 
-  render() {
-    const {open, onClose} = this.props;
-    const {hours, minutes} = this.state;
-    return (
-        <Dialog open={open} onClose={() => onClose()} fullWidth={true} className='workload-dialog' data-workload-dialog>
-          <DialogTitle>Workload</DialogTitle>
-          <DialogContent data-workload-dialog-content>
-            <Workload minutes={minutes}
-                      hours={hours}
-                      onHoursChange={this.handleHoursChange}
-                      onMinutesChange={this.handleMinutesChange}/>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => onClose()} data-cancel-button>
-              Cancel
-            </Button>
-            <Button onClick={this.onSaveClick} autoFocus color='primary' data-save-button>
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
-    );
-  }
-
-  private onSaveClick = () => {
-    const {hours, minutes} = this.state;
+  const onSaveClick = () => {
     if (hours > 0 || minutes > 0) {
-      this.props.onClose(this.workload);
+      onClose(workload);
     }
   };
 
-  private handleHoursChange = (value: number) => this.setState({
-    hours: value
-  });
-
-  private handleMinutesChange = (value: number) => this.setState({
-    minutes: value
-  });
-
-  private get workload(): string {
-    const {hours, minutes} = this.state;
-    return formatWorkload(hours * 60 + minutes);
-  }
+  return (
+        <Dialog open={open} onClose={() => onClose()} fullWidth={true} className='workload-dialog' data-workload-dialog>
+          <DialogTitle>Workload</DialogTitle>
+          <DialogContent>
+            <Workload minutes={minutes}
+                      hours={hours}
+                      onHoursChange={v => setHours(v)}
+                      onMinutesChange={v => setMinutes(v)}/>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => onClose()}>Cancel</Button>
+            <Button onClick={onSaveClick} autoFocus color='primary'>Save</Button>
+          </DialogActions>
+        </Dialog>
+    );
 }

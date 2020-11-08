@@ -4,13 +4,13 @@ import { Provider, useDispatch } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { LeftMenu } from './LeftMenu';
 import { setupStore } from '../../utils/testUtils';
-import { toggleMenuVisibility } from '../../redux/leftMenu.actions';
+import { toggleMenuVisibilityAction } from '../../actions/leftMenu.actions';
 import { render, fireEvent, RenderResult } from '@testing-library/react'
 
 const OpenMenuComponent = () => {
   const dispatch = useDispatch();
   return (
-      <button data-testid='open-menu-button' onClick={() => dispatch(toggleMenuVisibility())}/>
+      <button data-testid='open-menu-button' onClick={() => dispatch(toggleMenuVisibilityAction())}/>
   );
 };
 

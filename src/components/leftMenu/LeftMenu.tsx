@@ -13,7 +13,7 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import ListIcon from '@material-ui/icons/List';
 import BuildIcon from '@material-ui/icons/Build';
 import { OpenTrappState } from '../../redux/root.reducer';
-import { toggleMenuVisibility } from '../../redux/leftMenu.actions';
+import { toggleMenuVisibilityAction } from '../../actions/leftMenu.actions';
 import './LeftMenu.scss';
 import { LeftMenuEntry } from './LeftMenuEntry';
 
@@ -32,7 +32,7 @@ export const LeftMenuComponent = ({location, history, mobileVersion}: Props) => 
   const dispatch = useDispatch();
 
   const onHideMenu = () => {
-    dispatch(toggleMenuVisibility());
+    dispatch(toggleMenuVisibilityAction());
   };
 
   const showAdminPage = () => {

@@ -1,15 +1,13 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { Grid } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
-import { changeMonth, loadMonth } from '../../redux/calendar.actions';
-import { loadTags, loadWorkLogs, removeWorkLog, updateWorkLog } from '../../redux/workLog.actions';
+import { monthChangedAction } from '../../actions/calendar.actions';
+import { bulkEditAction, loadTagsAction, removeWorkLogAction, updateWorkLogAction } from '../../actions/workLog.actions';
 import './ReportingPage.desktop.scss';
-import { changeEmployees, changeReportType, changeTags } from '../../redux/reporting.actions';
 import { EditedWorkLog, ReportingWorkLog } from './reporting.model';
-import { chain, includes, intersection, isEmpty, uniq } from 'lodash';
-import { AuthorizedUser, DayDTO, ReportingWorkLogDTO } from '../../api/dtos';
+import { chain, includes, intersection, isEmpty } from 'lodash';
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -17,185 +15,118 @@ import CalendarIcon from '@material-ui/icons/CalendarToday';
 import ListIcon from '@material-ui/icons/ViewList';
 import ChartIcon from '@material-ui/icons/BarChart';
 import { MonthlyReport } from '../monthlyReport/MonthlyReport';
-import { WorkLog } from '../monthlyReport/MonthlyReport.model';
-import { ReportType } from '../../redux/reporting.reducer';
+import { MonthlyReportDay, WorkLog } from '../monthlyReport/MonthlyReport.model';
 import { TableReport } from './tableReport/TableReport';
 import { BulkEditDialog } from './bulkEditDialog/BulkEditDialog';
 import { ProjectsReport } from './projectsReport/ProjectsReport';
 import { ReportingFilters } from './reportingFilters/ReportingFilters';
+import { selectedMonthSelector, usernameSelector, userTagsSelector } from '../../selectors/selectors';
 
-interface Selection {
-  month: { year: number, month: number };
+const employeesFilter = (selectedEmployees: string[]) => (w: ReportingWorkLog) => includes(selectedEmployees, w.employee);
+const tagsFilter = (selectedTags: string[]) => (w: ReportingWorkLog) => !isEmpty(intersection(selectedTags, w.projectNames));
+
+interface ReportProps {
+  days: MonthlyReportDay[];
   tags: string[];
-  employees: string[];
-}
-
-interface ReportingPageDataProps {
-  workLogs: ReportingWorkLog[];
-  tags: string[]
-  selection: Selection;
-  days: DayDTO[];
-  reportType: ReportType;
   username: string;
-}
-
-interface ReportingPageEventProps {
-  onMonthChange: (year: number, month: number) => void;
-  init: (year: number, month: number) => void;
-  onTagsChange: (values: string[]) => void;
-  onEmployeesChange: (values: string[]) => void;
-  onReportTypeChange: (type: ReportType) => void;
+  workLogs: ReportingWorkLog[];
+  selection: {employees: string[], tags: string[]},
   onRemoveWorkLog: (id: string) => void;
-  onEditWorkLog: (workLog: EditedWorkLog) => void;
+  onEditWorkLog: (w: EditedWorkLog) => void;
 }
 
-type ReportingPageProps = ReportingPageDataProps & ReportingPageEventProps;
+const Report = ({days, tags, username, onRemoveWorkLog, onEditWorkLog, workLogs, selection}: ReportProps) => {
+  enum ReportType {
+    CALENDAR,
+    TABLE,
+    PROJECTS
+  }
+  const [reportType, setReportType] = useState(ReportType.CALENDAR);
 
-class ReportingPageDesktopComponent extends Component<ReportingPageProps, {}> {
-  componentDidMount(): void {
-    const {init, selection} = this.props;
-    const {month, year} = selection.month;
-    init(year, month);
+  const workLogsForSelectedUsersAndTags: { [username: string]: WorkLog[]; } = chain(workLogs)
+      .filter(employeesFilter(selection.employees))
+      .groupBy(w => w.employee)
+      .mapValues(values => values
+          .filter(tagsFilter(selection.tags))
+          .map(v => ({day: v.day, workload: v.workload}))
+      )
+      .value();
+  const filteredWorkLogs = workLogs
+      .filter(employeesFilter(selection.employees))
+      .filter(tagsFilter(selection.tags));
+
+  return (
+      <Grid item container lg={10} xs={11}>
+        <Paper className='reporting-page__report report'>
+          <Tabs value={reportType}
+                onChange={() => {}}
+                variant='fullWidth'
+                indicatorColor='primary'
+                textColor='primary'
+                className='report__tabs'>
+            <Tab icon={<CalendarIcon/>} onClick={() => setReportType(ReportType.CALENDAR)} data-testid='calendar-tab'/>
+            <Tab icon={<ListIcon/>} onClick={() => setReportType(ReportType.TABLE)} data-testid='table-tab'/>
+            <Tab icon={<ChartIcon/>} onClick={() => setReportType(ReportType.PROJECTS)} data-testid='projects-tab'/>
+          </Tabs>
+          {reportType === ReportType.CALENDAR && <MonthlyReport days={days} workLogs={workLogsForSelectedUsersAndTags}/>}
+          {reportType === ReportType.TABLE && <TableReport workLogs={filteredWorkLogs}
+                                                           tags={tags}
+                                                           onRemoveWorkLog={onRemoveWorkLog}
+                                                           onEditWorkLog={onEditWorkLog}
+                                                           username={username}/>
+          }
+          {reportType === ReportType.PROJECTS && <ProjectsReport workLogs={filteredWorkLogs}/>}
+        </Paper>
+      </Grid>
+  );
+}
+
+export const ReportingPageDesktop = () => {
+  const [selectedEmployees, setSelectedEmployees] = useState(undefined as string[]);
+  const [selectedTags, setSelectedTags] = useState(undefined as string[]);
+  const days = useSelector((state: OpenTrappState) => state.calendar.days || []);
+  const tags = useSelector((state: OpenTrappState) => state.workLog.tags || []);
+  const userTags = useSelector(userTagsSelector);
+  const username = useSelector(usernameSelector);
+  const workLogs = useSelector((state: OpenTrappState) => state.workLog.workLogs || []);
+  const selectedMonth = useSelector(selectedMonthSelector);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(monthChangedAction(selectedMonth.year, selectedMonth.month));
+    dispatch(loadTagsAction());
+  }, []);
+
+  const selection = {
+    tags: selectedTags ? selectedTags : userTags,
+    employees: selectedEmployees ? selectedEmployees : [username],
+    month: selectedMonth
   }
 
-  render() {
-    const {
-      selection, username, workLogs, tags, days, reportType,
-      onMonthChange, onTagsChange, onEmployeesChange, onReportTypeChange, onRemoveWorkLog, onEditWorkLog
-    } = this.props;
-    return (
-        <div className='reporting-page'>
-          <Grid container justify='center' spacing={3}>
-            <Grid item lg={10} xs={11}>
-              <div className='reporting-page__header header'>
-                <div className='header__text'><span>Review reports</span> by month, project and employee</div>
-                <BulkEditDialog />
-              </div>
-              <Divider variant='fullWidth'/>
-            </Grid>
-            <ReportingFilters workLogs={workLogs}
-                              onTagsChange={onTagsChange}
-                              onEmployeesChange={onEmployeesChange}
-                              onMonthChange={onMonthChange}
-                              selection={selection}
-                              employeesFilter={this.employeesFilter}
-                              tagsFilter={this.tagsFilter}/>
-            <Grid item container lg={10} xs={11}>
-              <Paper className='reporting-page__report report'>
-                <Tabs value={reportType}
-                      onChange={() => {}}
-                      variant='fullWidth'
-                      indicatorColor='primary'
-                      textColor='primary'
-                      className='report__tabs'>
-                  <Tab icon={<CalendarIcon/>} onClick={() => onReportTypeChange(ReportType.CALENDAR)} data-testid='calendar-tab'/>
-                  <Tab icon={<ListIcon/>} onClick={() => onReportTypeChange(ReportType.TABLE)} data-testid='table-tab'/>
-                  <Tab icon={<ChartIcon/>} onClick={() => onReportTypeChange(ReportType.PROJECTS)} data-testid='projects-tab'/>
-                </Tabs>
-                {reportType === ReportType.CALENDAR && <MonthlyReport days={days}
-                                                                      workLogs={this.workLogsForSelectedUsersAndTags}/>
-                }
-                {reportType === ReportType.TABLE && <TableReport workLogs={this.filteredWorkLogs}
-                                                                 tags={tags}
-                                                                 onRemoveWorkLog={onRemoveWorkLog}
-                                                                 onEditWorkLog={onEditWorkLog}
-                                                                 username={username}/>
-                }
-                {reportType === ReportType.PROJECTS && <ProjectsReport workLogs={this.filteredWorkLogs} />}
-              </Paper>
-            </Grid>
+  return (
+      <div className='reporting-page'>
+        <Grid container justify='center' spacing={3}>
+          <Grid item lg={10} xs={11}>
+            <div className='reporting-page__header header'>
+              <div className='header__text'><span>Review reports</span> by month, project and employee</div>
+              <BulkEditDialog username={username} selection={selection} userTags={userTags} onEdit={dto => dispatch(bulkEditAction(dto))}/>
+            </div>
+            <Divider variant='fullWidth'/>
           </Grid>
-        </div>
-    );
-  }
-
-  private get employeesFilter() {
-    const {employees} = this.props.selection;
-    return (workLog: ReportingWorkLog) => includes(employees, workLog.employee);
-  };
-
-  private get tagsFilter() {
-    const {tags} = this.props.selection;
-    return (workLog: ReportingWorkLog) => !isEmpty(intersection(tags, workLog.projectNames));
-  };
-
-  private get workLogsForSelectedUsersAndTags(): { [username: string]: WorkLog[]; } {
-    const {workLogs} = this.props;
-    return chain(workLogs)
-        .filter(this.employeesFilter)
-        .groupBy(w => w.employee)
-        .mapValues(values => values
-            .filter(this.tagsFilter)
-            .map(v => ({day: v.day, workload: v.workload}))
-        )
-        .value();
-  }
-
-  private get filteredWorkLogs(): ReportingWorkLog[] {
-    const {workLogs} = this.props;
-    return workLogs
-        .filter(this.employeesFilter)
-        .filter(this.tagsFilter);
-  }
+          <ReportingFilters workLogs={workLogs.map(w => new ReportingWorkLog(w))}
+                            onTagsChange={v => setSelectedTags(v)}
+                            onEmployeesChange={v => setSelectedEmployees(v)}
+                            onMonthChange={(year, month) => dispatch(monthChangedAction(year, month))}
+                            selection={selection}
+                            employeesFilter={employeesFilter(selection.employees)}
+                            tagsFilter={tagsFilter(selection.tags)}/>
+          <Report days={days}
+                  tags={tags}
+                  username={username}
+                  selection={selection}
+                  workLogs={workLogs}
+                  onRemoveWorkLog={id => dispatch(removeWorkLogAction(id))}
+                  onEditWorkLog={w => dispatch(updateWorkLogAction(w.id, w.projectNames, w.workload))} />
+        </Grid>
+      </div>
+  );
 }
-
-function tagsForUser(workLogs: ReportingWorkLogDTO[], username: string): string[] {
-  const tags = workLogs
-      .filter(w => w.employee === username)
-      .map(w => w.projectNames)
-      .reduce((curr, prev) => [...curr, ...prev], []);
-  return uniq(tags);
-}
-
-function mapStateToProps(state: OpenTrappState): ReportingPageDataProps {
-  const {selectedMonth, days = []} = state.calendar;
-  const {workLogs = [], tags = []} = state.workLog;
-  const {selectedTags, selectedEmployees, reportType} = state.reporting;
-  const {user = {} as AuthorizedUser} = state.authentication;
-  return {
-    selection: {
-      month: selectedMonth,
-      tags: selectedTags ? selectedTags : tagsForUser(workLogs, user.name),
-      employees: selectedEmployees ? selectedEmployees : [user.name]
-    },
-    username: user.name,
-    workLogs: workLogs.map(w => new ReportingWorkLog(w)),
-    days,
-    tags,
-    reportType
-  };
-}
-
-function mapDispatchToProps(dispatch): ReportingPageEventProps {
-  return {
-    init(year: number, month: number) {
-      dispatch(loadMonth(year, month));
-      dispatch(loadWorkLogs(year, month));
-      dispatch(loadTags());
-    },
-    onMonthChange(year: number, month: number) {
-      dispatch(changeMonth(year, month));
-      dispatch(loadWorkLogs(year, month));
-    },
-    onTagsChange(values: string[]) {
-      dispatch(changeTags(values));
-    },
-    onEmployeesChange(values: string[]) {
-      dispatch(changeEmployees(values));
-    },
-    onReportTypeChange(type: ReportType) {
-      dispatch(changeReportType(type));
-    },
-    onRemoveWorkLog(id: string) {
-      dispatch(removeWorkLog(id));
-    },
-    onEditWorkLog(workLog: EditedWorkLog) {
-      dispatch(updateWorkLog(workLog.id, workLog.projectNames, workLog.workload));
-    }
-  };
-}
-
-export const ReportingPageDesktop = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(ReportingPageDesktopComponent);

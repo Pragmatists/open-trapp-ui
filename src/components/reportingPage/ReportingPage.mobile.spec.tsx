@@ -7,7 +7,6 @@ import { Month } from '../../utils/Month';
 import { OpenTrappRestAPI } from '../../api/OpenTrappAPI';
 import { setupStore } from '../../utils/testUtils';
 import { initialState as registrationInitialState } from '../../redux/registration.reducer';
-import { initialState as reportingInitialState } from '../../redux/reporting.reducer';
 import { ReportingPageMobile } from './ReportingPage.mobile';
 import { MemoryRouter } from 'react-router';
 
@@ -85,8 +84,7 @@ describe('Reporting page - mobile', () => {
           month: 2
         }
       },
-      registration: registrationInitialState(),
-      reporting: reportingInitialState()
+      registration: registrationInitialState()
     });
   });
 

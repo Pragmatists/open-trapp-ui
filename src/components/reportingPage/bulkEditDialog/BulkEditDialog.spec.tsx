@@ -1,12 +1,8 @@
-import { fireEvent, render, RenderResult, waitFor, within } from '@testing-library/react';
-import { Provider } from 'react-redux';
+import { fireEvent, render, RenderResult, waitFor } from '@testing-library/react';
 import * as React from 'react';
 import { BulkEditDialog } from './BulkEditDialog';
 import MockAdapter from 'axios-mock-adapter';
-import { Store } from 'redux';
-import { ignoreHtmlTags, setupStore } from '../../../utils/testUtils';
-import { initialState as registrationInitialState } from '../../../redux/registration.reducer';
-import { initialState as reportingInitialState } from '../../../redux/reporting.reducer';
+import { ignoreHtmlTags } from '../../../utils/testUtils';
 import { OpenTrappRestAPI } from '../../../api/OpenTrappAPI';
 
 const workLogResponse = [
@@ -15,44 +11,26 @@ const workLogResponse = [
 
 describe('Bulk edit dialog', () => {
   let httpMock: MockAdapter;
-  let store: Store;
+
+  const selection = () => ({
+    tags: ['projects', 'nvm', 'jld'],
+    employees: ['john.doe', 'tom.hanks'],
+    month: {
+      year: 2019,
+      month: 3
+    }
+  });
 
   beforeEach(() => {
     httpMock = new MockAdapter(OpenTrappRestAPI.axios);
     httpMock
         .onGet(/\/work-log\/bulk-update\/.*$/)
         .reply(200, {entriesAffected: 1})
-        .onPost('/work-log/bulk-update')
-        .reply(200, {entriesAffected: 1})
-        .onGet('/calendar/2019/3/work-log/entries')
-        .reply(200, workLogResponse);
-    store = setupStore({
-      authentication: {
-        loggedIn: true,
-        user: {
-          name: 'john.doe'
-        }
-      },
-      calendar: {
-        selectedMonth: {
-          year: 2019,
-          month: 3
-        }
-      },
-      registration: registrationInitialState(),
-      reporting: {
-        ...reportingInitialState(),
-        selectedTags: ['projects', 'nvm', 'jld'],
-        selectedEmployees: ['john.doe', 'tom.hanks']
-      }
-    });
   });
 
   it('by default displays and validates query for selected tags and users', async () => {
     const {getByText, getByDisplayValue} = render(
-        <Provider store={store}>
-          <BulkEditDialog />
-        </Provider>
+          <BulkEditDialog userTags={['projects', 'nvm']} selection={selection()} onEdit={() => {}} />
     );
     fireEvent.click(getByText('Bulk edit'));
     await waitFor(() => {});
@@ -63,9 +41,7 @@ describe('Bulk edit dialog', () => {
 
   it('validates query on change', async () => {
     const container = render(
-        <Provider store={store}>
-          <BulkEditDialog />
-        </Provider>
+          <BulkEditDialog userTags={['projects', 'nvm']} selection={selection()} onEdit={() => {}}/>
     );
     fireEvent.click(container.getByText('Bulk edit'));
 
@@ -76,39 +52,30 @@ describe('Bulk edit dialog', () => {
   });
 
   it('updates entries on UPDATE button click', async () => {
+    const onEdit = jest.fn();
     const container = render(
-        <Provider store={store}>
-          <BulkEditDialog />
-        </Provider>
+          <BulkEditDialog userTags={['projects', 'nvm']} selection={selection()} onEdit={onEdit} />
     );
     fireEvent.click(container.getByText('Bulk edit'));
 
     typeQuery(container, '@2019/03 #projects #nvm *john.doe');
     typeExpression(container, '-#nvm +#jld');
     fireEvent.click(container.getByText('Update'));
+    await waitFor(() => {});
 
-    await waitFor(() => expect(httpMock.history.post.length).toEqual(1));
-    expect(httpMock.history.post[0].url).toEqual('/work-log/bulk-update');
-    expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
+    expect(onEdit).toHaveBeenCalledWith({
       query: '@2019/03 #projects #nvm *john.doe',
       expression: '-#nvm +#jld'
     });
-    expect(httpMock.history.get[2].url).toEqual('/calendar/2019/3/work-log/entries');
   });
 
-  function queryInput(container: RenderResult) {
-    return container.getByTestId('bulk-edit-query').lastChild.firstChild;
-  }
-
-  function expressionInput(container: RenderResult) {
-    return container.getByTestId('bulk-edit-expression').lastChild.firstChild;
-  }
-
   function typeQuery(container: RenderResult, query: string) {
-    fireEvent.change(queryInput(container), {target: {value: query}});
+    const queryInput = container.getByTestId('bulk-edit-query').lastChild.firstChild;
+    fireEvent.change(queryInput, {target: {value: query}});
   }
 
   function typeExpression(container: RenderResult, expression: string) {
-    fireEvent.change(expressionInput(container), {target: {value: expression}});
+    const expressionInput = container.getByTestId('bulk-edit-expression').lastChild.firstChild;
+    fireEvent.change(expressionInput, {target: {value: expression}});
   }
 });

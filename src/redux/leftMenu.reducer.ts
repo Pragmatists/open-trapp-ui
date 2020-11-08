@@ -1,4 +1,4 @@
-import { LEFT_MENU_CONSTANTS } from './constants';
+import { LEFT_MENU_CONSTANTS } from '../actions/constants';
 
 export interface LeftMenuState {
   open: boolean;

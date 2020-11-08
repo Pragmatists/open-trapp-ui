@@ -21,7 +21,7 @@ interface Props {
 
 export const RegistrationPageMonth = ({days, workLogs, selectedMonth, selectedDays, onDaysSelected, onChange}: Props) => (
     <div className='registration-page-month'>
-      <div className='registration-page-month__header' data-selected-month-header>
+      <div className='registration-page-month__header'>
         <span>{selectedMonth.toString()}</span> month worklog
       </div>
       <Divider variant='fullWidth'/>
@@ -40,15 +40,13 @@ export const RegistrationPageMonth = ({days, workLogs, selectedMonth, selectedDa
       <div className='registration-page-month__navigate-section'>
         <Button variant='contained'
                 color='primary'
-                onClick={() => onChange(selectedMonth.previous)}
-                data-prev-month-button>
+                onClick={() => onChange(selectedMonth.previous)}>
           <NavigateBeforeIcon/>
           Previous
         </Button>
         <Button variant='contained'
                 color='primary'
-                onClick={() => onChange(selectedMonth.next)}
-                data-next-month-button>
+                onClick={() => onChange(selectedMonth.next)}>
           Next
           <NavigateNextIcon/>
         </Button>

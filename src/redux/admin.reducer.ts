@@ -1,5 +1,5 @@
 import { AuthorizedUserDTO, ServiceAccountDTO } from '../api/dtos';
-import { ADMIN_CONSTANTS } from './constants';
+import { ADMIN_CONSTANTS } from '../actions/constants';
 
 export interface AdminState {
   serviceAccounts?: ServiceAccountDTO[];

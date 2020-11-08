@@ -17,7 +17,7 @@ export const MonthSelector = ({selectedMonth, onChange}: Props) => (
            onClick={() => onChange(selectedMonth.minus(1))}>
         <ArrowBack/>
       </Fab>
-      <div className='reporting-month-selector__date' data-month-selector-month>
+      <div className='reporting-month-selector__date'>
         {selectedMonth.toString()}
       </div>
       <Fab aria-label='Next'

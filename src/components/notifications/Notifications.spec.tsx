@@ -5,7 +5,6 @@ import { Notifications } from './Notifications';
 import { Store } from 'redux';
 import { setupStore } from '../../utils/testUtils';
 import { initialState as registrationInitialState } from '../../redux/registration.reducer';
-import { initialState as reportingInitialState } from '../../redux/reporting.reducer';
 import { initialState as notificationsInitialState } from '../../redux/notifications.reducer';
 
 describe('Notifications', () => {
@@ -26,7 +25,6 @@ describe('Notifications', () => {
         }
       },
       registration: registrationInitialState(),
-      reporting: reportingInitialState(),
       notifications: notificationsInitialState()
     });
   });

@@ -1,15 +1,20 @@
 import { rootReducer } from '../redux/root.reducer';
 import { applyMiddleware, createStore } from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import { createEpicMiddleware } from 'redux-observable';
+import { OpenTrappRestAPI } from '../api/OpenTrappAPI';
+import epic from '../epics';
 
 export function setupStore(initialState?: any) {
-  return createStore(
+  const epicsMiddleware = createEpicMiddleware({ dependencies: { openTrappApi: OpenTrappRestAPI } })
+  const store = createStore(
       rootReducer,
       {...initialState},
       applyMiddleware(
-          thunkMiddleware
+          epicsMiddleware
       )
   );
+  epicsMiddleware.run(epic);
+  return store;
 }
 
 export function ignoreHtmlTags(text: string) {

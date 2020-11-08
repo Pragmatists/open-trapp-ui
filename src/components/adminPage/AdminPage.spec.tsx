@@ -45,7 +45,7 @@ describe('Admin Page', () => {
     httpMock.reset();
   });
 
-  describe('service accounts', async () => {
+  describe('service accounts', () => {
     const rowByClientId = (container: RenderResult, clientId: string) => {
       const row = container.getByText(clientId).closest("tr");
       return within(row);

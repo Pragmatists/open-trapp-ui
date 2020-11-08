@@ -20,11 +20,7 @@ interface ReportingFiltersProps {
   tagsFilter: (workLog: ReportingWorkLog) => boolean;
 }
 
-
-export const ReportingFilters = ({
-                                   workLogs, selection, onTagsChange, onEmployeesChange,
-                                   onMonthChange, employeesFilter, tagsFilter
-                                 }: ReportingFiltersProps) => (
+export const ReportingFilters = ({workLogs, selection, onTagsChange, onEmployeesChange, onMonthChange, employeesFilter, tagsFilter}: ReportingFiltersProps) => (
     <Grid item container lg={10} xs={11} spacing={4}>
       <Grid item lg={2} sm={12}>
         <MonthSelector selectedMonth={selection.month} onMonthChange={onMonthChange}/>

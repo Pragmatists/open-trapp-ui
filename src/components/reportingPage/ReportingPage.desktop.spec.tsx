@@ -7,8 +7,8 @@ import { fireEvent, render, RenderResult, waitFor, within } from '@testing-libra
 import * as React from 'react';
 import { Provider } from 'react-redux';
 import { ReportingPageDesktop } from './ReportingPage.desktop';
-import { initialState as reportingInitialState } from '../../redux/reporting.reducer';
 import { Month } from '../../utils/Month';
+import { BulkEditDialog } from './bulkEditDialog/BulkEditDialog';
 
 const days = [
   {id: '2019/02/01', weekend: false, holiday: false},
@@ -57,7 +57,15 @@ describe('Reporting Page - desktop', () => {
         .onDelete(/\/work-log\/entries\/.*$/)
         .reply(204)
         .onPut('/work-log/entries/jd2')
-        .reply(200, updatedResponse);
+        .reply(200, updatedResponse)
+        .onGet('/projects')
+        .reply(200, [])
+        .onGet(/\/work-log\/bulk-update\/.*$/)
+        .reply(200, {entriesAffected: 1})
+        .onPost('/work-log/bulk-update')
+        .reply(200, {entriesAffected: 1})
+        .onGet('/calendar/2019/3/work-log/entries')
+        .reply(200, workLogResponse);
 
     store = setupStore({
       authentication: {
@@ -72,8 +80,7 @@ describe('Reporting Page - desktop', () => {
           month: 3
         }
       },
-      registration: registrationInitialState(),
-      reporting: reportingInitialState()
+      registration: registrationInitialState()
     });
   });
 
@@ -318,6 +325,41 @@ describe('Reporting Page - desktop', () => {
       expect(queryByTestId('table-report')).not.toBeInTheDocument();
       expect(queryByTestId('monthly-report')).not.toBeInTheDocument();
     });
+  });
+
+  describe('bulk edit', () => {
+    it('updates entries on UPDATE button click', async () => {
+      const container = render(
+          <Provider store={store}>
+            <ReportingPageDesktop />
+          </Provider>
+      );
+      await waitFor(() => {});
+
+      fireEvent.click(container.getByText('Bulk edit'));
+
+      typeQuery(container, '@2019/03 #projects #nvm *john.doe');
+      typeExpression(container, '-#nvm +#jld');
+      fireEvent.click(container.getByText('Update'));
+      await waitFor(() => {});
+
+      expect(httpMock.history.post.length).toEqual(1);
+      expect(httpMock.history.post[0].url).toEqual('/work-log/bulk-update');
+      expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
+        query: '@2019/03 #projects #nvm *john.doe',
+        expression: '-#nvm +#jld'
+      });
+    });
+
+    function typeQuery(container: RenderResult, query: string) {
+      const queryInput = container.getByTestId('bulk-edit-query').lastChild.firstChild;
+      fireEvent.change(queryInput, {target: {value: query}});
+    }
+
+    function typeExpression(container: RenderResult, expression: string) {
+      const expressionInput = container.getByTestId('bulk-edit-expression').lastChild.firstChild;
+      fireEvent.change(expressionInput, {target: {value: expression}});
+    }
   });
 
   function chips(container: RenderResult, selector: string) {

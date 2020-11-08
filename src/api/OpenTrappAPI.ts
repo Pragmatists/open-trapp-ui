@@ -1,5 +1,7 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import moment from 'moment';
+import { from, Observable } from 'rxjs';
+import { map, mapTo } from 'rxjs/operators';
 import {
   AffectedEntriesDTO,
   AuthorizedUser,
@@ -12,7 +14,7 @@ import {
 } from './dtos';
 import { LocalStorage } from '../utils/LocalStorage';
 
-class OpenTrappAPI {
+export class OpenTrappAPI {
   private static readonly API_ROOT_URL = `${process.env.REACT_APP_API_URL}/api/v1`;
   private readonly axiosInstance: AxiosInstance;
 
@@ -31,47 +33,35 @@ class OpenTrappAPI {
     )
   }
 
-  obtainJWTToken(idToken: string) {
-    return this.axios.get<AuthorizedUser>(
-        `/authentication/user-token`,
-        {headers: {'id-token': idToken}}
-    ).then(axiosResp => axiosResp.data);
+  obtainJWTToken(idToken: string): Promise<AuthorizedUser> {
+    return this.axios.get<AuthorizedUser>(`/authentication/user-token`, {headers: {'id-token': idToken}})
+        .then(r => r.data);
   }
 
-  calendarMonth(year: number, month: number): Promise<MonthDTO> {
-    return this.axios.get<MonthDTO>(`/calendar/${year}/${month}`)
-        .then(axiosResp => axiosResp.data);
+  calendarMonth(year: number, month: number): Observable<MonthDTO> {
+    return this.get<MonthDTO>(`/calendar/${year}/${month}`);
   }
 
-  workLogEntriesForMonth(year: number, month: number): Promise<ReportingWorkLogDTO[]> {
-    return this.axios.get<ReportingWorkLogDTO[]>(`/calendar/${year}/${month}/work-log/entries`)
-        .then(axiosResp => axiosResp.data);
+  workLogEntries(year: number, month: number): Observable<ReportingWorkLogDTO[]> {
+    return this.get<ReportingWorkLogDTO[]>(`/calendar/${year}/${month}/work-log/entries`);
   }
 
-  saveWorkLog(day: string, tags: string[], workload: string, username: string): Promise<string> {
-    return this.axios.post<{ id: string }>(
-        `/employee/${username}/work-log/entries`,
-        {
-          projectNames: tags,
-          workload,
-          day
-        }
-    ).then(axiosResp => axiosResp.data.id);
+  saveWorkLog(day: string, tags: string[], workload: string, username: string): Observable<string> {
+    return this.post<{ id: string }>(`/employee/${username}/work-log/entries`, {projectNames: tags, workload, day}).pipe(
+            map(r => r.id)
+        );
   }
 
-  updateWorkLog(id: string, tags: string[], workload: string): Promise<ReportingWorkLogDTO> {
-    return this.axios.put<ReportingWorkLogDTO>(
-        `/work-log/entries/${id}`,
-        {
-          projectNames: tags,
-          workload
-        }
-    ).then(axiosResp => axiosResp.data);
+  updateWorkLog(id: string, tags: string[], workload: string): Observable<ReportingWorkLogDTO> {
+    return from(this.axios.put<ReportingWorkLogDTO>(`/work-log/entries/${id}`, {projectNames: tags, workload})).pipe(
+        map(r => r.data)
+    );
   }
 
-  removeWorkLog(id: string): Promise<void> {
-    return this.axios.delete(`/work-log/entries/${id}`)
-        .then(() => undefined);
+  removeWorkLog(id: string): Observable<string> {
+    return this.delete(`/work-log/entries/${id}`).pipe(
+        mapTo(id)
+    );
   }
 
   validateBulkEditQuery(query: string): Promise<AffectedEntriesDTO> {
@@ -79,28 +69,24 @@ class OpenTrappAPI {
         .then(axiosResp => axiosResp.data);
   }
 
-  bulkEdit(requestBody: BulkEditDTO): Promise<AffectedEntriesDTO> {
-    return this.axios.post<AffectedEntriesDTO>('/work-log/bulk-update', requestBody)
-        .then(axiosResp => axiosResp.data);
+  bulkEdit(requestBody: BulkEditDTO): Observable<AffectedEntriesDTO> {
+    return this.post<AffectedEntriesDTO>('/work-log/bulk-update', requestBody);
   }
 
-  tags(numberOfPastMonths?: number): Promise<string[]> {
+  tags(numberOfPastMonths?: number): Observable<string[]> {
     const url = numberOfPastMonths ?
         `/projects?dateFrom=${moment().subtract(numberOfPastMonths, 'months').format('YYYY-MM-DD')}` :
         '/projects';
-    return this.axios.get<string[]>(url)
-        .then(axiosResp => axiosResp.data);
+    return this.get<string[]>(url);
   }
 
-  presets(limit?: number): Promise<string[][]> {
+  presets(limit?: number): Observable<string[][]> {
     const url = limit ? `/projects/presets?limit=${limit}` : '/projects/presets';
-    return this.axios.get<string[][]>(url)
-        .then(axiosResp => axiosResp.data);
+    return this.get<string[][]>(url);
   }
 
-  get serviceAccounts(): Promise<ServiceAccountDTO[]> {
-    return this.axios.get<ServiceAccountDTO[]>('/admin/service-accounts')
-        .then(axiosResp => axiosResp.data);
+  get serviceAccounts(): Observable<ServiceAccountDTO[]> {
+    return this.get<ServiceAccountDTO[]>('/admin/service-accounts');
   }
 
   creteServiceAccount(name: string): Promise<CreateServiceAccountResponseDTO> {
@@ -108,17 +94,34 @@ class OpenTrappAPI {
         .then(axiosResp => axiosResp.data);
   }
 
-  deleteServiceAccount(id: string): Promise<{}> {
-    return this.axios.delete(`/admin/service-accounts/${id}`);
+  deleteServiceAccount(id: string): Observable<string> {
+    return this.delete(`/admin/service-accounts/${id}`).pipe(
+        mapTo(id)
+    );
   }
 
-  get authorizedUsers(): Promise<AuthorizedUserDTO[]> {
-    return this.axios.get<AuthorizedUserDTO[]>('/admin/users')
-        .then(axiosResp => axiosResp.data);
+  get authorizedUsers(): Observable<AuthorizedUserDTO[]> {
+    return this.get<AuthorizedUserDTO[]>('/admin/users');
   }
 
   get axios() {
     return this.axiosInstance;
+  }
+
+  private post<T>(url: string, data: any, config?: AxiosRequestConfig): Observable<T> {
+    return from(this.axios.post(url, data, config)).pipe(
+        map(r => r.data)
+    );
+  }
+
+  private get<T>(url: string, config?: AxiosRequestConfig): Observable<T> {
+    return from(this.axios.get<T>(url, config)).pipe(
+        map(r => r.data)
+    );
+  }
+
+  private delete(url: string): Observable<AxiosResponse> {
+    return from(this.axios.delete(url));
   }
 
   private decorateRequestWithAuthToken = (config: AxiosRequestConfig) => {
@@ -130,23 +133,17 @@ class OpenTrappAPI {
   };
 
   private handleErrorResponse = (error: any) => {
-    if (error.status === 401) {
-      OpenTrappAPI.removeAuthorizationFromLocalStorage();
+    console.error(`HTTP request failed, status: ${error.response.status}`, error);
+    if (error.response.status === 401) {
+      LocalStorage.clearAuthorizedUser();
+      window.location.reload();
     }
     return Promise.reject(error);
   };
 
   private static get apiToken(): string {
-    const authorizedUser = OpenTrappAPI.authorizedUser;
+    const authorizedUser = LocalStorage.authorizedUser;
     return authorizedUser ? authorizedUser.token : undefined;
-  }
-
-  private static get authorizedUser(): any {
-    return LocalStorage.authorizedUser
-  }
-
-  private static removeAuthorizationFromLocalStorage() {
-    localStorage.removeItem('OpenTrappUser');
   }
 }
 

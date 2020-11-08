@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Dialog } from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -14,106 +14,85 @@ interface ServiceAccountDialogProps {
   onClose: (name?: string) => void;
 }
 
-interface ServiceAccountDialogState {
-  name: string;
-  createdAccount?: {
-    clientID: string;
-    secret: string;
-  }
+interface CreatedAccount {
+  clientID: string;
+  secret: string;
 }
 
-export class ServiceAccountDialog extends Component<ServiceAccountDialogProps, ServiceAccountDialogState> {
-  state = {
-    name: '',
-    createdAccount: undefined
-  };
+const AccountDetails = ({name, clientID, secret}: { name: string, clientID: string, secret: string }) => (
+    <DialogContent className='service-account-dialog__content content'>
+      <div>Your account <b>{name}</b> has been created.</div>
+      <div>Copy credentials from fields below.</div>
+      <TextField label='Client ID'
+                 className='content__text-field'
+                 value={clientID}
+                 margin='normal'
+                 InputProps={{readOnly: true}}
+                 type='text'
+                 fullWidth/>
+      <TextField label='Secret'
+                 className='content__text-field'
+                 value={secret}
+                 margin='normal'
+                 InputProps={{readOnly: true}}
+                 type='text'
+                 fullWidth/>
+    </DialogContent>
+);
 
-  render() {
-    const {createdAccount} = this.state;
-    return (
-        <Dialog open={this.props.open} onClose={this.onCloseDialog} className='service-account-dialog'>
-          <DialogTitle>Create service account</DialogTitle>
-          {createdAccount ? this.renderAccountDetails() : this.renderNameInput()}
-          {createdAccount ? this.renderDetailsActions() : this.renderNameActions()}
-        </Dialog>
-    );
-  }
+const DetailsActions = ({onClose}: { onClose: VoidFunction }) => (
+    <DialogActions>
+      <Button onClick={onClose}>Close</Button>
+    </DialogActions>
+);
 
-  private renderNameInput() {
-    return (
-        <DialogContent className='service-account-dialog__content content'>
-          <TextField autoFocus
-                     className='content__text-field'
-                     value={this.state.name}
-                     onChange={e => this.setState({name: e.target.value})}
-                     margin='normal'
-                     label='Account name'
-                     type='text'
-                     fullWidth/>
-        </DialogContent>
-    );
-  }
+const NameInput = ({name, onChange}: { name: string, onChange: (string) => void }) => (
+    <DialogContent className='service-account-dialog__content content'>
+      <TextField autoFocus
+                 className='content__text-field'
+                 value={name}
+                 onChange={e => onChange(e.target.value)}
+                 margin='normal'
+                 label='Account name'
+                 type='text'
+                 fullWidth/>
+    </DialogContent>
+);
 
-  private renderAccountDetails() {
-    const {name, createdAccount} = this.state;
-    return (
-        <DialogContent className='service-account-dialog__content content'>
-          <div>Your account <b>{name}</b> has been created.</div>
-          <div>Copy credentials from fields below.</div>
-          <TextField label='Client ID'
-                     className='content__text-field'
-                     value={createdAccount.clientID}
-                     margin='normal'
-                     InputProps={{readOnly: true}}
-                     type='text'
-                     fullWidth
-                     data-client-id-field/>
-          <TextField label='Secret'
-                     className='content__text-field'
-                     value={createdAccount.secret}
-                     margin='normal'
-                     InputProps={{readOnly: true}}
-                     type='text'
-                     fullWidth
-                     data-client-secret-field/>
-        </DialogContent>
-    );
-  }
+const NameActions = ({onClose, onCreate, disabled}: { onClose: VoidFunction, onCreate: VoidFunction, disabled: boolean }) => (
+    <DialogActions>
+      <Button onClick={onClose} data-testid='cancel-button'>Cancel</Button>
+      <Button onClick={onCreate} color='primary' data-testid='create-button' disabled={disabled}>Create</Button>
+    </DialogActions>
+);
 
-  private renderNameActions() {
-    return (
-        <DialogActions>
-          <Button onClick={this.onCloseDialog} data-testid='cancel-button'>
-            Cancel
-          </Button>
-          <Button onClick={this.onCreateClick} color='primary' data-testid='create-button' disabled={isEmpty(this.state.name)}>
-            Create
-          </Button>
-        </DialogActions>
-    );
-  }
+export const ServiceAccountDialog = ({open, onClose}: ServiceAccountDialogProps) => {
+  const [createdAccount, setCreatedAccount] = useState(undefined as CreatedAccount);
+  const [name, setName] = useState('');
 
-  private renderDetailsActions() {
-    return (
-        <DialogActions>
-          <Button onClick={this.onCloseDialog} data-close-button>Close</Button>
-        </DialogActions>
-    );
-  }
-
-  private onCreateClick = () => {
-    const {name} = this.state;
+  const onCreateClick = () => {
     OpenTrappRestAPI.creteServiceAccount(name)
-        .then(createdAccount => this.setState({createdAccount}));
+        .then(a => setCreatedAccount(a));
   };
 
-  private onCloseDialog = () => {
-    const {onClose} = this.props;
-    const name = isEmpty(this.state.name) || !this.state.createdAccount ? undefined : this.state.name;
-    this.setState({
-      name: '',
-      createdAccount: undefined
-    });
-    onClose(name);
+  const onCloseDialog = () => {
+    setName('');
+    setCreatedAccount(undefined);
+    onClose(isEmpty(name) || !createdAccount ? undefined : name);
   }
+
+  return (
+      <Dialog open={open} onClose={onCloseDialog} className='service-account-dialog'>
+        <DialogTitle>Create service account</DialogTitle>
+        {
+          createdAccount
+              ? <AccountDetails name={name} clientID={createdAccount.clientID} secret={createdAccount.secret}/>
+              : <NameInput name={name} onChange={n => setName(n)}/>}
+        {
+          createdAccount
+              ? <DetailsActions onClose={onCloseDialog}/>
+              : <NameActions onClose={onCloseDialog} onCreate={onCreateClick} disabled={isEmpty(name)}/>
+        }
+      </Dialog>
+  );
 }

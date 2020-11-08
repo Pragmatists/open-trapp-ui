@@ -5,7 +5,11 @@ import { Grid } from '@material-ui/core';
 import './AdminPage.scss';
 import Paper from '@material-ui/core/Paper';
 import { ServiceAccountsList } from './serviceAccountsList/ServiceAccountsList';
-import { deleteServiceAccount, loadAuthorizedUsers, loadServiceAccounts } from '../../redux/admin.actions';
+import {
+  deleteServiceAccountAction,
+  loadAuthorizedUsersAction,
+  loadServiceAccountsAction
+} from '../../actions/admin.actions';
 import { UsersList } from './usersList/UsersList';
 import Button from '@material-ui/core/Button';
 import { ServiceAccountDialog } from './serviceAccountDialog/ServiceAccountDialog';
@@ -15,18 +19,18 @@ export const AdminPage = () => {
   const serviceAccounts = useSelector((state: OpenTrappState) => state.admin?.serviceAccounts);
   const users = useSelector((state: OpenTrappState) => state.admin?.authorizedUsers);
   const username = useSelector((state: OpenTrappState) => state.authentication?.user?.name);
-  const dispatch = useDispatch()
-  const stableDispatch = useCallback(dispatch, [])
+  const dispatch = useDispatch();
+  const stableDispatch = useCallback(dispatch, []);
   useEffect(() => {
-    stableDispatch(loadServiceAccounts());
-    stableDispatch(loadAuthorizedUsers());
-  }, [stableDispatch])
-  const onOpenServiceAccountDialog = () => setServiceAccountDialogOpen(true)
+    stableDispatch(loadServiceAccountsAction());
+    stableDispatch(loadAuthorizedUsersAction());
+  }, [stableDispatch]);
+  const onOpenServiceAccountDialog = () => setServiceAccountDialogOpen(true);
 
   const onCloseServiceAccountDialog = (name?: string) => {
     setServiceAccountDialogOpen(false);
     if (name) {
-      dispatch(loadServiceAccounts());
+      dispatch(loadServiceAccountsAction());
     }
   };
 
@@ -42,7 +46,7 @@ export const AdminPage = () => {
             <Paper className='admin-page__content'>
               {
                 serviceAccounts ?
-                    <ServiceAccountsList accounts={serviceAccounts} username={username} onDelete={id => dispatch(deleteServiceAccount(id))}/> :
+                    <ServiceAccountsList accounts={serviceAccounts} username={username} onDelete={id => dispatch(deleteServiceAccountAction(id))}/> :
                     <LoadingPlaceholder >Loading accounts...</LoadingPlaceholder>
               }
             </Paper>

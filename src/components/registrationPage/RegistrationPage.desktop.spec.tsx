@@ -55,6 +55,8 @@ describe('Registration Page - desktop', () => {
         .reply(200, workLogResponse)
         .onGet('/projects')
         .reply(200, tagsResponse)
+        .onGet('/projects/presets')
+        .reply(200, [])
         .onPost('/employee/john.doe/work-log/entries')
         .reply(201, {id: '123-456'});
     store = setupStore({
@@ -177,7 +179,7 @@ describe('Registration Page - desktop', () => {
 
   describe('Work log input', () => {
     it('fetches tags', async () => {
-      const container = render(
+      render(
           <Provider store={store}>
             <RegistrationPageDesktop/>
           </Provider>
@@ -197,8 +199,9 @@ describe('Registration Page - desktop', () => {
 
       typeExpression(container, '1d #projects #nvm @2019/02/27');
       pressEnter(container);
+      await waitFor(() => {});
 
-      await waitFor(() => expect(httpMock.history.post.length).toEqual(1));
+      expect(httpMock.history.post.length).toEqual(1);
       expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
         projectNames: ['projects', 'nvm'],
         workload: '1d',
@@ -240,10 +243,9 @@ describe('Registration Page - desktop', () => {
 
       typeExpression(container, '1d #projects #nvm @2019/02/27');
       pressEnter(container);
+      await waitFor(() => {});
 
-      await waitFor(() =>
-          expect(httpMock.history.get.filter(r => r.url === '/calendar/2019/2/work-log/entries')).toHaveLength(2)
-      );
+      expect(httpMock.history.get.filter(r => r.url === '/calendar/2019/2/work-log/entries')).toHaveLength(2);
     });
 
     function pressEnter(wrapper) {

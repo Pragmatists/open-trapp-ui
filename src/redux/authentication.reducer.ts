@@ -1,5 +1,5 @@
 import { AuthorizedUser } from '../api/dtos';
-import { AUTHENTICATION_CONSTANTS } from './constants';
+import { AUTHENTICATION_CONSTANTS } from '../actions/constants';
 import { LocalStorage } from '../utils/LocalStorage';
 
 const user: AuthorizedUser = LocalStorage.authorizedUser;

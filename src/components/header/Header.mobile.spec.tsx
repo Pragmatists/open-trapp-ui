@@ -1,42 +1,61 @@
 import * as React from 'react';
-import { noop } from 'lodash';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { setupStore } from '../../utils/testUtils';
-import { HeaderMobile, HeaderComponent } from './Header.mobile';
+import { HeaderMobile } from './Header.mobile';
 import { render, fireEvent } from '@testing-library/react'
 
 describe('Header - mobile', () => {
   let store: Store;
 
   it('renders Google login if user is not logged in', () => {
+    store = initializeStore(false);
     const container = render(
-        <HeaderComponent isLoggedIn={false} onLogout={noop} onGoogleToken={noop} onMenuButtonClick={noop}/>
+        <Provider store={store}>
+          <MemoryRouter initialEntries={['/']}>
+            <HeaderMobile/>
+          </MemoryRouter>
+        </Provider>
     );
 
     expect(container.getByText('Sign in')).toBeInTheDocument();
   });
 
   it('does not render UserDetails if user is not logged in', () => {
+    store = initializeStore(false);
     const container = render(
-        <HeaderComponent isLoggedIn={false} onLogout={noop} onGoogleToken={noop} onMenuButtonClick={noop}/>
+        <Provider store={store}>
+          <MemoryRouter initialEntries={['/']}>
+            <HeaderMobile/>
+          </MemoryRouter>
+        </Provider>
     );
 
     expect(container.queryByTestId('user-details')).not.toBeInTheDocument();
   });
 
   it('renders UserDetails if user is logged in', () => {
+    store = initializeStore(true);
     const container = render(
-        <HeaderComponent isLoggedIn={true} onLogout={noop} onGoogleToken={noop} onMenuButtonClick={noop}/>
+        <Provider store={store}>
+          <MemoryRouter initialEntries={['/']}>
+            <HeaderMobile/>
+          </MemoryRouter>
+        </Provider>
     );
 
     expect(container.queryByTestId('user-details')).toBeInTheDocument();
   });
 
   it('does not render Google login if user is logged in', () => {
+    store = initializeStore(true);
     const container = render(
-        <HeaderComponent isLoggedIn={true} onLogout={noop} onGoogleToken={noop} onMenuButtonClick={noop}/>
+        <Provider store={store}>
+          <MemoryRouter initialEntries={['/']}>
+            <HeaderMobile/>
+          </MemoryRouter>
+        </Provider>
     );
 
     expect(container.queryByText('Sign in')).not.toBeInTheDocument();
@@ -57,12 +76,12 @@ describe('Header - mobile', () => {
     expect(store.getState().leftMenu.open).toBeTruthy();
   });
 
-  function initializeStore(authorizedUser: boolean, menuVisible: boolean) {
+  function initializeStore(authorizedUser: boolean, menuVisible = false) {
     return setupStore({
       authentication: authorizedUser ? {
         loggedIn: true,
         user: {
-          name: 'john.doe'
+          name: 'John Doe'
         }
       } : {loggedIn: false},
       leftMenu: {open: menuVisible}

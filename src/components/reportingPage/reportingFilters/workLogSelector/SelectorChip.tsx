@@ -10,7 +10,7 @@ interface ChipLabelProps {
 const ChipLabel = ({label, workload}: ChipLabelProps) => (
     <div className='chip-content'>
       <div className='chip-content__label' data-testid='selector-chip-label'>{label}</div>
-      {workload > 0 && <div className='chip-content__workload' data-chip-workload>{formatWorkload(workload)}</div>}
+      {workload > 0 && <div className='chip-content__workload'>{formatWorkload(workload)}</div>}
     </div>
 );
 
