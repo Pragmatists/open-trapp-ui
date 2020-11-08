@@ -81,7 +81,8 @@ describe('Header - mobile', () => {
       authentication: authorizedUser ? {
         loggedIn: true,
         user: {
-          name: 'John Doe'
+          name: 'john.doe',
+          displayName: 'John Doe'
         }
       } : {loggedIn: false},
       leftMenu: {open: menuVisible}
