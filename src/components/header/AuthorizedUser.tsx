@@ -3,7 +3,6 @@ import { UserDetails } from './userDetails/UserDetails';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { usernameSelector } from '../../selectors/selectors';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { LocalStorage } from '../../utils/LocalStorage';
 

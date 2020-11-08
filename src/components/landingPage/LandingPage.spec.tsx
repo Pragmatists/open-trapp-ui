@@ -18,7 +18,7 @@ describe('LandingPage', () => {
     expect(card)
       .toHaveTextContent('Easy time capture');
     expect(card)
-      .toHaveTextContent('Powerfull expression language will help you quickly register your work.');
+      .toHaveTextContent('Powerful expression language will help you quickly register your work.');
   });
 
   it('second card should describe reporting', () => {
