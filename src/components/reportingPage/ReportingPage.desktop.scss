@@ -1,5 +1,6 @@
 .reporting-page {
-  padding: 12px;
+  width: 80%;
+  margin: 1em auto;
 
   .header {
     display: flex;
@@ -15,6 +16,10 @@
         font-size: 2rem;
       }
     }
+  }
+
+  &__filters {
+    margin: 2em 0;
   }
 
   .report {

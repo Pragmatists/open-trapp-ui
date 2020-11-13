@@ -35,7 +35,7 @@ const AppRoutingComponent = ({width}: AppRoutingProps) => isWidthUp('md', width)
         <PrivateRoute path='/admin' component={AdminPage}/>
         <Route component={NotFoundPage}/>
       </Switch>
-      <Notifications />
+      <Notifications/>
     </div> :
     <div>
       <HeaderMobile/>

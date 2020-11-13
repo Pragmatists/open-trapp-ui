@@ -1,0 +1,11 @@
+.reporting-filters {
+  display: grid;
+  grid-template-columns: 1fr 4fr 4fr;
+  grid-gap: 2em;
+}
+
+@media (max-width: 1200px){
+  .reporting-filters {
+    grid-template-columns: 1fr;
+  }
+}

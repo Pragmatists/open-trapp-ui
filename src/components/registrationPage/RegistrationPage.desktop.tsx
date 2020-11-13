@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { Grid } from "@material-ui/core";
 import './RegistrationPage.desktop.scss'
 import Divider from "@material-ui/core/Divider";
 import { WorkLogInput } from "./workLogInput/WorkLogInput";
@@ -54,34 +53,30 @@ export const RegistrationPageDesktop = () => {
 
   return (
       <div className='registration-page'>
-        <Grid container justify='center' spacing={3}>
-          <Grid item lg={10} xs={11}>
-            <div className='registration-page__header'>
-              <span>Report your time</span> using our expression language, to make it quick!
-              <RulesDialog/>
-            </div>
-            <Divider variant='fullWidth'/>
-          </Grid>
-          <Grid item lg={10} xs={11}>
-            <WorkLogInput onChange={onWorkLogInputChange}
-                          onSave={onSaveWorkLog}
-                          workLog={workLog}
-                          tags={tags}
-                          presets={presets}
-                          autoAddedTagsMapping={AUTO_ADDED_TAGS_MAPPING}/>
-          </Grid>
-          <Grid item lg={10} xs={11}>
-            {days && !isEmpty(workLogs) ?
-                <RegistrationPageMonth selectedMonth={new Month(selectedMonth.year, selectedMonth.month)}
-                                       selectedDays={workLog.days}
-                                       days={days}
-                                       workLogs={workLogs}
-                                       onChange={onMonthChange}
-                                       onDaysSelected={onDaysSelected}/> :
-                'Loading...'
-            }
-          </Grid>
-        </Grid>
+        <div className='registration-page__header'>
+          <span>Report your time</span> using our expression language, to make it quick!
+          <RulesDialog/>
+        </div>
+        <Divider variant='fullWidth'/>
+        <div className='registration-page__input'>
+          <WorkLogInput onChange={onWorkLogInputChange}
+                        onSave={onSaveWorkLog}
+                        workLog={workLog}
+                        tags={tags}
+                        presets={presets}
+                        autoAddedTagsMapping={AUTO_ADDED_TAGS_MAPPING}/>
+        </div>
+        <div>
+          {days && !isEmpty(workLogs) ?
+              <RegistrationPageMonth selectedMonth={new Month(selectedMonth.year, selectedMonth.month)}
+                                     selectedDays={workLog.days}
+                                     days={days}
+                                     workLogs={workLogs}
+                                     onChange={onMonthChange}
+                                     onDaysSelected={onDaysSelected}/> :
+              'Loading...'
+          }
+        </div>
       </div>
   );
 }

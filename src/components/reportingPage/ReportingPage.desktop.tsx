@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OpenTrappState } from '../../redux/root.reducer';
-import { Grid } from '@material-ui/core';
 import Divider from '@material-ui/core/Divider';
 import { loadMonthAction, monthChangedAction } from '../../actions/calendar.actions';
 import { bulkEditAction, loadTagsAction, removeWorkLogAction, updateWorkLogAction } from '../../actions/workLog.actions';
@@ -104,14 +103,12 @@ export const ReportingPageDesktop = () => {
 
   return (
       <div className='reporting-page'>
-        <Grid container justify='center' spacing={3}>
-          <Grid item lg={10} xs={11}>
-            <div className='reporting-page__header header'>
-              <div className='header__text'><span>Review reports</span> by month, project and employee</div>
-              <BulkEditDialog username={username} selection={selection} userTags={userTags} onEdit={dto => dispatch(bulkEditAction(dto))}/>
-            </div>
-            <Divider variant='fullWidth'/>
-          </Grid>
+        <div className='reporting-page__header header'>
+          <div className='header__text'><span>Review reports</span> by month, project and employee</div>
+          <BulkEditDialog username={username} selection={selection} userTags={userTags} onEdit={dto => dispatch(bulkEditAction(dto))}/>
+        </div>
+        <Divider variant='fullWidth'/>
+        <div className='reporting-page__filters'>
           <ReportingFilters workLogs={workLogs.map(w => new ReportingWorkLog(w))}
                             onTagsChange={v => setSelectedTags(v)}
                             onEmployeesChange={v => setSelectedEmployees(v)}
@@ -119,16 +116,14 @@ export const ReportingPageDesktop = () => {
                             selection={selection}
                             employeesFilter={employeesFilter(selection.employees)}
                             tagsFilter={tagsFilter(selection.tags)}/>
-          <Grid item lg={10} xs={11}>
-            <Report days={days}
-                    tags={tags}
-                    username={username}
-                    selection={selection}
-                    workLogs={workLogs}
-                    onRemoveWorkLog={id => dispatch(removeWorkLogAction(id))}
-                    onEditWorkLog={w => dispatch(updateWorkLogAction(w.id, w.projectNames, w.workload))}/>
-          </Grid>
-        </Grid>
+        </div>
+        <Report days={days}
+                tags={tags}
+                username={username}
+                selection={selection}
+                workLogs={workLogs}
+                onRemoveWorkLog={id => dispatch(removeWorkLogAction(id))}
+                onEditWorkLog={w => dispatch(updateWorkLogAction(w.id, w.projectNames, w.workload))}/>
       </div>
   );
 }
