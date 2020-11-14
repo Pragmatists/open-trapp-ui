@@ -1,18 +1,21 @@
 .header-desktop {
+  width: 80%;
+  margin: 0 auto;
   display: flex;
-
-  &__hamburger-container {
-    display: flex;
-    align-items: center;
-  }
+  align-items: center;
 
   &__text {
     flex-grow: 1;
     text-align: left;
+    cursor: default;
 
     & > span {
       font-weight: 500;
     }
+  }
+
+  .app-bar-tabs {
+    margin-right: 2em{};
   }
 
   &__logo {

@@ -1,4 +1,7 @@
-.registration-page {
+.registration-page-mobile {
+  width: 90%;
+  margin: 1em auto 4em auto;
+
   .presets-selector {
     &__placeholder {
       text-align: center;
@@ -20,7 +23,7 @@
 
   button.add-button {
     position: fixed;
-    bottom: 1em;
+    bottom: 5em;
     right: 1em;
   }
 }

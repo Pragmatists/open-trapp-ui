@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router';
 import { setupStore } from '../../utils/testUtils';
 import { HeaderMobile } from './Header.mobile';
-import { render, fireEvent } from '@testing-library/react'
+import { render } from '@testing-library/react'
 
 describe('Header - mobile', () => {
   let store: Store;
@@ -61,22 +61,7 @@ describe('Header - mobile', () => {
     expect(container.queryByText('Sign in')).not.toBeInTheDocument();
   });
 
-  it('changes menu visibility on menu button click', () => {
-    store = initializeStore(true, false);
-    const container = render(
-        <Provider store={store}>
-          <MemoryRouter initialEntries={['/']}>
-            <HeaderMobile/>
-          </MemoryRouter>
-        </Provider>
-    );
-
-    fireEvent.click(container.getByLabelText('Menu'));
-
-    expect(store.getState().leftMenu.open).toBeTruthy();
-  });
-
-  function initializeStore(authorizedUser: boolean, menuVisible = false) {
+  function initializeStore(authorizedUser: boolean) {
     return setupStore({
       authentication: authorizedUser ? {
         loggedIn: true,
@@ -84,8 +69,7 @@ describe('Header - mobile', () => {
           name: 'john.doe',
           displayName: 'John Doe'
         }
-      } : {loggedIn: false},
-      leftMenu: {open: menuVisible}
+      } : {loggedIn: false}
     });
   }
 });

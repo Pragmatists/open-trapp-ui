@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { AuthorizedUserDTO } from '../../../api/dtos';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
@@ -10,29 +10,24 @@ interface UsersListProps {
   users: AuthorizedUserDTO[];
 }
 
-export class UsersList extends Component<UsersListProps, {}> {
-  render() {
-    const {users} = this.props;
-    return (
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Roles</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {users.map(user => (
-                <AuthorizedUserRow key={user.name} user={user}/>
-            ))}
-          </TableBody>
-        </Table>
-    );
-  }
-}
+export const UsersList = ({users}: UsersListProps) => (
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableCell>Name</TableCell>
+          <TableCell>Email</TableCell>
+          <TableCell>Roles</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {users.map(user => (
+            <AuthorizedUserRow key={user.name} user={user}/>
+        ))}
+      </TableBody>
+    </Table>
+);
 
-const AuthorizedUserRow = ({user}: {user: AuthorizedUserDTO}) => (
+const AuthorizedUserRow = ({user}: { user: AuthorizedUserDTO }) => (
     <TableRow data-testid='authorized-user-row'>
       <TableCell>{user.name}</TableCell>
       <TableCell>{user.email}</TableCell>

@@ -6,7 +6,8 @@ header.header-mobile {
 }
 
 .header-mobile {
-  &__text {
+  h5.header-text {
+    margin: 0 1em;
     text-align: center;
     & > span {
       font-weight: 500;
@@ -14,7 +15,7 @@ header.header-mobile {
   }
 
   &__icon {
-    margin: 12px;
+    margin: 1em;
     cursor: pointer;
   }
 }

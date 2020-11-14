@@ -13,20 +13,21 @@ import { SettingsPageDesktop } from './components/settingsPage/SettingsPage.desk
 import { RegistrationPageMobile } from './components/registrationPage/RegistrationPage.mobile';
 import { SettingsPageMobile } from './components/settingsPage/SettingsPage.mobile';
 import { ReportingPageDesktop } from './components/reportingPage/ReportingPage.desktop';
-import { LeftMenu } from './components/leftMenu/LeftMenu';
 import { RedirectIfNeeded } from './components/RedirectIfNeeded';
 import { Notifications } from './components/notifications/Notifications';
 import { ReportingPageMobile } from './components/reportingPage/ReportingPage.mobile';
 import { AdminPage } from './components/adminPage/AdminPage';
+import { BottomNavigationBar } from './components/bottomNavigation/BottomNavigation';
+import { useSelector } from 'react-redux';
+import { userLoggedInSelector } from './selectors/selectors';
 
 interface AppRoutingProps {
   width: Breakpoint;
 }
 
-const AppRoutingComponent = ({width}: AppRoutingProps) => isWidthUp('md', width) ?
+const DesktopRouting = () => (
     <div>
       <HeaderDesktop/>
-      <LeftMenu/>
       <Switch>
         <Route path='/' exact component={RedirectIfNeeded(LandingPage)}/>
         <PrivateRoute path='/registration' component={RegistrationPageDesktop}/>
@@ -36,17 +37,26 @@ const AppRoutingComponent = ({width}: AppRoutingProps) => isWidthUp('md', width)
         <Route component={NotFoundPage}/>
       </Switch>
       <Notifications/>
-    </div> :
-    <div>
-      <HeaderMobile/>
-      <LeftMenu mobileVersion={true}/>
-      <Switch>
-        <Route path='/' exact component={RedirectIfNeeded(LandingPage)}/>
-        <PrivateRoute path='/registration' component={RegistrationPageMobile}/>
-        <PrivateRoute path='/reporting' component={ReportingPageMobile}/>
-        <PrivateRoute path='/settings' component={SettingsPageMobile}/>
-        <Route component={NotFoundPage}/>
-      </Switch>
-    </div>;
+    </div>
+);
+
+export const MobileRouting = () => {
+  const isLoggedIn = useSelector(userLoggedInSelector);
+  return (
+      <div>
+        <HeaderMobile/>
+        <Switch>
+          <Route path='/' exact component={RedirectIfNeeded(LandingPage)}/>
+          <PrivateRoute path='/registration' component={RegistrationPageMobile}/>
+          <PrivateRoute path='/reporting' component={ReportingPageMobile}/>
+          <PrivateRoute path='/settings' component={SettingsPageMobile}/>
+          <Route component={NotFoundPage}/>
+        </Switch>
+        {isLoggedIn && <BottomNavigationBar />}
+      </div>
+  );
+}
+
+const AppRoutingComponent = ({width}: AppRoutingProps) => isWidthUp('md', width) ? <DesktopRouting /> : <MobileRouting />;
 
 export const AppRouting = withWidth()(AppRoutingComponent);

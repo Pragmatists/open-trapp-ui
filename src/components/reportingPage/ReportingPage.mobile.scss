@@ -1,0 +1,14 @@
+.reporting-page-mobile {
+  width: 90%;
+  margin: 1em auto 4em auto;
+
+  &__days-list {
+    display: flex;
+    flex-direction: column;
+    margin: 1em 0;
+  }
+
+  .days-list > div + div {
+    margin: 1em 0;
+  }
+}

@@ -1,15 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 interface AuthorizedUserDialogProps {
   open: boolean;
 }
 
-export class AuthorizedUserDialog extends Component<AuthorizedUserDialogProps, {}> {
-  render() {
-    return (
-        <div>
-
-        </div>
-    );
-  }
+export const AuthorizedUserDialog = ({}: AuthorizedUserDialogProps) => {
+  return (
+      <div></div>
+  );
 }

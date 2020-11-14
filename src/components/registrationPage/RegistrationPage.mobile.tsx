@@ -63,7 +63,7 @@ export const RegistrationPageMobile = () => {
   };
 
   return (
-        <div className='registration-page'>
+        <div className='registration-page-mobile'>
           <DaySelector selectedDay={selectedDay} onChange={day => dispatch(workLogChangedAction((workLog.withDays([day]))))}/>
           <WorkLogs workLogs={workLogs} onDelete={workLogId => dispatch(removeWorkLogAction(workLogId))} />
           <div className='presets-selector'>
@@ -85,7 +85,7 @@ export const RegistrationPageMobile = () => {
           <CreateWorkLogDialog onClose={handleCustomWorkLogDialogClose} open={customWorkLogDialogOpen} tags={tags} />
           <Fab onClick={() => setCustomWorkLogDialogOpen(true)}
                color='primary'
-               className='registration-page__add-button add-button'
+               className='registration-page-mobile__add-button add-button'
                data-testid='custom-work-log-button'>
             <AddIcon />
           </Fab>

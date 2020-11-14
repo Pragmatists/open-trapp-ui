@@ -22,7 +22,7 @@ describe('Header - desktop', () => {
     expect(getByText('Sign in with Google')).toBeInTheDocument();
   });
 
-  it('does not render UserDetails if user is not logged in', () => {
+  it('does not render user details if user is not logged in', () => {
     store = initializeStore(false);
     const {queryByTestId, queryByText} = render(
         <Provider store={store}>
@@ -36,7 +36,7 @@ describe('Header - desktop', () => {
     expect(queryByText('John Doe')).not.toBeInTheDocument();
   });
 
-  it('renders UserDetails if user is logged in', () => {
+  it('renders user details if user is logged in', () => {
     store = initializeStore(true);
     const {getByText} = render(
         <Provider store={store}>
@@ -62,9 +62,9 @@ describe('Header - desktop', () => {
     expect(queryByText('Sign in with Google')).not.toBeInTheDocument();
   });
 
-  it('changes menu visibility on menu button click', () => {
-    store = initializeStore(true, false);
-    const {getByLabelText} = render(
+  it('does not render tabs if user not logged in', () => {
+    store = initializeStore(false);
+    const {queryByText} = render(
         <Provider store={store}>
           <MemoryRouter initialEntries={['/']}>
             <HeaderDesktop/>
@@ -72,21 +72,69 @@ describe('Header - desktop', () => {
         </Provider>
     );
 
-    fireEvent.click(getByLabelText('Menu'));
-
-    expect(store.getState().leftMenu.open).toBeTruthy();
+    expect(queryByText('Registration')).not.toBeInTheDocument();
+    expect(queryByText('Reporting')).not.toBeInTheDocument();
   });
 
-  function initializeStore(authorizedUser: boolean, menuVisible = false) {
+  it('renders tabs if user logged in', () => {
+    store = initializeStore(true);
+    const {getByText, queryByText} = render(
+        <Provider store={store}>
+          <MemoryRouter initialEntries={['/']}>
+            <HeaderDesktop/>
+          </MemoryRouter>
+        </Provider>
+    );
+
+    expect(getByText('Registration')).toBeInTheDocument();
+    expect(getByText('Reporting')).toBeInTheDocument();
+    expect(queryByText('Admin')).not.toBeInTheDocument();
+  });
+
+  it('renders Admin tab if user has ADMIN role', () => {
+    store = initializeStore(true, true);
+    const {getByText} = render(
+        <Provider store={store}>
+          <MemoryRouter initialEntries={['/']}>
+            <HeaderDesktop/>
+          </MemoryRouter>
+        </Provider>
+    );
+
+    expect(getByText('Admin')).toBeInTheDocument();
+  });
+
+
+  it.each`
+    page
+    ${'Registration'}
+    ${'Reporting'}
+    ${'Admin'}
+  `(`navigates to $page page on tab click`, ({page}) => {
+    store = initializeStore(true, true);
+    const {getByText} = render(
+        <Provider store={store}>
+          <MemoryRouter initialEntries={['/']}>
+            <HeaderDesktop/>
+          </MemoryRouter>
+        </Provider>
+    );
+
+    fireEvent.click(getByText(page));
+
+    expect(getByText(page).parentElement).toHaveAttribute('aria-selected', 'true');
+  });
+
+  function initializeStore(authorizedUser: boolean, isAdmin = false) {
     return setupStore({
       authentication: authorizedUser ? {
         loggedIn: true,
         user: {
           name: 'john.doe',
-          displayName: 'John Doe'
+          displayName: 'John Doe',
+          roles: isAdmin ? ['ADMIN'] : []
         }
-      } : {loggedIn: false},
-      leftMenu: {open: menuVisible}
+      } : {loggedIn: false}
     });
   }
 });

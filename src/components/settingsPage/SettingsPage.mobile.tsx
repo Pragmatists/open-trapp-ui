@@ -1,11 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-export class SettingsPageMobile extends Component<{}, {}> {
-  render() {
-    return (
-        <div>
-          Settings mobile page
-        </div>
-    );
-  }
-}
+export const SettingsPageMobile = () => (
+    <div>
+      Settings mobile page
+    </div>
+);
