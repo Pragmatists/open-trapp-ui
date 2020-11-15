@@ -15,17 +15,29 @@
   }
 
   .app-bar-tabs {
-    margin-right: 2em{};
+    margin-right: 2em;
+
+    .MuiTab-labelIcon {
+      min-height: 4em;
+    }
+
+    .MuiTab-wrapper {
+      flex-direction: row;
+
+      & > *:first-child {
+        margin-right: 0.5em;
+      }
+    }
   }
 
   &__logo {
-    width: 2.5rem;
-    height: 2.5rem;
-    margin-right: 16px;
+    width: 3em;
+    height: 3em;
+    margin: 0.5em 1em 0.5em 0;
   }
 
   &__icon {
-    margin-right: 16px;
+    margin-right: 1em;
     cursor: pointer;
   }
 }

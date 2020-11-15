@@ -98,7 +98,7 @@ export class MonthlyReport extends Component<MonthlyReportProps, {}> {
         <TableRow className='report-table__row' data-testid='table-footer-row'>
           <TableCell className='report-table__cell report-table__cell--bold'>Total</TableCell>
           {days.map((day, idx) => (
-              <TableCell key={idx} className={this.cellClass(day)} onClick={e => this.onCellClick(e, day.id)} data-month-day-value>
+              <TableCell key={idx} className={this.cellClass(day)} onClick={e => this.onCellClick(e, day.id)}>
                 {workloadForDay[day.id]}
               </TableCell>
           ))}
