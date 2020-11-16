@@ -6,8 +6,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Button from '@material-ui/core/Button';
 import { isEmpty } from 'lodash';
 import TextField from '@material-ui/core/TextField';
-import { OpenTrappRestAPI } from '../../../api/OpenTrappAPI';
-import './ServiceAccountDialog.scss';
+import { OpenTrappRestAPI } from '../../api/OpenTrappAPI';
 
 interface ServiceAccountDialogProps {
   open: boolean;

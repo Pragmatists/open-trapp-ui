@@ -3,7 +3,7 @@ import TableHead from '@material-ui/core/TableHead';
 import Table from '@material-ui/core/Table';
 import { TableRow } from '@material-ui/core';
 import TableCell from '@material-ui/core/TableCell';
-import { ServiceAccountDTO } from '../../../api/dtos';
+import { ServiceAccountDTO } from '../../api/dtos';
 import TableBody from '@material-ui/core/TableBody';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Button from '@material-ui/core/Button';

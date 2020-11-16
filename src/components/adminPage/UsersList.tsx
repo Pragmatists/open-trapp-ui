@@ -1,5 +1,5 @@
 import React from 'react';
-import { AuthorizedUserDTO } from '../../../api/dtos';
+import { AuthorizedUserDTO } from '../../api/dtos';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import { TableRow } from '@material-ui/core';

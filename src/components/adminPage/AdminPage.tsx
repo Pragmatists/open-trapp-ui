@@ -3,15 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { OpenTrappState } from '../../redux/root.reducer';
 import './AdminPage.scss';
 import Paper from '@material-ui/core/Paper';
-import { ServiceAccountsList } from './serviceAccountsList/ServiceAccountsList';
+import { ServiceAccountsList } from './ServiceAccountsList';
 import {
   deleteServiceAccountAction,
   loadAuthorizedUsersAction,
   loadServiceAccountsAction
 } from '../../actions/admin.actions';
-import { UsersList } from './usersList/UsersList';
+import { UsersList } from './UsersList';
 import Button from '@material-ui/core/Button';
-import { ServiceAccountDialog } from './serviceAccountDialog/ServiceAccountDialog';
+import { ServiceAccountDialog } from './ServiceAccountDialog';
 
 export const AdminPage = () => {
   const [serviceAccountDialogOpen, setServiceAccountDialogOpen] = useState(false);
