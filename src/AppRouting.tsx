@@ -13,7 +13,6 @@ import { SettingsPageDesktop } from './components/settingsPage/SettingsPage.desk
 import { RegistrationPageMobile } from './components/registrationPage/RegistrationPage.mobile';
 import { SettingsPageMobile } from './components/settingsPage/SettingsPage.mobile';
 import { ReportingPageDesktop } from './components/reportingPage/ReportingPage.desktop';
-import { RedirectIfNeeded } from './components/RedirectIfNeeded';
 import { Notifications } from './components/notifications/Notifications';
 import { ReportingPageMobile } from './components/reportingPage/ReportingPage.mobile';
 import { AdminPage } from './components/adminPage/AdminPage';
@@ -29,7 +28,7 @@ const DesktopRouting = () => (
     <div>
       <HeaderDesktop/>
       <Switch>
-        <Route path='/' exact component={RedirectIfNeeded(LandingPage)}/>
+        <Route path='/' exact component={LandingPage}/>
         <PrivateRoute path='/registration' component={RegistrationPageDesktop}/>
         <PrivateRoute path='/reporting' component={ReportingPageDesktop}/>
         <PrivateRoute path='/settings' component={SettingsPageDesktop}/>
@@ -46,7 +45,7 @@ export const MobileRouting = () => {
       <div>
         <HeaderMobile/>
         <Switch>
-          <Route path='/' exact component={RedirectIfNeeded(LandingPage)}/>
+          <Route path='/' exact component={LandingPage}/>
           <PrivateRoute path='/registration' component={RegistrationPageMobile}/>
           <PrivateRoute path='/reporting' component={ReportingPageMobile}/>
           <PrivateRoute path='/settings' component={SettingsPageMobile}/>

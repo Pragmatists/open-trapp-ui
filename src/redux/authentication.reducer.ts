@@ -2,12 +2,12 @@ import { AuthorizedUser } from '../api/dtos';
 import { AUTHENTICATION_CONSTANTS } from '../actions/constants';
 import { LocalStorage } from '../utils/LocalStorage';
 
-const user: AuthorizedUser = LocalStorage.authorizedUser;
-
 export interface AuthenticationState {
   loggedIn: boolean;
   user?: AuthorizedUser;
 }
+
+const user: AuthorizedUser = LocalStorage.authorizedUser;
 
 const initialState = user ? {loggedIn: true, user} : {loggedIn: false};
 

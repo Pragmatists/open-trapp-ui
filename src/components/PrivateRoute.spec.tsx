@@ -5,6 +5,8 @@ import { AuthorizedUser } from '../api/dtos';
 import { someJwtToken } from '../utils/jwtUtils';
 import { MemoryRouter, Route } from 'react-router';
 import { render } from '@testing-library/react'
+import { Provider } from 'react-redux';
+import { setupStore } from '../utils/testUtils';
 
 const SomeComponent = () => (
     <div>some component</div>
@@ -22,9 +24,11 @@ describe('Private route', () => {
   it('renders component if user is authorized', () => {
     LocalStorage.authorizedUser = someUserDetails('some-user');
     const container = render(
-        <MemoryRouter initialEntries={['/some-path']}>
-          <PrivateRoute component={SomeComponent} path='/some-path'/>
-        </MemoryRouter>
+        <Provider store={initializeStore(true)}>
+          <MemoryRouter initialEntries={['/some-path']}>
+            <PrivateRoute component={SomeComponent} path='/some-path'/>
+          </MemoryRouter>
+        </Provider>
     );
 
     expect(container.queryByText('some component')).toBeInTheDocument();
@@ -33,10 +37,12 @@ describe('Private route', () => {
   it('redirects to landing page if user unauthorized', () => {
     LocalStorage.clearAuthorizedUser();
     const container = render(
-        <MemoryRouter initialEntries={['/some-path']}>
-          <PrivateRoute component={SomeComponent} path='/some-path'/>
-          <Route component={LandingPage} path='/' exact/>
-        </MemoryRouter>
+        <Provider store={initializeStore(false)}>
+          <MemoryRouter initialEntries={['/some-path']}>
+            <PrivateRoute component={SomeComponent} path='/some-path'/>
+            <Route component={LandingPage} path='/' exact/>
+          </MemoryRouter>
+        </Provider>
     );
 
     expect(container.queryByText('some component')).not.toBeInTheDocument();
@@ -53,5 +59,13 @@ describe('Private route', () => {
       profilePicture: 'https://some-photo-domain.com/photo.jpg',
       roles: ['USER', 'ADMIN']
     };
+  }
+
+  function initializeStore(authorizedUser: boolean) {
+    return setupStore({
+      authentication: {
+        loggedIn: authorizedUser
+      }
+    });
   }
 });
