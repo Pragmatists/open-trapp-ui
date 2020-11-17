@@ -105,6 +105,7 @@ export const WorkLogInput = ({workLog, onChange, autoAddedTagsMapping, tags, pre
               className: 'work-log-input__input',
               placeholder: '1d #my-project',
               value: workLog.expression,
+              autoFocus: true,
               onChange: handleInputChange,
               onKeyPress: handleSubmit
             }}
