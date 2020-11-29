@@ -1,3 +1,5 @@
+import { round } from 'lodash';
+
 export function formatWorkload(workload: number): string {
   if (workload === null || workload === undefined || workload < 0) {
     return 'INVALID';
@@ -15,4 +17,8 @@ export function formatWorkload(workload: number): string {
     minutes > 0 ? `${minutes}m` : undefined
   ].filter(v => v !== undefined)
       .join(' ');
+}
+
+export function workloadAsDays(workload: number): number {
+  return workload ? round(workload / 60, 2) : workload;
 }

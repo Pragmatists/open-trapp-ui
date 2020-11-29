@@ -5,7 +5,7 @@ import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import { Workload } from "../workload/Workload";
-import { formatWorkload } from '../../../utils/workLogUtils';
+import { formatWorkload } from '../../../utils/workloadUtils';
 
 interface WorkloadDialogProps {
   open: boolean;

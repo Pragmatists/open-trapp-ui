@@ -1,11 +1,12 @@
 .monthly-report {
-  padding: 8px;
+  margin: 8px;
 
   .report-table {
     width: 100%;
 
     &__cell {
       padding: 12px 4px;
+      user-select: none;
 
       &--weekend {
         color: #c7254e;
@@ -23,6 +24,15 @@
         color: white;
         background-color: #2d6ca2;
       }
+
+      div {
+        display: flex;
+        vertical-align: center;
+
+        .missing-workload-icon {
+          color: #C21F39;
+        }
+      }
     }
 
     &__row:last-of-type {
@@ -31,7 +41,7 @@
       }
     }
 
-    .header-cell {
+    th.report-table__cell {
       font-size: 0.8rem;
 
       .day-name {

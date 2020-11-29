@@ -10,7 +10,7 @@ import { ListItem } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Workload } from '../workload/Workload';
-import { formatWorkload } from '../../../utils/workLogUtils';
+import { formatWorkload } from '../../../utils/workloadUtils';
 
 interface CreateWorkLogDialogProps {
   onClose: (tags?: string[], workload?: string) => void;

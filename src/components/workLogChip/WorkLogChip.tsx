@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatWorkload } from '../../utils/workLogUtils';
+import { formatWorkload } from '../../utils/workloadUtils';
 import { Chip } from '@material-ui/core';
 import './WorkLogChip.scss';
 

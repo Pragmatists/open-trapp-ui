@@ -7,7 +7,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import { chain, sum } from 'lodash';
 import './ProjectsReport.scss';
-import { formatWorkload } from '../../../utils/workLogUtils';
+import { formatWorkload } from '../../../utils/workloadUtils';
 
 interface ProjectsReportProps {
   workLogs: ReportingWorkLog[];

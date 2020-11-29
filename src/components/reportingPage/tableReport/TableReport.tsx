@@ -6,7 +6,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
 import TableBody from '@material-ui/core/TableBody';
 import { chain, groupBy, keys, size } from 'lodash';
-import { formatWorkload } from '../../../utils/workLogUtils';
+import { formatWorkload } from '../../../utils/workloadUtils';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import './TableReport.scss';

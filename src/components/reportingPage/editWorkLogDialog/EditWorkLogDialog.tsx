@@ -8,7 +8,7 @@ import { isEmpty, trim } from 'lodash';
 import { EditedWorkLog, ReportingWorkLog } from '../reporting.model';
 import TextField from '@material-ui/core/TextField';
 import './EditWorkLogDialog.scss'
-import { formatWorkload } from '../../../utils/workLogUtils';
+import { formatWorkload } from '../../../utils/workloadUtils';
 import { TagsAutocompleteInput } from './tagsAutocompleteInput/TagsAutocompleteInput';
 import { ReportingWorkLogDTO } from '../../../api/dtos';
 

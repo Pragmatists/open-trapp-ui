@@ -36,7 +36,7 @@ const singleEmployeeWorkLog = {
   'john.doe': [
     {day: '2018/12/03', workload: 480},
     {day: '2018/12/04', workload: 450},
-    {day: '2018/12/04', workload: 30},
+    {day: '2018/12/04', workload: 10},
     {day: '2018/12/06', workload: 330},
     {day: '2018/12/07', workload: 0}
   ]
@@ -80,18 +80,18 @@ describe('MonthlyReport', () => {
 
     expect(tableRowCells(container)[0]).toHaveTextContent('');
     expect(tableRowCells(container)[1]).toHaveTextContent('');
-    expect(tableRowCells(container)[2]).toHaveTextContent('8');
-    expect(tableRowCells(container)[3]).toHaveTextContent('8');
+    expect(tableRowCells(container)[2].textContent).toEqual('8');
+    expect(tableRowCells(container)[3].textContent).toEqual('7.67');
     expect(tableRowCells(container)[4]).toHaveTextContent('');
-    expect(tableRowCells(container)[5]).toHaveTextContent('5.5');
-    expect(tableRowCells(container)[6]).toHaveTextContent('0');
+    expect(tableRowCells(container)[5].textContent).toEqual('5.5');
+    expect(tableRowCells(container)[6].textContent).toEqual('0');
   });
 
   it('displays total number of hours in last column', () => {
     const {getByText, getByTestId} = render(<MonthlyReport days={someMonth} workLogs={singleEmployeeWorkLog}/>);
 
     expect(getByText('Total')).toBeInTheDocument();
-    expect(getByTestId('month-total-value')).toHaveTextContent('21.5');
+    expect(getByTestId('month-total-value').textContent).toEqual('21.17');
   });
 
   it('displays total row if more than one employee', () => {
