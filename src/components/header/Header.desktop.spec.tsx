@@ -40,7 +40,7 @@ describe('Header - desktop', () => {
     store = initializeStore(true);
     const {getByText} = render(
         <Provider store={store}>
-          <MemoryRouter initialEntries={['/']}>
+          <MemoryRouter initialEntries={['/registration']}>
             <HeaderDesktop/>
           </MemoryRouter>
         </Provider>
@@ -53,7 +53,7 @@ describe('Header - desktop', () => {
     store = initializeStore(true);
     const {queryByText} = render(
         <Provider store={store}>
-          <MemoryRouter initialEntries={['/']}>
+          <MemoryRouter initialEntries={['/registration']}>
             <HeaderDesktop/>
           </MemoryRouter>
         </Provider>
@@ -66,7 +66,7 @@ describe('Header - desktop', () => {
     store = initializeStore(false);
     const {queryByText} = render(
         <Provider store={store}>
-          <MemoryRouter initialEntries={['/']}>
+          <MemoryRouter initialEntries={['/registration']}>
             <HeaderDesktop/>
           </MemoryRouter>
         </Provider>
@@ -80,7 +80,7 @@ describe('Header - desktop', () => {
     store = initializeStore(true);
     const {getByText, queryByText} = render(
         <Provider store={store}>
-          <MemoryRouter initialEntries={['/']}>
+          <MemoryRouter initialEntries={['/registration']}>
             <HeaderDesktop/>
           </MemoryRouter>
         </Provider>
@@ -95,7 +95,7 @@ describe('Header - desktop', () => {
     store = initializeStore(true, true);
     const {getByText} = render(
         <Provider store={store}>
-          <MemoryRouter initialEntries={['/']}>
+          <MemoryRouter initialEntries={['/registration']}>
             <HeaderDesktop/>
           </MemoryRouter>
         </Provider>
