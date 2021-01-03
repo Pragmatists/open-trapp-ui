@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState, Fragment } from 'react';
 import { isEmpty } from 'lodash';
 import ErrorIcon from '@material-ui/icons/Error';
 import './ValidationStatus.scss'
@@ -23,7 +23,7 @@ export const ValidationStatus = ({workLog}: ValidationStatusProps) => {
     )
   } else if (!isEmpty(workLog.expression)) {
     return (
-        <React.Fragment>
+        <Fragment>
           <IconButton aria-label='Help' onClick={handleClick} data-testid='error-indicator'>
             <ErrorIcon color='error'/>
           </IconButton>
@@ -39,7 +39,7 @@ export const ValidationStatus = ({workLog}: ValidationStatusProps) => {
               )
             }
           </Popover>
-        </React.Fragment>
+        </Fragment>
     )
   }
   return null;

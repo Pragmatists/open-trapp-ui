@@ -1,5 +1,4 @@
 import { Redirect, Route } from 'react-router';
-import React from 'react';
 import { useSelector } from 'react-redux';
 import { userLoggedInSelector } from '../selectors/selectors';
 

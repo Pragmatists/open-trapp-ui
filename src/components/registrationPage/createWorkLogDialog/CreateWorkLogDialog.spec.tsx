@@ -1,4 +1,3 @@
-import React from 'react';
 import { noop } from 'lodash';
 import { CreateWorkLogDialog } from './CreateWorkLogDialog';
 import { fireEvent, render, RenderResult } from '@testing-library/react';

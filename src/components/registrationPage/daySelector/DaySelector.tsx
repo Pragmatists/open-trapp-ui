@@ -1,4 +1,3 @@
-import React from 'react';
 import moment from 'moment';
 import { Fab } from '@material-ui/core';
 import ArrowBack from '@material-ui/icons/ArrowBackIos';

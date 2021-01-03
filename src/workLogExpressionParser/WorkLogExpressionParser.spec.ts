@@ -1,7 +1,6 @@
 import { TimeProvider } from '../utils/dateTimeUtils';
 import { WorkLogExpressionParser } from './WorkLogExpressionParser';
 
-
 describe('WorkLogExpressionParser', () => {
   const CURRENT_DATE = "2014/01/02";
   const CURRENT_WEEKDAY = 'thursday';
@@ -21,7 +20,7 @@ describe('WorkLogExpressionParser', () => {
 
   beforeEach(() => {
     timeProvider = new TimeProvider();
-    spyOn(timeProvider, 'getCurrentDate').and.returnValue(new Date(CURRENT_DATE));
+    jest.spyOn(timeProvider, 'getCurrentDate').mockReturnValue(new Date(CURRENT_DATE));
     workLogExpressionParser = new WorkLogExpressionParser(timeProvider);
   });
 

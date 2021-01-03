@@ -1,4 +1,4 @@
-import React, {ReactElement} from 'react';
+import {ReactElement} from 'react';
 import { ReportWorkloadCell } from './ReportCell';
 import { render } from '@testing-library/react';
 import moment from 'moment';

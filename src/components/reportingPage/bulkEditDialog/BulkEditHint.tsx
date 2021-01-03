@@ -1,4 +1,3 @@
-import React from 'react';
 import { isNil } from 'lodash';
 import './BulkEditHint.scss';
 

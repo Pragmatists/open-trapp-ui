@@ -1,4 +1,3 @@
-import React from 'react';
 import { MenuItem } from '@material-ui/core';
 import match from 'autosuggest-highlight/match';
 import parse from 'autosuggest-highlight/parse';

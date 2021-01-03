@@ -1,4 +1,3 @@
-import React from 'react';
 import { fireEvent, render, RenderResult } from '@testing-library/react';
 import { WorkLogs } from './WorkLogs';
 import { noop } from 'lodash';

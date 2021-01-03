@@ -5,10 +5,6 @@ import MockAdapter from 'axios-mock-adapter';
 import { ignoreHtmlTags } from '../../../utils/testUtils';
 import { OpenTrappRestAPI } from '../../../api/OpenTrappAPI';
 
-const workLogResponse = [
-  {id: 'jd1', employee: 'john.doe', projectNames: ['projects', 'nvm'], workload: 480, day: '2019/03/01'},
-];
-
 describe('Bulk edit dialog', () => {
   let httpMock: MockAdapter;
 
@@ -30,7 +26,7 @@ describe('Bulk edit dialog', () => {
 
   it('by default displays and validates query for selected tags and users', async () => {
     const {getByText, getByDisplayValue} = render(
-          <BulkEditDialog userTags={['projects', 'nvm']} selection={selection()} onEdit={() => {}} />
+          <BulkEditDialog userTags={['projects', 'nvm']} selection={selection()} onEdit={() => {}} username='tom'/>
     );
     fireEvent.click(getByText('Bulk edit'));
     await waitFor(() => {});
@@ -41,7 +37,7 @@ describe('Bulk edit dialog', () => {
 
   it('validates query on change', async () => {
     const container = render(
-          <BulkEditDialog userTags={['projects', 'nvm']} selection={selection()} onEdit={() => {}}/>
+          <BulkEditDialog userTags={['projects', 'nvm']} selection={selection()} onEdit={() => {}} username='tom'/>
     );
     fireEvent.click(container.getByText('Bulk edit'));
 
@@ -54,7 +50,7 @@ describe('Bulk edit dialog', () => {
   it('updates entries on UPDATE button click', async () => {
     const onEdit = jest.fn();
     const container = render(
-          <BulkEditDialog userTags={['projects', 'nvm']} selection={selection()} onEdit={onEdit} />
+          <BulkEditDialog userTags={['projects', 'nvm']} selection={selection()} onEdit={onEdit} username='tom'/>
     );
     fireEvent.click(container.getByText('Bulk edit'));
 

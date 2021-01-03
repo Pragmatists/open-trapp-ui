@@ -1,4 +1,3 @@
-import React from 'react';
 import { ReportingWorkLogDTO } from '../../../api/dtos';
 import './WorkLogs.scss';
 import List from '@material-ui/core/List';

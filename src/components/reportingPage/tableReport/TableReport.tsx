@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { EditedWorkLog, ReportingWorkLog } from '../reporting.model';
 import { Table } from '@material-ui/core';
 import TableHead from '@material-ui/core/TableHead';

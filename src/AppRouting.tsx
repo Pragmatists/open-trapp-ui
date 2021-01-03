@@ -6,7 +6,6 @@ import { Route, Switch } from 'react-router';
 import { LandingPage } from './components/landingPage/LandingPage';
 import { PrivateRoute } from './components/PrivateRoute';
 import { NotFoundPage } from './components/notFound/NotFoundPage';
-import React from 'react';
 import { isWidthUp } from '@material-ui/core/withWidth';
 import { RegistrationPageDesktop } from './components/registrationPage/RegistrationPage.desktop';
 import { SettingsPageDesktop } from './components/settingsPage/SettingsPage.desktop';

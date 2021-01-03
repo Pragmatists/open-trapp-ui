@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autosuggest from 'react-autosuggest';
 import { Suggestion, SuggestionItem } from '../../../Suggestion';

@@ -1,4 +1,4 @@
-import React, {FunctionComponent} from 'react';
+import {FunctionComponent} from 'react';
 import classNames from 'classnames';
 import moment from 'moment';
 import { isNil } from 'lodash';

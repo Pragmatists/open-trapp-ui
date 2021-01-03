@@ -1,4 +1,3 @@
-import React from 'react';
 import { Fab } from '@material-ui/core';
 import ArrowBack from '@material-ui/icons/ArrowBackIos';
 import ArrowForward from '@material-ui/icons/ArrowForwardIos';

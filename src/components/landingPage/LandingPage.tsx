@@ -1,4 +1,3 @@
-import React from 'react';
 import Divider from '@material-ui/core/Divider';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import EqualizerIcon from '@material-ui/icons/Equalizer';

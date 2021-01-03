@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OpenTrappState } from '../../redux/root.reducer';
 import Divider from '@material-ui/core/Divider';

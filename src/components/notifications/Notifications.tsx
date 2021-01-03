@@ -1,4 +1,3 @@
-import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { OpenTrappState } from '../../redux/root.reducer';
 import { Snackbar } from '@material-ui/core';

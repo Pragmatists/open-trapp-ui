@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, RenderResult, within, fireEvent } from '@testing-library/react';
 import { MonthlyReport } from "./MonthlyReport";
 

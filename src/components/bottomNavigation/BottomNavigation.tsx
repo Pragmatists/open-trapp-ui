@@ -1,4 +1,3 @@
-import React from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';

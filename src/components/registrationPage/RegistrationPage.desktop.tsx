@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import './RegistrationPage.desktop.scss'
 import Divider from "@material-ui/core/Divider";
 import { WorkLogInput } from "./workLogInput/WorkLogInput";

@@ -1,4 +1,3 @@
-import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography';
 import { useLocation } from 'react-router-dom';

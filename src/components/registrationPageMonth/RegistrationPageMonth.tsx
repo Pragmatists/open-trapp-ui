@@ -1,4 +1,3 @@
-import React from 'react';
 import { MonthlyReport } from '../monthlyReport/MonthlyReport';
 import Button from '@material-ui/core/Button';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';

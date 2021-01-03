@@ -1,5 +1,4 @@
 import GoogleLogin, { GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
-import React from 'react';
 import { OpenTrappRestAPI } from '../../api/OpenTrappAPI';
 import { loginFailedAction, loginSuccessAction } from '../../actions/authentication.actions';
 import { useDispatch } from 'react-redux';

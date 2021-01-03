@@ -1,6 +1,5 @@
 import { logoutAction } from '../../actions/authentication.actions';
 import { UserDetails } from './userDetails/UserDetails';
-import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { OpenTrappState } from '../../redux/root.reducer';

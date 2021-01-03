@@ -1,4 +1,3 @@
-import React from 'react';
 import './MonthlyReport.scss';
 import { MonthlyReportDay, WorkLog } from "./MonthlyReport.model";
 import { Table } from "@material-ui/core";

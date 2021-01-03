@@ -1,4 +1,3 @@
-import React from 'react';
 import { MonthSelector } from './monthSelector/MonthSelector';
 import { WorkLogSelector } from './workLogSelector/WorkLogSelector';
 import { ReportingWorkLog } from '../reporting.model';

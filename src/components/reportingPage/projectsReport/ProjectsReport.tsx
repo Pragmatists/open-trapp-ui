@@ -1,4 +1,3 @@
-import React from 'react';
 import { ReportingWorkLog } from '../reporting.model';
 import { Table } from '@material-ui/core';
 import TableHead from '@material-ui/core/TableHead';

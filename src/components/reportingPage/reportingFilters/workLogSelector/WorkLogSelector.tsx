@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { uniq, xor } from 'lodash';
 import { ReportingWorkLog } from '../../reporting.model';
 import Button from '@material-ui/core/Button';
