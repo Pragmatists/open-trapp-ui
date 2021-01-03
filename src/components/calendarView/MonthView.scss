@@ -1,0 +1,37 @@
+.month-view {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background-color: black;
+  grid-gap: 0.5px;
+
+  & > * {
+    background-color: white;
+  }
+
+  .day-wrapper {
+    position: relative;
+    box-sizing: border-box;
+
+    &::before {
+      content: "";
+      padding-bottom: 100%;
+      display: block;
+    }
+  }
+
+  .day {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+
+    &__title {
+      text-align: right;
+    }
+  }
+}

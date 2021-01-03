@@ -15,6 +15,8 @@ import { loadPresetsAction } from '../../actions/registration.actions';
 import { Month } from '../../utils/Month';
 import { extractAutoAddedTagsMapping } from '../../utils/tagUtils'
 import { selectedMonthSelector } from '../../selectors/selectors';
+import { CalendarView } from '../calendarView/CalendarView';
+import { Paper } from '@material-ui/core';
 
 const workLogsSelector = (state: OpenTrappState) => {
   const {name} = state.authentication.user || {} as AuthorizedUser;
@@ -76,6 +78,11 @@ export const RegistrationPageDesktop = () => {
                                      onDaysSelected={onDaysSelected}/> :
               'Loading...'
           }
+        </div>
+        <div>
+          <Paper>
+            <CalendarView month={new Month(selectedMonth.year, selectedMonth.month)} />
+          </Paper>
         </div>
       </div>
   );
