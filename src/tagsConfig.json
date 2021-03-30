@@ -2,6 +2,7 @@
   "topLevel": [
     "projects",
     "internal",
+    "trainings",
     "sick",
     "vacation",
     "vacation-special",
