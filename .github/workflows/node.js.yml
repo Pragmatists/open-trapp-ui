@@ -28,8 +28,8 @@ jobs:
           name: open-trapp-ui-dist
           path: ./build
   deploy-on-github-pages:
-    name: "Deploy app to GitHub Pages from main branch source code"
-    if: github.ref == 'refs/heads/main'
+    name: "Deploy app to GitHub Pages from master branch source code"
+    if: github.ref == 'refs/heads/master'
     needs: build
     runs-on: ubuntu-latest
     steps:
