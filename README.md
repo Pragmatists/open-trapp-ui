@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/Pragmatists/open-trapp-ui.svg?branch=master)](https://travis-ci.org/Pragmatists/open-trapp-ui)
+[![Build Status](https://github.com/Pragmatists/open-trapp-ui/actions/workflows/node.js.yml/badge.svg)](https://github.com/Pragmatists/open-trapp-ui/actions/workflows/node.js.yml)
 [![Coverage Status](https://coveralls.io/repos/github/Pragmatists/open-trapp-ui/badge.svg?branch=master)](https://coveralls.io/github/Pragmatists/open-trapp-ui?branch=master)
 
 # OpenTrappUI
