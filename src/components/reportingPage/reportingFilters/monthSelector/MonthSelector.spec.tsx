@@ -50,7 +50,7 @@ describe('Month Selector', () => {
     expect(container.getByText('2019/03').parentNode).toHaveAttribute('data-chip-selected', "true");
   });
 
-  it('scrolls months list on NEXT click', () => {
+  it('scrolls months list on PREVIOUS and NEXT click', () => {
     const container = render(
         <MonthSelector selectedMonth={{year: 2019, month: 2}} onMonthChange={noop}/>
     );
@@ -63,12 +63,15 @@ describe('Month Selector', () => {
     expect(container.getByText('2019/02').parentNode).toHaveAttribute('data-chip-selected', "true");
   });
 
-  it('next button is disabled in initial state', () => {
+  it('scrolls months list on NEXT click', () => {
     const container = render(
-        <MonthSelector selectedMonth={{year: 2019, month: 3}} onMonthChange={noop}/>
+        <MonthSelector selectedMonth={{year: 2019, month: 2}} onMonthChange={noop}/>
     );
 
-    expect(container.getByTestId('next-months-button')).toBeDisabled();
+    fireEvent.click(container.getByTestId('next-months-button'));
+
+    expect(chipsLabels(container)).toEqual(['2019/01', '2019/02', '2019/03', '2019/04', '2019/05']);
+    expect(container.getByText('2019/02').parentNode).toHaveAttribute('data-chip-selected', "true");
   });
 
   function monthChips(container: RenderResult) {

@@ -8,7 +8,6 @@ import * as React from 'react';
 import { Provider } from 'react-redux';
 import { ReportingPageDesktop } from './ReportingPage.desktop';
 import { Month } from '../../utils/Month';
-import { BulkEditDialog } from './bulkEditDialog/BulkEditDialog';
 
 const days = [
   {id: '2019/02/01', weekend: false, holiday: false},

@@ -25,7 +25,6 @@ export const MonthSelector = ({selectedMonth, onMonthChange}: MonthSelectorProps
   const [shift, setShift] = useState(0);
   const months = Month.current.range(3, 1)
       .map(m => shift > 0 ? m.plus(shift) : m.minus(-shift));
-  const monthBeforeCurrentSelected = new Month(selectedMonth.year, selectedMonth.month).isBefore(Month.current);
 
   return (
       <div className='month-selector' data-testid='months-selector'>
@@ -42,9 +41,7 @@ export const MonthSelector = ({selectedMonth, onMonthChange}: MonthSelectorProps
                            onClick={() => onMonthChange(month.year, month.month)}/>
             )
           }
-          <Button onClick={() => setShift(shift + 1)}
-                  disabled={shift === 0 || !monthBeforeCurrentSelected}
-                  data-testid='next-months-button'>
+          <Button onClick={() => setShift(shift + 1)} data-testid='next-months-button'>
             <ArrowDownIcon/>
           </Button>
         </div>
