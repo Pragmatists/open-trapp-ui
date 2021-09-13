@@ -4,6 +4,7 @@ import { Store } from 'redux';
 import { Provider } from 'react-redux';
 import { chain } from 'lodash';
 import { fireEvent, render, RenderResult, waitFor, within } from '@testing-library/react';
+import userEvent from "@testing-library/user-event";
 import { ignoreHtmlTags, setupStore } from '../../utils/testUtils';
 import { RegistrationPageDesktop } from './RegistrationPage.desktop';
 import { OpenTrappRestAPI } from '../../api/OpenTrappAPI';
@@ -78,14 +79,13 @@ describe('Registration Page - desktop', () => {
 
   describe('Monthly report', () => {
     it('displays current month', async () => {
-      const {getByText} = render(
+      const {findByText} = render(
           <Provider store={store}>
             <RegistrationPageDesktop/>
           </Provider>
       );
-      await waitFor(() => {});
 
-      expect(getByText(ignoreHtmlTags('2019/02 month worklog'))).toBeInTheDocument();
+      expect(await findByText(ignoreHtmlTags('2019/02 month worklog'))).toBeInTheDocument();
     });
 
     it('fetches and renders days with workload for current month', async () => {
@@ -107,18 +107,18 @@ describe('Registration Page - desktop', () => {
     });
 
     it('reloads data on NEXT month click', async () => {
-      const container = render(
+      const { getByText, getByTestId } = render(
           <Provider store={store}>
             <RegistrationPageDesktop/>
           </Provider>
       );
       await waitFor(() => {});
 
-      fireEvent.click(container.getByText('Next'));
+      fireEvent.click(getByText('Next'));
 
       await waitFor(() => expect(httpMock.history.get.filter(r => r.url.startsWith('/calendar'))).toHaveLength(4));
-      expect(container.getByTestId('monthly-report')).toBeInTheDocument();
-      expect(container.getByText(ignoreHtmlTags('2019/03 month worklog'))).toBeInTheDocument();
+      expect(getByTestId('monthly-report')).toBeInTheDocument();
+      expect(getByText(ignoreHtmlTags('2019/03 month worklog'))).toBeInTheDocument();
     });
 
     it('reloads data on PREVIOUS month click', async () => {
@@ -199,9 +199,8 @@ describe('Registration Page - desktop', () => {
 
       typeExpression(container, '1d #projects #nvm @2019/02/27');
       pressEnter(container);
-      await waitFor(() => {});
 
-      expect(httpMock.history.post.length).toEqual(1);
+      await waitFor(() => expect(httpMock.history.post).toHaveLength(1));
       expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
         projectNames: ['projects', 'nvm'],
         workload: '1d',
@@ -220,7 +219,7 @@ describe('Registration Page - desktop', () => {
       typeExpression(container, '1d #projects #nvm @2019/02/27~@2019/02/28');
       pressEnter(container);
 
-      await waitFor(() => expect(httpMock.history.post.length).toEqual(2));
+      await waitFor(() => expect(httpMock.history.post).toHaveLength(2));
       expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
         projectNames: ['projects', 'nvm'],
         workload: '1d',
@@ -232,6 +231,28 @@ describe('Registration Page - desktop', () => {
         day: '2019/02/28'
       });
     });
+
+    it('saves self-dev work log with description', async () => {
+      const container = render(
+          <Provider store={store}>
+            <RegistrationPageDesktop/>
+          </Provider>
+      );
+      await waitFor(() => {});
+
+      typeExpression(container, '1d #internal #self-dev @2019/02/27');
+      pressEnter(container);
+      userEvent.type(within(container.getByLabelText('Self-dev description')).getByRole('textbox'), 'Some self-dev description');
+      userEvent.click(container.getByRole('button', { name: 'Confirm' }));
+
+      await waitFor(() => expect(httpMock.history.post).toHaveLength(1));
+      expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
+        projectNames: ['internal', 'self-dev'],
+        workload: '1d',
+        day: '2019/02/27',
+        note: 'Some self-dev description'
+      });
+    })
 
     it('reloads work logs after save', async () => {
       const container = render(
@@ -254,7 +275,7 @@ describe('Registration Page - desktop', () => {
   });
 
   function workLogInput(container: RenderResult) {
-    return container.getByRole('combobox').firstChild.firstChild;
+    return within(container.getByRole('combobox')).getByRole('textbox');
   }
 
   function typeExpression(container: RenderResult, expression: string) {

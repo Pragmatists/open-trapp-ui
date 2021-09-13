@@ -44,7 +44,7 @@ export const removeWorkLogEpic = (action$: ActionsObservable<Action>, state$: St
     );
 
 const saveWorkLogs = (workLog: ParsedWorkLog, username: string, openTrappApi: OpenTrappAPI) => {
-  return from(workLog.days.map(d => openTrappApi.saveWorkLog(d, workLog.tags, workLog.workload, username))).pipe(
+  return from(workLog.days.map(d => openTrappApi.saveWorkLog(username, d, workLog.tags, workLog.workload, workLog.note))).pipe(
       mergeAll(),
       ignoreElements()
   );

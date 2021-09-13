@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, KeyboardEvent } from 'react';
 import { Paper } from '@material-ui/core';
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
@@ -15,6 +15,7 @@ import { ConfirmNewTagsDialog } from '../confirmNewTagsDialog/ConfirmNewTagsDial
 import { ParsedWorkLog } from '../../../workLogExpressionParser/ParsedWorkLog';
 import { ValidationStatus } from './ValidationStatus';
 import { Preset } from '../registration.model';
+import { SelfDevDescriptionDialog } from '../selfDevDescriptionDialog/SelfDevDescriptionDialog';
 
 export interface WorkLogInputProps {
   workLog: ParsedWorkLog;
@@ -47,6 +48,7 @@ export const WorkLogInput = ({workLog, onChange, autoAddedTagsMapping, tags, pre
   const [helpOpen, setHelpOpen] = useState(false)
   const [suggestions, setSuggestions] = useState([]);
   const [newTags, setNewTags] = useState([]);
+  const [selfDevDialogVisible, setSelfDevDialogVisible] = useState(false);
 
   const handleInputChange = (event, {newValue}) => {
     const workLog = workLogExpressionParser.parse(newValue);
@@ -55,11 +57,13 @@ export const WorkLogInput = ({workLog, onChange, autoAddedTagsMapping, tags, pre
     onChange(workLog.withAddedTags(autoAddedTags));
   };
 
-  const handleSubmit = (event: React.KeyboardEvent) => {
+  const handleSubmit = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
       if (workLog.validate().valid) {
         const newTags = difference(workLog.tags, tags);
-        if (isEmpty(newTags)) {
+        if (workLog.tags.includes('self-dev')) {
+          setSelfDevDialogVisible(true);
+        } else if (isEmpty(newTags)) {
           onSave(workLog);
         } else {
           setNewTags(newTags);
@@ -96,6 +100,11 @@ export const WorkLogInput = ({workLog, onChange, autoAddedTagsMapping, tags, pre
     setNewTags([]);
   };
 
+  const handleSelfDevDescriptionProvided = (description: string) => {
+    onSave(workLog.withNote(description));
+    setSelfDevDialogVisible(false);
+  }
+
   return (
       <Paper className='work-log-input' elevation={1}>
         <Autosuggest
@@ -130,6 +139,9 @@ export const WorkLogInput = ({workLog, onChange, autoAddedTagsMapping, tags, pre
                               newTags={newTags}
                               onClose={handleConfirmationDialogClose}
                               open={!isEmpty(newTags)}/>
+        <SelfDevDescriptionDialog open={selfDevDialogVisible}
+                                  onCancel={() => setSelfDevDialogVisible(false)}
+                                  onConfirm={handleSelfDevDescriptionProvided} />
       </Paper>
   );
 }

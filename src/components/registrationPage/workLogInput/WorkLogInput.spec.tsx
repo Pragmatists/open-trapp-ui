@@ -1,10 +1,11 @@
 import moment from 'moment';
-import { fireEvent, render, RenderResult } from '@testing-library/react';
-import { noop } from 'lodash';
-import { WorkLogInput, WorkLogInputProps } from './WorkLogInput';
-import { ParsedWorkLog } from '../../../workLogExpressionParser/ParsedWorkLog';
-import { Preset } from '../registration.model';
-import { ignoreHtmlTags } from '../../../utils/testUtils';
+import userEvent from '@testing-library/user-event'
+import {fireEvent, render, RenderResult, within} from '@testing-library/react';
+import {noop} from 'lodash';
+import {WorkLogInput, WorkLogInputProps} from './WorkLogInput';
+import {ParsedWorkLog} from '../../../workLogExpressionParser/ParsedWorkLog';
+import {Preset} from '../registration.model';
+import {ignoreHtmlTags} from '../../../utils/testUtils';
 
 const tags = ['projects', 'nvm', 'vacation'];
 
@@ -202,6 +203,43 @@ describe('WorkLogInput', () => {
     });
   });
 
+  describe('self dev', () => {
+    it('asks for description if work log contains self-dev tag', () => {
+      const onSave = jest.fn();
+      const initialWorkLog = new ParsedWorkLog('1d #internal #self-dev @2019/03/01', ['2019/03/01'], ['internal', 'self-dev'], '1d');
+      const container = render(worLogInput({workLog: initialWorkLog, tags}));
+
+      pressEnter(container);
+
+      expect(onSave).not.toHaveBeenCalled();
+      expect(container.getByLabelText('Self-dev description')).toBeInTheDocument();
+      expect(container.getByText('Short description is required to report a self-dev'))
+          .toBeInTheDocument();
+    });
+
+    it('emits save if description is provided', () => {
+      let savePayload: ParsedWorkLog = undefined;
+      const initialWorkLog = new ParsedWorkLog('1d #internal #self-dev @2019/03/01', ['2019/03/01'], ['internal', 'self-dev'], '1d');
+      const container = render(worLogInput({workLog: initialWorkLog, tags, onSave: payload => savePayload = payload}));
+
+      pressEnter(container);
+      userEvent.type(getDescriptionInput(container), 'Some self-dev description');
+      userEvent.click(container.getByRole('button', { name: 'Confirm' }));
+
+      expect(container.getByText('Self-dev description')).not.toBeVisible();
+      expect(savePayload.validate().valid).toBeTruthy();
+      expect(savePayload.workload).toEqual('1d');
+      expect(savePayload.days).toEqual(['2019/03/01']);
+      expect(savePayload.tags).toEqual(['internal', 'self-dev']);
+      expect(savePayload.note).toEqual('Some self-dev description');
+    });
+
+    function getDescriptionInput(container: RenderResult) {
+      return within(container.getByLabelText('Self-dev description'))
+          .getByRole('textbox');
+    }
+  })
+
   describe('validation', () => {
     it('does not show icon for empty input', () => {
       const initialWorkLog = ParsedWorkLog.empty();
@@ -266,6 +304,7 @@ describe('WorkLogInput', () => {
   }
 
   function workLogInput(container: RenderResult) {
-    return container.getByRole('combobox').firstChild.firstChild;
+    return within(container.getByRole('combobox'))
+        .getByRole('textbox')
   }
 });

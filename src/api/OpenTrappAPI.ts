@@ -46,8 +46,8 @@ export class OpenTrappAPI {
     return this.get<ReportingWorkLogDTO[]>(`/calendar/${year}/${month}/work-log/entries`);
   }
 
-  saveWorkLog(day: string, tags: string[], workload: string, username: string): Observable<string> {
-    return this.post<{ id: string }>(`/employee/${username}/work-log/entries`, {projectNames: tags, workload, day}).pipe(
+  saveWorkLog(username: string, day: string, tags: string[], workload: string, note?: string): Observable<string> {
+    return this.post<{ id: string }>(`/employee/${username}/work-log/entries`, {projectNames: tags, workload, day, note}).pipe(
             map(r => r.id)
         );
   }

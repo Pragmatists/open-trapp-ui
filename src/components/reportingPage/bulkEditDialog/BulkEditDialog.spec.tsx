@@ -1,4 +1,4 @@
-import { fireEvent, render, RenderResult, waitFor } from '@testing-library/react';
+import {fireEvent, render, RenderResult, waitFor, within} from '@testing-library/react';
 import * as React from 'react';
 import { BulkEditDialog } from './BulkEditDialog';
 import MockAdapter from 'axios-mock-adapter';
@@ -66,12 +66,12 @@ describe('Bulk edit dialog', () => {
   });
 
   function typeQuery(container: RenderResult, query: string) {
-    const queryInput = container.getByTestId('bulk-edit-query').lastChild.firstChild;
+    const queryInput = within(container.getByTestId('bulk-edit-query')).getByRole('textbox');
     fireEvent.change(queryInput, {target: {value: query}});
   }
 
   function typeExpression(container: RenderResult, expression: string) {
-    const expressionInput = container.getByTestId('bulk-edit-expression').lastChild.firstChild;
+    const expressionInput = within(container.getByTestId('bulk-edit-expression')).getByRole('textbox');
     fireEvent.change(expressionInput, {target: {value: expression}});
   }
 });

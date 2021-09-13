@@ -11,7 +11,8 @@ export class ParsedWorkLog {
       readonly expression: string,
       readonly days: string[],
       readonly tags: string[],
-      readonly workload: string
+      readonly workload: string,
+      readonly note?: string
   ) {
   }
 
@@ -50,6 +51,10 @@ export class ParsedWorkLog {
     const daysExpression = ParsedWorkLog.daysToExpression(days);
     const newExpression = this.newExpression(daysExpression);
     return new ParsedWorkLog(newExpression, days, this.tags, this.workload);
+  }
+
+  withNote(note: string): ParsedWorkLog {
+    return new ParsedWorkLog(this.expression, this.days, this.tags, this.workload, note)
   }
 
   private static daysToExpression(days: string[]): string {
