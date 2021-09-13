@@ -1,4 +1,4 @@
-import { fireEvent, render, RenderResult, waitFor } from '@testing-library/react';
+import {fireEvent, render, RenderResult, waitFor, within} from '@testing-library/react';
 import { Provider } from 'react-redux';
 import * as React from 'react';
 import { Store } from 'redux';
@@ -9,6 +9,7 @@ import { setupStore } from '../../utils/testUtils';
 import { initialState as registrationInitialState } from '../../redux/registration.reducer';
 import { OpenTrappRestAPI } from '../../api/OpenTrappAPI';
 import { ReportingWorkLogDTO } from '../../api/dtos';
+import userEvent from "@testing-library/user-event";
 
 const workLogResponse: ReportingWorkLogDTO[] = [
   {id: '1', link: 'link', employee: 'john.doe', day: '2019/02/01', workload: 480, projectNames: ['projects', 'nvm']},
@@ -16,7 +17,7 @@ const workLogResponse: ReportingWorkLogDTO[] = [
   {id: '3', link: 'link', employee: 'john.doe', day: '2019/02/04', workload: 450, projectNames: ['projects', 'nvm']},
   {id: '4', link: 'link', employee: 'john.doe', day: '2019/02/04', workload: 30, projectNames: ['internal', 'standup']},
   {id: '5', link: 'link', employee: 'andy.barber', day: '2019/02/01', workload: 390, projectNames: ['projects', 'nvm']},
-  {id: '6', link: 'link', employee: 'andy.barber', day: '2019/02/01', workload: 30, projectNames: ['internal', 'standup']},
+  {id: '6', link: 'link', employee: 'andy.barber', day: '2019/02/01', workload: 30, projectNames: ['internal', 'self-dev']},
   {id: '7', link: 'link', employee: 'andy.barber', day: '2019/02/04', workload: 0, projectNames: ['remote']}
 ];
 
@@ -74,7 +75,7 @@ describe('Registration Page - mobile', () => {
           </Provider>
       );
 
-      expect(getByText(today)).toBeInTheDocument();
+      expect(getByText(today)).toBeVisible();
     });
 
     it('changes date on right arrow click', async () => {
@@ -87,7 +88,7 @@ describe('Registration Page - mobile', () => {
 
       fireEvent.click(getByTestId('day-selector-next'));
 
-      expect(getByText(tomorrow)).toBeInTheDocument();
+      expect(getByText(tomorrow)).toBeVisible();
     });
 
     it('changes date on left arrow click', async () => {
@@ -100,7 +101,7 @@ describe('Registration Page - mobile', () => {
 
       fireEvent.click(getByTestId('day-selector-previous'));
 
-      expect(getByText(yesterday)).toBeInTheDocument();
+      expect(getByText(yesterday)).toBeVisible();
     });
   });
 
@@ -111,9 +112,8 @@ describe('Registration Page - mobile', () => {
             <RegistrationPageMobile/>
           </Provider>
       );
-      await waitFor(() => {});
 
-      expect(container.queryAllByTestId('work-log')).toHaveLength(2);
+      await waitFor(() => expect(container.queryAllByTestId('work-log')).toHaveLength(2));
     });
 
     it('deletes work log', async () => {
@@ -139,9 +139,8 @@ describe('Registration Page - mobile', () => {
             <RegistrationPageMobile/>
           </Provider>
       );
-      await waitFor(() => {});
 
-      expect(presets(container)).toHaveLength(2);
+      await waitFor(() => expect(presets(container)).toHaveLength(2));
       expect(presets(container)[0]).toHaveTextContent('vacation');
       expect(presets(container)[1]).toHaveTextContent('projects, nvm');
     });
@@ -156,10 +155,9 @@ describe('Registration Page - mobile', () => {
     await waitFor(() => {});
 
     fireEvent.click(presets(container)[0]);
-    fireEvent.click(container.getByText('Save'));
-    await waitFor(() => {});
+    fireEvent.click(container.getByRole('button', {name: 'Save'}));
 
-    expect(httpMock.history.post.length).toEqual(1);
+    await waitFor(() => expect(httpMock.history.post.length).toEqual(1));
     expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
       projectNames: ['vacation'],
       workload: '1d',
@@ -177,11 +175,10 @@ describe('Registration Page - mobile', () => {
 
     fireEvent.click(container.getByTestId('custom-work-log-button'));
     fireEvent.click(container.getByText('nvm'));
-    fireEvent.click(container.getByText('Next'));
-    fireEvent.click(container.getByText('Save'));
-    await waitFor(() => {});
+    fireEvent.click(container.getByRole('button', {name: 'Next'}));
+    fireEvent.click(container.getByRole('button', {name: 'Save'}));
 
-    expect(httpMock.history.post.length).toEqual(1);
+    await waitFor(() => expect(httpMock.history.post.length).toEqual(1));
     expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
       projectNames: ['nvm'],
       workload: '1d',
@@ -189,7 +186,51 @@ describe('Registration Page - mobile', () => {
     });
   });
 
+  it('registers self-dev', async () => {
+    const container = render(
+        <Provider store={store}>
+          <RegistrationPageMobile/>
+        </Provider>
+    );
+    await waitFor(() => {});
+
+    fireEvent.click(container.getByTestId('custom-work-log-button'));
+    fireEvent.click(container.getByText('self-dev'));
+    fireEvent.click(container.getByRole('button', {name: 'Next'}));
+    userEvent.type(within(container.getByLabelText('self-dev description')).getByRole('textbox'), 'Some description');
+    fireEvent.click(container.getByRole('button', {name: 'Save'}));
+
+    await waitFor(() => expect(httpMock.history.post.length).toEqual(1));
+    expect(JSON.parse(httpMock.history.post[0].data)).toEqual({
+      projectNames: ['self-dev'],
+      workload: '1d',
+      day: '2019/02/04',
+      note: 'Some description'
+    });
+  })
+
+  it('shows tags list after cancel and reopen', async () => {
+    const container = render(
+        <Provider store={store}>
+          <RegistrationPageMobile/>
+        </Provider>
+    );
+    await waitFor(() => {});
+
+    fireEvent.click(container.getByTestId('custom-work-log-button'));
+    fireEvent.click(container.getByText('nvm'));
+    fireEvent.click(container.getByRole('button', {name: 'Next'}));
+    fireEvent.click(container.getByRole('button', {name: 'Cancel'}));
+    fireEvent.click(container.getByTestId('custom-work-log-button'));
+
+    expect(customTags(container)).toHaveLength(6);
+  })
+
   function presets(container: RenderResult) {
     return container.queryAllByTestId('preset');
+  }
+
+  function customTags(container: RenderResult) {
+    return container.queryAllByTestId('tag');
   }
 });

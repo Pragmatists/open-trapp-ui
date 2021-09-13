@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { isNil } from 'lodash';
-import { OpenTrappState } from '../../redux/root.reducer';
+import {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {isNil} from 'lodash';
+import {OpenTrappState} from '../../redux/root.reducer';
 import {
   loadTagsAction,
   loadWorkLogsAction,
@@ -9,16 +9,15 @@ import {
   saveWorkLogAction,
   workLogChangedAction
 } from '../../actions/workLog.actions';
-import { DaySelector } from './daySelector/DaySelector';
-import { ParsedWorkLog } from '../../workLogExpressionParser/ParsedWorkLog';
-import { loadPresetsAction} from '../../actions/registration.actions';
-import { Preset } from './registration.model';
-import { WorkloadDialog } from './workloadDialog/WorkloadDialog';
-import { WorkLogs } from './workLogs/WorkLogs';
-import { CreateWorkLogDialog } from './createWorkLogDialog/CreateWorkLogDialog';
+import {DaySelector} from './daySelector/DaySelector';
+import {ParsedWorkLog} from '../../workLogExpressionParser/ParsedWorkLog';
+import {loadPresetsAction} from '../../actions/registration.actions';
+import {Preset} from './registration.model';
+import {WorkLogs} from './workLogs/WorkLogs';
+import {CreateWorkLogDialog} from './createWorkLogDialog/CreateWorkLogDialog';
 import List from '@material-ui/core/List';
 import ListSubheader from '@material-ui/core/ListSubheader';
-import { Chip } from '@material-ui/core';
+import Chip from '@material-ui/core/Chip';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import './RegistrationPage.mobile.scss';
@@ -44,51 +43,49 @@ export const RegistrationPageMobile = () => {
     dispatch(loadPresetsAction());
   }, [dispatch]);
 
-  const selectedDay =  workLog.days[0];
+  const selectedDay = workLog.days[0];
 
-  const handleWorkloadDialogClose = (workload?: string) => {
-    if (workload) {
-      const workLog = ParsedWorkLog.from(selectedPreset.tags, selectedDay, workload);
-      dispatch(saveWorkLogAction(workLog));
-    }
-    setSelectedPreset(undefined);
-  };
-
-  const handleCustomWorkLogDialogClose = (tags?: string[], workload?: string) => {
-    if (tags && workload) {
-      const workLog = ParsedWorkLog.from(tags, selectedDay, workload);
-      dispatch(saveWorkLogAction(workLog));
-    }
+  const handleCancel = () => {
     setCustomWorkLogDialogOpen(false);
+    setSelectedPreset(undefined);
+  }
+
+  const handleSave = (tags: string[], workload: string, description?: string) => {
+    const workLog = ParsedWorkLog.from(tags, selectedDay, workload);
+    dispatch(saveWorkLogAction(workLog.withNote(description)));
+    handleCancel()
   };
 
   return (
-        <div className='registration-page-mobile'>
-          <DaySelector selectedDay={selectedDay} onChange={day => dispatch(workLogChangedAction((workLog.withDays([day]))))}/>
-          <WorkLogs workLogs={workLogs} onDelete={workLogId => dispatch(removeWorkLogAction(workLogId))} />
-          <div className='presets-selector'>
-            <List className='presets-selector__list'>
-              <ListSubheader className='presets-selector__title'>Suggested projects</ListSubheader>
-              {
-                presets.map((preset, idx) => (
-                    <Chip key={idx}
-                          label={preset.tags.join(', ')}
-                          onClick={() => setSelectedPreset(preset)}
-                          className='presets-selector__chip chip'
-                          color={'primary'}
-                          data-testid='preset' />
-                ))
-              }
-            </List>
-          </div>
-          <WorkloadDialog open={!isNil(selectedPreset)} onClose={handleWorkloadDialogClose} />
-          <CreateWorkLogDialog onClose={handleCustomWorkLogDialogClose} open={customWorkLogDialogOpen} tags={tags} />
-          <Fab onClick={() => setCustomWorkLogDialogOpen(true)}
-               color='primary'
-               className='registration-page-mobile__add-button add-button'
-               data-testid='custom-work-log-button'>
-            <AddIcon />
-          </Fab>
+      <div className='registration-page-mobile'>
+        <DaySelector selectedDay={selectedDay} onChange={day => dispatch(workLogChangedAction((workLog.withDays([day]))))} />
+        <WorkLogs workLogs={workLogs} onDelete={workLogId => dispatch(removeWorkLogAction(workLogId))} />
+        <div className='presets-selector'>
+          <List className='presets-selector__list'>
+            <ListSubheader className='presets-selector__title'>Suggested projects</ListSubheader>
+            {
+              presets.map((preset, idx) => (
+                  <Chip key={idx}
+                        label={preset.tags.join(', ')}
+                        onClick={() => setSelectedPreset(preset)}
+                        className='presets-selector__chip chip'
+                        color={'primary'}
+                        data-testid='preset' />
+              ))
+            }
+          </List>
         </div>
-    );
+        <CreateWorkLogDialog onSave={handleSave}
+                             onCancel={handleCancel}
+                             open={customWorkLogDialogOpen || !isNil(selectedPreset)}
+                             selectedTags={selectedPreset?.tags}
+                             tags={tags} />
+        <Fab onClick={() => setCustomWorkLogDialogOpen(true)}
+             color='primary'
+             className='registration-page-mobile__add-button add-button'
+             data-testid='custom-work-log-button'>
+          <AddIcon />
+        </Fab>
+      </div>
+  );
 }

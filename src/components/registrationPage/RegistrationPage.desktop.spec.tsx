@@ -242,7 +242,7 @@ describe('Registration Page - desktop', () => {
 
       typeExpression(container, '1d #internal #self-dev @2019/02/27');
       pressEnter(container);
-      userEvent.type(within(container.getByLabelText('Self-dev description')).getByRole('textbox'), 'Some self-dev description');
+      userEvent.type(within(container.getByLabelText('self-dev description')).getByRole('textbox'), 'Some self-dev description');
       userEvent.click(container.getByRole('button', { name: 'Confirm' }));
 
       await waitFor(() => expect(httpMock.history.post).toHaveLength(1));

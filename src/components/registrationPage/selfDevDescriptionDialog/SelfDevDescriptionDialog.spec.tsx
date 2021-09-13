@@ -9,7 +9,7 @@ describe('Self-dev description dialog', () => {
         <SelfDevDescriptionDialog open={true} onCancel={noop} onConfirm={noop} />
     );
 
-    expect(getByLabelText('Self-dev description')).toBeVisible();
+    expect(getByLabelText('self-dev description')).toBeVisible();
     expect(getByRole('button', { name: 'Cancel' })).toBeVisible();
     expect(getByRole('button', { name: 'Confirm' })).toBeVisible();
   })
@@ -19,7 +19,7 @@ describe('Self-dev description dialog', () => {
         <SelfDevDescriptionDialog open={true} onCancel={noop} onConfirm={noop} />
     );
 
-    expect(queryByLabelText('Self-dev description')).toBeVisible();
+    expect(queryByLabelText('self-dev description')).toBeVisible();
     expect(queryByRole('button', { name: 'Cancel' })).toBeVisible();
     expect(queryByRole('button', { name: 'Confirm' })).toBeVisible();
   })

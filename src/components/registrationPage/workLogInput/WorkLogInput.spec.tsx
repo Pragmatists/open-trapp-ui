@@ -212,7 +212,7 @@ describe('WorkLogInput', () => {
       pressEnter(container);
 
       expect(onSave).not.toHaveBeenCalled();
-      expect(container.getByLabelText('Self-dev description')).toBeInTheDocument();
+      expect(container.getByLabelText('self-dev description')).toBeInTheDocument();
       expect(container.getByText('Short description is required to report a self-dev'))
           .toBeInTheDocument();
     });
@@ -235,7 +235,7 @@ describe('WorkLogInput', () => {
     });
 
     function getDescriptionInput(container: RenderResult) {
-      return within(container.getByLabelText('Self-dev description'))
+      return within(container.getByLabelText('self-dev description'))
           .getByRole('textbox');
     }
   })

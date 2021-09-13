@@ -32,17 +32,17 @@ export const SelfDevDescriptionDialog = ({open, onCancel, onConfirm}: SelfDevDes
   }, [open]);
 
   const handleConfirm = () => {
-    const errorMessage = validateDescription(description)
+    const errorMessage = validateDescription(description);
     if (!errorMessage) {
-      onConfirm(trim(description))
+      onConfirm(trim(description));
     } else {
-      setError(errorMessage)
+      setError(errorMessage);
     }
   }
 
-  const handleChange = v => {
-    setError(validateDescription(v));
-    setDescription(v);
+  const handleChange = (value: string) => {
+    setError(validateDescription(value));
+    setDescription(value);
   }
 
   return (
@@ -50,7 +50,7 @@ export const SelfDevDescriptionDialog = ({open, onCancel, onConfirm}: SelfDevDes
         <DialogTitle>Self-dev description</DialogTitle>
         <DialogContent>
           <p>Short description is required to report a self-dev</p>
-          <TextField aria-label='Self-dev description'
+          <TextField aria-label='self-dev description'
                      multiline
                      type='text'
                      value={description}
