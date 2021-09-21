@@ -9,7 +9,7 @@ export const App = () => (
     <Fragment>
       <CssBaseline/>
       <MuiThemeProvider theme={theme}>
-        <BrowserRouter basename='/open-trapp-ui'>
+        <BrowserRouter basename='/'>
           <AppRouting/>
         </BrowserRouter>
       </MuiThemeProvider>
