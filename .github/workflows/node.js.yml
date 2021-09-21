@@ -51,3 +51,27 @@ jobs:
           user_email: 'github-actions[bot]@users.noreply.github.com'
           force_orphan: true
           keep_files: false
+  deploy-on-cloudfront:
+    name: "Deploy app to CloudFront from master branch source code"
+    if: github.ref == 'refs/heads/master'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: open-trapp-ui-dist
+          path: ./build
+      - name: "Setting AWS credentials"
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+      - name: "Deploy app to CloudFront with S3 origin from master branch source code"
+        uses: lbertenasco/s3-deploy@v1
+        if: ${{ github.event_name != 'pull_request' && always() }}
+        with:
+          folder: ./build
+          bucket: ${{ secrets.S3_BUCKET }}
+          dist-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          invalidation: / *
