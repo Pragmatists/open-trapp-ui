@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>404 Not Found | OpenTrapp</title>
+</head>
+<body>
+<script>
+  (function redirect() {
+    var basePath = 'open-trapp-ui';
+    if (document && document.location) {
+      var pathname = document.location.pathname.replace(`${basePath}/`, '');
+      document.location.replace(`/${basePath}?redirect=${encodeURIComponent(pathname)}`);
+    }
+  }());
+</script>
+</body>
+</html>

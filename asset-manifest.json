@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/open-trapp-ui/static/css/main.9ddfe9d7.chunk.css",
+    "main.js": "/open-trapp-ui/static/js/main.f5c984c7.chunk.js",
+    "main.js.map": "/open-trapp-ui/static/js/main.f5c984c7.chunk.js.map",
+    "runtime-main.js": "/open-trapp-ui/static/js/runtime-main.e065c27e.js",
+    "runtime-main.js.map": "/open-trapp-ui/static/js/runtime-main.e065c27e.js.map",
+    "static/js/2.73c138b3.chunk.js": "/open-trapp-ui/static/js/2.73c138b3.chunk.js",
+    "static/js/2.73c138b3.chunk.js.map": "/open-trapp-ui/static/js/2.73c138b3.chunk.js.map",
+    "index.html": "/open-trapp-ui/index.html",
+    "static/css/main.9ddfe9d7.chunk.css.map": "/open-trapp-ui/static/css/main.9ddfe9d7.chunk.css.map",
+    "static/js/2.73c138b3.chunk.js.LICENSE.txt": "/open-trapp-ui/static/js/2.73c138b3.chunk.js.LICENSE.txt",
+    "static/media/openTrapp.94cb3a9f.svg": "/open-trapp-ui/static/media/openTrapp.94cb3a9f.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e065c27e.js",
+    "static/js/2.73c138b3.chunk.js",
+    "static/css/main.9ddfe9d7.chunk.css",
+    "static/js/main.f5c984c7.chunk.js"
+  ]
+}
