@@ -33,7 +33,7 @@ jobs:
           path: ./build
   deploy-on-github-pages:
     name: "Deploy app to GitHub Pages from master branch source code"
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/disable'
     needs: build
     runs-on: ubuntu-latest
     steps:
